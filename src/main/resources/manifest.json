@@ -1,8 +1,8 @@
 {
-    "Group": "io.github.drakonforge",
-    "Name": "ExamplePlugin",
+    "Group": "DrakonForge",
+    "Name": "Outspoken",
     "Version": "1.0.0",
-    "Description": "An example plugin for Hytale modding.",
+    "Description": "A context-based dialogue bark system for Hytale.",
     "Authors": [
         {
             "Name": "Drakon",
@@ -19,5 +19,5 @@
     },
     "DisabledByDefault": false,
     "IncludesAssetPack": true,
-    "Main": "io.github.drakonforge.exampleplugin.ExamplePlugin"
+    "Main": "io.github.drakonforge.outspoken.OutspokenPlugin"
 }
