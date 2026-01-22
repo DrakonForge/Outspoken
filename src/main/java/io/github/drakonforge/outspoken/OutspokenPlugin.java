@@ -27,9 +27,6 @@ public class OutspokenPlugin extends JavaPlugin {
     protected void setup() {
         instance = this;
         LOGGER.atInfo().log("Setting up plugin " + this.getName() + " version " + this.getManifest().getVersion().toString());
-
-        // Run /test to confirm example plugin is working
-        this.getCommandRegistry().registerCommand(new ExampleCommand(this.getName(), this.getManifest().getVersion().toString()));
     }
 
     @Override
