@@ -6,13 +6,23 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 public class DatabaseQuery {
+    public enum PassthroughType {
+        CHANCE, NEVER
+    }
+
     private final String group;
     private final String category;
     private final Map<String, ContextTable> contexts = new HashMap<>();
+    private final PassthroughType passthroughType;
 
     public DatabaseQuery(String group, String category) {
+        this(group, category, PassthroughType.CHANCE);
+    }
+
+    public DatabaseQuery(String group, String category, PassthroughType passthroughType) {
         this.group = group;
         this.category = category;
+        this.passthroughType = passthroughType;
     }
 
     public void addContextTable(String tableName, ContextTable contextTable) {
@@ -30,5 +40,9 @@ public class DatabaseQuery {
 
     public String getCategory() {
         return category;
+    }
+
+    public PassthroughType getPassthroughType() {
+        return passthroughType;
     }
 }
