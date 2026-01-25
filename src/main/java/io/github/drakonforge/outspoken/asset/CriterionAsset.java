@@ -16,7 +16,8 @@ public class CriterionAsset {
         GreaterThan(Set.of(ValueType.Float, ValueType.Context), true),
         GreaterThanEquals(Set.of(ValueType.Float, ValueType.Context), true),
         LessThan(Set.of(ValueType.Float, ValueType.Context), true),
-        LessThanEquals(Set.of(ValueType.Float, ValueType.Context), true);
+        LessThanEquals(Set.of(ValueType.Float, ValueType.Context), true),
+        Range(Set.of(ValueType.Range, ValueType.Float), true);
 
         private final Set<ValueType> validValueTypes;
         private final boolean invertible;

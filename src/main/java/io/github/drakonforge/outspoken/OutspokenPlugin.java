@@ -7,18 +7,12 @@ import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 
+import com.hypixel.hytale.server.npc.NPCPlugin;
+import com.hypixel.hytale.server.npc.asset.builder.BuilderFactory;
 import io.github.drakonforge.outspoken.asset.RulebankAsset;
 import io.github.drakonforge.outspoken.command.OutspokenCommand;
-import io.github.drakonforge.outspoken.context.ContextManager;
-import io.github.drakonforge.outspoken.context.ContextTable;
-import io.github.drakonforge.outspoken.rulebank.RuleDatabase;
-import io.github.drakonforge.outspoken.rulebank.RuleDatabaseGenerator;
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery.PassthroughType;
-import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult;
-import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.BestMatch;
-import java.util.Map;
-import java.util.Map.Entry;
+import io.github.drakonforge.outspoken.component.BuilderSpeechbank;
+import io.github.drakonforge.outspoken.component.SpeechbankComponent;
 import javax.annotation.Nonnull;
 
 /**
@@ -46,11 +40,15 @@ public class OutspokenPlugin extends JavaPlugin {
         // TODO: For hot reloading
         if (AssetRegistry.getAssetStore(RulebankAsset.class) == null) {
             AssetRegistry.register(HytaleAssetStore.builder(RulebankAsset.class, new DefaultAssetMap<>()).setPath("Rulebank").setCodec(RulebankAsset.CODEC).setKeyFunction(RulebankAsset::getId).build());
+            // TODO Can also set loadsAfter()
         }
+
+        BuilderFactory<SpeechbankComponent> speechbankFactory = new BuilderFactory<>(SpeechbankComponent.class, "Type", BuilderSpeechbank::new);
+        NPCPlugin.get().getBuilderManager().registerFactory(speechbankFactory);
+        NPCPlugin.get().registerCoreComponentType("Speechbank", BuilderSpeechbank::new);
 
         this.getCommandRegistry().registerCommand(new OutspokenCommand());
 
-        // TODO Can also set loadsAfter()
     }
 
     @Override

@@ -5,6 +5,7 @@ import io.github.drakonforge.outspoken.asset.CriterionAsset;
 import io.github.drakonforge.outspoken.asset.CriterionAsset.CriterionType;
 import io.github.drakonforge.outspoken.asset.CriterionValue;
 import io.github.drakonforge.outspoken.asset.CriterionValue.ContextValue;
+import io.github.drakonforge.outspoken.asset.CriterionValue.Range;
 import io.github.drakonforge.outspoken.asset.CriterionValue.ValueType;
 import io.github.drakonforge.outspoken.asset.ResponseAsset;
 import io.github.drakonforge.outspoken.asset.RuleAsset;
@@ -16,7 +17,6 @@ import io.github.drakonforge.outspoken.criterion.CriterionDynamic;
 import io.github.drakonforge.outspoken.criterion.CriterionExist;
 import io.github.drakonforge.outspoken.criterion.CriterionPass;
 import io.github.drakonforge.outspoken.criterion.CriterionStatic;
-import io.github.drakonforge.outspoken.response.NoneResponse;
 import io.github.drakonforge.outspoken.response.PlainTextResponse;
 import io.github.drakonforge.outspoken.response.Response;
 import io.github.drakonforge.outspoken.response.Response.ResponseType;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.Nullable;
 
-public final class RuleDatabaseGenerator {
+public final class RuleDatabaseFactory {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private static final float EPSILON = 1e-6f;
 
@@ -88,7 +88,7 @@ public final class RuleDatabaseGenerator {
     }
 
     public static RuleDatabase createFromAssetMap(Map<String, RulebankAsset> assetMap, ContextManager contextManager) {
-        LOGGER.atFine().log("Found " + assetMap.size() + " rulebank assets");
+        LOGGER.atInfo().log("Found " + assetMap.size() + " rulebank assets");
         RuleDatabase database = new RuleDatabase(contextManager);
         for (Entry<String, RulebankAsset> entry : assetMap.entrySet()) {
             RulebankAsset asset = entry.getValue();;
@@ -107,6 +107,7 @@ public final class RuleDatabaseGenerator {
         Map<String, RuleAsset[]> categoryMap = asset.getCategoryMap();
         for (Entry<String, RuleAsset[]> category : categoryMap.entrySet()) {
             List<Rule> rules = new ArrayList<>();
+            LOGGER.atInfo().log("Found id " + id + ", category " + category.getKey());
             for (RuleAsset ruleAsset : category.getValue()) {
                 Result result = collectRuleFromAsset(rules, ruleAsset, database.getContextManager());
                 if (result.failed()) {
@@ -165,49 +166,27 @@ public final class RuleDatabaseGenerator {
                 return Result.error("Criterion type " + type + " cannot be inverted");
             }
 
+            Result result;
             switch (criterionAsset.getType()) {
-                case CriterionType.Equals -> {
-                    Result result = parseEqualsCriterion(criterionRef, value, valueType, invert, contextManager);
-                    if (result.failed()) {
-                        return result;
-                    }
+                case Equals -> result = parseEqualsCriterion(criterionRef, value, valueType, invert, contextManager);
+                case Exists -> result = parseExistsCriterion(criterionRef, invert);
+                case Pass -> result = parsePassCriterion(criterionRef, value);
+                case GreaterThan ->
+                        result = parseGreaterThanCriterion(criterionRef, value, valueType, invert);
+                case GreaterThanEquals ->
+                        result = parseGreaterThanEqualsCriterion(criterionRef, value, valueType, invert);
+                case LessThan ->
+                        result = parseLessThanCriterion(criterionRef, value, valueType, invert);
+                case LessThanEquals ->
+                        result = parseLessThanEqualsCriterion(criterionRef, value, valueType, invert);
+                case Range ->
+                        result = parseRangeCriterion(criterionRef, value.getRangeValue(), invert);
+                default -> {
+                    return Result.error("Unknown criterion type: " + criterionAsset.getType());
                 }
-                case CriterionType.Exists -> {
-                    Result result = parseExistsCriterion(criterionRef, invert);
-                    if (result.failed()) {
-                        return result;
-                    }
-                }
-                case Pass -> {
-                    Result result = parsePassCriterion(criterionRef, value);
-                    if (result.failed()) {
-                        return result;
-                    }
-                }
-                case GreaterThan -> {
-                    Result result = parseGreaterThanCriterion(criterionRef, value, valueType, invert);
-                    if (result.failed()) {
-                        return result;
-                    }
-                }
-                case GreaterThanEquals -> {
-                    Result result = parseGreaterThanEqualsCriterion(criterionRef, value, valueType, invert);
-                    if (result.failed()) {
-                        return result;
-                    }
-                }
-                case LessThan -> {
-                    Result result = parseLessThanCriterion(criterionRef, value, valueType, invert);
-                    if (result.failed()) {
-                        return result;
-                    }
-                }
-                case LessThanEquals -> {
-                    Result result = parseLessThanEqualsCriterion(criterionRef, value, valueType, invert);
-                    if (result.failed()) {
-                        return result;
-                    }
-                }
+            }
+            if (result.failed()) {
+                return result;
             }
             Criterion criterion = criterionRef.get();
             if (criterion == null) {
@@ -337,6 +316,24 @@ public final class RuleDatabaseGenerator {
         return Result.error("Invalid type");
     }
 
+    private static Result parseRangeCriterion(Ref<Criterion> criterionRef, Range rangeValue, boolean invert) {
+        if (rangeValue == null) {
+            return Result.error("Range value is null");
+        }
+
+        float min = rangeValue.getMin();
+        float max = rangeValue.getMax();
+        if (rangeValue.isMinExclusive()) {
+            min += EPSILON;
+        }
+        if (rangeValue.isMaxExclusive()) {
+            max -= EPSILON;
+        }
+
+        criterionRef.set(new CriterionStatic(min, max, invert));
+        return Result.SUCCESS;
+    }
+
     private static Result collectResponseFromAsset(Ref<Response> responseRef, ResponseAsset responseAsset, ContextManager contextManager) {
         ResponseType type = responseAsset.getResponseType();
         String[] entries = responseAsset.getEntries();
@@ -354,5 +351,5 @@ public final class RuleDatabaseGenerator {
         return Result.error("Response type not supported");
     }
 
-    private RuleDatabaseGenerator() {}
+    private RuleDatabaseFactory() {}
 }

@@ -4,7 +4,7 @@ import io.github.drakonforge.outspoken.asset.RulebankAsset;
 import io.github.drakonforge.outspoken.context.ContextManager;
 import io.github.drakonforge.outspoken.context.ContextTable;
 import io.github.drakonforge.outspoken.rulebank.RuleDatabase;
-import io.github.drakonforge.outspoken.rulebank.RuleDatabaseGenerator;
+import io.github.drakonforge.outspoken.rulebank.RuleDatabaseFactory;
 import java.util.Map;
 
 public final class OutspokenApi {
@@ -13,7 +13,7 @@ public final class OutspokenApi {
     public static void createDatabase() {
         Map<String, RulebankAsset> assetMap = RulebankAsset.getAssetMap().getAssetMap();
         ContextManager contextManager = new ContextManager();
-        database = RuleDatabaseGenerator.createFromAssetMap(assetMap, contextManager);
+        database = RuleDatabaseFactory.createFromAssetMap(assetMap, contextManager);
     }
 
     public static RuleDatabase getDatabase() {

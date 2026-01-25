@@ -38,6 +38,9 @@ public class CriterionValue {
                     (obj, value) -> obj.booleanValue = value, obj -> obj.booleanValue)
             .documentation("TODO")
             .add()
+            .append(new KeyedCodec<>("Range", Range.CODEC), (obj, value) -> obj.rangeValue = value, obj -> obj.rangeValue)
+            .documentation("TODO")
+            .add()
             .documentation("TODO")
             .build();
     public static final CriterionValue NONE = new CriterionValue();
@@ -50,6 +53,7 @@ public class CriterionValue {
     private String stringValue = "Invalid";
     private boolean booleanValue;
     private ContextValue contextValue;
+    private Range rangeValue;
     protected CriterionValue() {}
 
     public ValueType getType() {
@@ -80,8 +84,12 @@ public class CriterionValue {
         return contextValue;
     }
 
+    public Range getRangeValue() {
+        return rangeValue;
+    }
+
     public enum ValueType {
-        None, Float, IntArray, StringArray, String, Context, Boolean
+        None, Float, IntArray, StringArray, String, Context, Boolean, Range
     }
 
     public static class ContextValue {
@@ -109,6 +117,39 @@ public class CriterionValue {
 
         public String getKey() {
             return key;
+        }
+    }
+
+    public static class Range {
+        public static final BuilderCodec<Range> CODEC = BuilderCodec.builder(
+                Range.class, Range::new)
+                .append(new KeyedCodec<>("Min", Codec.FLOAT), (range, min) -> range.min = min, range -> range.min).documentation("TODO").add()
+                .append(new KeyedCodec<>("Max", Codec.FLOAT), (range, max) -> range.max = max, range -> range.max).documentation("TODO").add()
+                .append(new KeyedCodec<>("MinExclusive", Codec.BOOLEAN), (range, minExclusive) -> range.minExclusive = minExclusive, range -> range.minExclusive).documentation("TODO").add()
+                .append(new KeyedCodec<>("MaxExclusive", Codec.BOOLEAN), (range, maxExclusive) -> range.maxExclusive = maxExclusive, range -> range.maxExclusive).documentation("TODO").add()
+                .documentation("TODO")
+
+                .build();
+
+        private float min = Float.MIN_VALUE;
+        private float max = Float.MAX_VALUE;
+        private boolean minExclusive = false;
+        private boolean maxExclusive = false;
+
+        public float getMin() {
+            return min;
+        }
+
+        public float getMax() {
+            return max;
+        }
+
+        public boolean isMinExclusive() {
+            return minExclusive;
+        }
+
+        public boolean isMaxExclusive() {
+            return maxExclusive;
         }
     }
 }
