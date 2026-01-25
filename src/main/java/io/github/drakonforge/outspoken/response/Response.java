@@ -1,4 +1,14 @@
 package io.github.drakonforge.outspoken.response;
 
-public class Response {}
+public interface Response {
+
+    Response EMPTY = new NoneResponse();
+
+    enum ResponseType {
+        None, PlainText, Speech
+    }
+
+    ResponseType getType();
+}
+
 // TODO: Maybe rename

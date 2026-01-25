@@ -8,6 +8,7 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 
 import io.github.drakonforge.outspoken.asset.RulebankAsset;
+import io.github.drakonforge.outspoken.command.OutspokenCommand;
 import io.github.drakonforge.outspoken.context.ContextManager;
 import io.github.drakonforge.outspoken.context.ContextTable;
 import io.github.drakonforge.outspoken.rulebank.RuleDatabase;
@@ -47,22 +48,14 @@ public class OutspokenPlugin extends JavaPlugin {
             AssetRegistry.register(HytaleAssetStore.builder(RulebankAsset.class, new DefaultAssetMap<>()).setPath("Rulebank").setCodec(RulebankAsset.CODEC).setKeyFunction(RulebankAsset::getId).build());
         }
 
+        this.getCommandRegistry().registerCommand(new OutspokenCommand());
+
         // TODO Can also set loadsAfter()
     }
 
     @Override
     protected void start() {
-        LOGGER.atInfo().log("Starting plugin " + this.getName());
-
-        Map<String, RulebankAsset> assetMap = RulebankAsset.getAssetMap().getAssetMap();
-        ContextManager contextManager = new ContextManager();
-        RuleDatabase database = RuleDatabaseGenerator.createFromAssetMap(assetMap, contextManager);
-
-        RulebankQuery query = new RulebankQuery("Example", "Greeting", PassthroughType.CHANCE);
-        ContextTable relationship = database.createBlankContextTable();
-        relationship.set("BestFriend", true);
-        query.addContextTable("Relationship", relationship);
-        BestMatch bestMatch = database.queryBestMatch(query);
-        LOGGER.atInfo().log("Example query returned " + bestMatch.code() + " and " + bestMatch.response());
+        OutspokenApi.createDatabase();
+        LOGGER.atInfo().log("Outspoken database initialized.");
     }
 }

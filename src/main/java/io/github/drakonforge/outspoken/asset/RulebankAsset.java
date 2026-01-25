@@ -19,12 +19,12 @@ import java.util.Map;
 public class RulebankAsset implements JsonAssetWithMap<String, DefaultAssetMap<String, RulebankAsset>> {
     private static final AssetBuilderCodec.Builder<String, RulebankAsset> CODEC_BUILDER = AssetBuilderCodec.builder(
                     RulebankAsset.class, RulebankAsset::new, Codec.STRING, (asset, id) -> asset.id = id,
-                    (asset) -> asset.id, (asset, data) -> asset.extraData = data,
-                    (asset) -> asset.extraData)
+                    RulebankAsset::getId, (asset, data) -> asset.extraData = data,
+                    asset -> asset.extraData)
             .append(new KeyedCodec<>("Categories",
-                            new MapCodec<>(new ArrayCodec<>(RuleAsset.CODEC, RuleAsset[]::new), HashMap::new, true)),
+                            new MapCodec<>(new ArrayCodec<>(RuleAsset.CODEC, RuleAsset[]::new), HashMap::new, true), true),
                     (asset, value) -> asset.categoryMap = value,
-                    (asset) -> asset.categoryMap)
+                    RulebankAsset::getCategoryMap)
             .documentation("Each category defines a distinct set of rules and responses for a particular event. For example: Greeting, DamageTaken, DamageDealt")
             .add()
             .documentation("A rulebank containing categories of context-based rules. This can be used as a speechbank for NPCs, where each NPC may have at most 1 rulebank governing their dialogue barks.");

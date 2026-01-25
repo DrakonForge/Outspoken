@@ -88,12 +88,12 @@ public class CriterionValue {
 
         public static final BuilderCodec<ContextValue> CODEC = BuilderCodec.builder(ContextValue.class,
                         ContextValue::new)
-                .append(new KeyedCodec<>("Table", Codec.STRING),
-                        (pair, tableName) -> pair.tableName = tableName, pair -> pair.tableName)
+                .append(new KeyedCodec<>("Table", Codec.STRING, true),
+                        (pair, tableName) -> pair.tableName = tableName, ContextValue::getTableName)
                 .documentation("TODO - Table")
                 .add()
-                .append(new KeyedCodec<>("Key", Codec.STRING), (pair, key) -> pair.key = key,
-                        pair -> pair.key)
+                .append(new KeyedCodec<>("Key", Codec.STRING, true), (pair, key) -> pair.key = key,
+                        ContextValue::getKey)
                 .documentation("TODO - Key")
                 .add()
                 .documentation("TODO - TableKeyPair")

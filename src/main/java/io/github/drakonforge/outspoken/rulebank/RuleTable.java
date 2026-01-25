@@ -30,6 +30,6 @@ public class RuleTable {
                 return new BestMatch(RulebankQueryResult.QueryReturnCode.SUCCESS, rule.response());
             }
         }
-        return BestMatch.FAILURE;
+        return BestMatch.NO_VALID_ENTRY;
     }
 }

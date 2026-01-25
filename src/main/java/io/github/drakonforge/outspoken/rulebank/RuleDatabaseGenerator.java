@@ -16,11 +16,15 @@ import io.github.drakonforge.outspoken.criterion.CriterionDynamic;
 import io.github.drakonforge.outspoken.criterion.CriterionExist;
 import io.github.drakonforge.outspoken.criterion.CriterionPass;
 import io.github.drakonforge.outspoken.criterion.CriterionStatic;
+import io.github.drakonforge.outspoken.response.NoneResponse;
+import io.github.drakonforge.outspoken.response.PlainTextResponse;
 import io.github.drakonforge.outspoken.response.Response;
+import io.github.drakonforge.outspoken.response.Response.ResponseType;
 import io.github.drakonforge.outspoken.rulebank.Rule.CriteriaEntry;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +47,11 @@ public final class RuleDatabaseGenerator {
     }
 
     private static class Ref<T> {
-        private T value = null;
+        private T value;
+
+        public Ref() {
+            this.value = null;
+        }
 
         public void set(T value) {
             this.value = value;
@@ -51,6 +59,13 @@ public final class RuleDatabaseGenerator {
 
         @Nullable
         public T get() {
+            return value;
+        }
+
+        public T getOrElse(T defaultValue) {
+            if (value == null) {
+                return defaultValue;
+            }
             return value;
         }
     }
@@ -82,7 +97,7 @@ public final class RuleDatabaseGenerator {
             // TODO: Check dependencies
             Result result = processRulebank(id, asset, database);
             if (result.failed()) {
-                LOGGER.atWarning().log("Some rulebanks failed to parse");
+                LOGGER.atWarning().log("Some rulebanks failed to parse: " + result.message());
             }
         }
         return database;
@@ -109,18 +124,28 @@ public final class RuleDatabaseGenerator {
         int priority = ruleAsset.getPriority();
 
         CriterionAsset[] criteriaAssets = ruleAsset.getCriteria();
-        List<CriteriaEntry> criteriaEntries = new ArrayList<>();
-        Result result = collectCriteriaFromAsset(criteriaEntries, criteriaAssets, contextManager);
-        if (result.failed()) {
-            return result;
+        List<CriteriaEntry> criteriaEntries;
+        if (criteriaAssets != null) {
+            criteriaEntries = new ArrayList<>();
+            Result result = collectCriteriaFromAsset(criteriaEntries, criteriaAssets, contextManager);
+            if (result.failed()) {
+                return result;
+            }
+            sortCriteria(criteriaEntries);
+        } else {
+            criteriaEntries = Collections.emptyList();
         }
-        sortCriteria(criteriaEntries);
 
-        // TODO
-        ResponseAsset[] responseAssets = ruleAsset.getResponses();
-        // Response response = createResponseFromAsset(responseAssets, contextManager);
+        ResponseAsset responseAsset = ruleAsset.getResponse();
+        Ref<Response> responseRef = new Ref<>();
+        if (responseAsset != null) {
+            Result result = collectResponseFromAsset(responseRef, responseAsset, contextManager);
+            if (result.failed()) {
+                return result;
+            }
+        }
 
-        rules.add(new Rule(criteriaEntries, null, priority));
+        rules.add(new Rule(criteriaEntries, responseRef.getOrElse(Response.EMPTY), priority));
         return Result.SUCCESS;
     }
 
@@ -312,9 +337,21 @@ public final class RuleDatabaseGenerator {
         return Result.error("Invalid type");
     }
 
-    private static Response createResponseFromAsset(ResponseAsset[] responseAssets, ContextManager contextManager) {
-        // TODO
-        return null;
+    private static Result collectResponseFromAsset(Ref<Response> responseRef, ResponseAsset responseAsset, ContextManager contextManager) {
+        ResponseType type = responseAsset.getResponseType();
+        String[] entries = responseAsset.getEntries();
+        if (type == ResponseType.None) {
+            return Result.SUCCESS;
+        }
+        if (type == ResponseType.PlainText) {
+            if (entries == null) {
+                return Result.error("PlainText response must have entries");
+            }
+            responseRef.set(new PlainTextResponse(entries));
+            return Result.SUCCESS;
+        }
+        // TODO Support speech type
+        return Result.error("Response type not supported");
     }
 
     private RuleDatabaseGenerator() {}

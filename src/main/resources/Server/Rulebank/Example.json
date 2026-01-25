@@ -4,24 +4,97 @@
       {
         "Criteria": [
           {
-            "Type": "Equals",
-            "Table": "Relationship",
-            "Key": "BestFriend",
+            "Type": "GreaterThanEquals",
+            "Table": "World",
+            "Key": "Hour",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": true
-            },
-            "Invert": false
+              "Type": "Float",
+              "Float": 4
+            }
+          },
+          {
+            "Type": "LessThan",
+            "Table": "World",
+            "Key": "Hour",
+            "Value": {
+              "Type": "Float",
+              "Float": 12
+            }
           }
         ],
-        "Responses": [
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Good morning!"
+          ]
+        }
+      },
+      {
+        "Criteria": [
           {
-            "Type": "Text",
-            "Value": [
-              "Hello!"
-            ]
+            "Type": "GreaterThanEquals",
+            "Table": "World",
+            "Key": "Hour",
+            "Value": {
+              "Type": "Float",
+              "Float": 12
+            }
+          },
+          {
+            "Type": "LessThan",
+            "Table": "World",
+            "Key": "Hour",
+            "Value": {
+              "Type": "Float",
+              "Float": 19
+            }
           }
-        ]
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Good day!",
+            "What a nice day out!"
+          ]
+        }
+      },
+      {
+        "Criteria": [
+          {
+            "Type": "GreaterThanEquals",
+            "Table": "World",
+            "Key": "Hour",
+            "Value": {
+              "Type": "Float",
+              "Float": 19
+            }
+          },
+          {
+            "Type": "LessThan",
+            "Table": "World",
+            "Key": "Hour",
+            "Value": {
+              "Type": "Float",
+              "Float": 21
+            }
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "It's getting late!",
+            "The sun will soon set."
+          ]
+        }
+      },
+      {
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Good night!",
+            "Zzzz...."
+          ]
+        }
       }
     ]
   }

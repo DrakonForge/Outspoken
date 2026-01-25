@@ -37,11 +37,11 @@ public class CriterionAsset {
 
     public static final BuilderCodec<CriterionAsset> CODEC = BuilderCodec.builder(
             CriterionAsset.class, CriterionAsset::new)
-            .append(new KeyedCodec<>("Type", new EnumCodec<>(CriterionType.class)), (obj, type) -> obj.type = type, obj -> obj.type).documentation("TODO").add()
-            .append(new KeyedCodec<>("Invert", Codec.BOOLEAN), (obj, invert) -> obj.invert = invert, obj -> obj.invert).documentation("TODO").add()
-            .append(new KeyedCodec<>("Table", Codec.STRING), (obj, tableName) -> obj.tableName = tableName, obj -> obj.tableName).documentation("TODO").add()
-            .append(new KeyedCodec<>("Key", Codec.STRING), (obj, key) -> obj.key = key, obj -> obj.key).documentation("TODO").add()
-            .append(new KeyedCodec<>("Value", CriterionValue.CODEC), (obj, value) -> obj.value = value, obj -> obj.value).documentation("TODO").add()
+            .append(new KeyedCodec<>("Type", new EnumCodec<>(CriterionType.class), true), (obj, type) -> obj.type = type, CriterionAsset::getType).documentation("TODO").add()
+            .append(new KeyedCodec<>("Invert", Codec.BOOLEAN), (obj, invert) -> obj.invert = invert, CriterionAsset::shouldInvert).documentation("TODO").add()
+            .append(new KeyedCodec<>("Table", Codec.STRING), (obj, tableName) -> obj.tableName = tableName, CriterionAsset::getTableName).documentation("TODO").add()
+            .append(new KeyedCodec<>("Key", Codec.STRING), (obj, key) -> obj.key = key, CriterionAsset::getKey).documentation("TODO").add()
+            .append(new KeyedCodec<>("Value", CriterionValue.CODEC), (obj, value) -> obj.value = value, CriterionAsset::getValue).documentation("TODO").add()
             .documentation("TODO")
             .build();
 
@@ -72,6 +72,7 @@ public class CriterionAsset {
         return key;
     }
 
+    @Nonnull
     public CriterionValue getValue() {
         return value;
     }
