@@ -1,0 +1,78 @@
+package io.github.drakonforge.outspoken.asset;
+
+import com.hypixel.hytale.codec.Codec;
+import com.hypixel.hytale.codec.KeyedCodec;
+import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.codecs.EnumCodec;
+import io.github.drakonforge.outspoken.asset.CriterionValue.ValueType;
+import java.util.Set;
+import javax.annotation.Nonnull;
+
+public class CriterionAsset {
+    public enum CriterionType {
+        Equals(Set.of(ValueType.Float, ValueType.String, ValueType.IntArray, ValueType.StringArray, ValueType.Context, ValueType.Boolean), true),
+        Exists(Set.of(ValueType.None), true),
+        Pass(Set.of(ValueType.Float), false),
+        GreaterThan(Set.of(ValueType.Float, ValueType.Context), true),
+        GreaterThanEquals(Set.of(ValueType.Float, ValueType.Context), true),
+        LessThan(Set.of(ValueType.Float, ValueType.Context), true),
+        LessThanEquals(Set.of(ValueType.Float, ValueType.Context), true);
+
+        private final Set<ValueType> validValueTypes;
+        private final boolean invertible;
+
+        CriterionType(Set<ValueType> validValueTypes, boolean invertible) {
+            this.validValueTypes = validValueTypes;
+            this.invertible = invertible;
+        }
+
+        public boolean isValidType(ValueType valueType) {
+            return validValueTypes.contains(valueType);
+        }
+
+        public boolean canInvert() {
+            return invertible;
+        }
+    }
+
+    public static final BuilderCodec<CriterionAsset> CODEC = BuilderCodec.builder(
+            CriterionAsset.class, CriterionAsset::new)
+            .append(new KeyedCodec<>("Type", new EnumCodec<>(CriterionType.class)), (obj, type) -> obj.type = type, obj -> obj.type).documentation("TODO").add()
+            .append(new KeyedCodec<>("Invert", Codec.BOOLEAN), (obj, invert) -> obj.invert = invert, obj -> obj.invert).documentation("TODO").add()
+            .append(new KeyedCodec<>("Table", Codec.STRING), (obj, tableName) -> obj.tableName = tableName, obj -> obj.tableName).documentation("TODO").add()
+            .append(new KeyedCodec<>("Key", Codec.STRING), (obj, key) -> obj.key = key, obj -> obj.key).documentation("TODO").add()
+            .append(new KeyedCodec<>("Value", CriterionValue.CODEC), (obj, value) -> obj.value = value, obj -> obj.value).documentation("TODO").add()
+            .documentation("TODO")
+            .build();
+
+    protected CriterionAsset() {}
+
+    @Nonnull
+    private CriterionType type = CriterionType.Equals;
+    private boolean invert;
+    private String tableName;
+    private String key;
+    @Nonnull
+    private CriterionValue value = CriterionValue.NONE;
+
+    @Nonnull
+    public CriterionType getType() {
+        return type;
+    }
+
+    public boolean shouldInvert() {
+        return invert;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public CriterionValue getValue() {
+        return value;
+    }
+}

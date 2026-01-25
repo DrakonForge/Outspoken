@@ -1,9 +1,12 @@
 package io.github.drakonforge.outspoken.criterion;
 
 import io.github.drakonforge.outspoken.context.ContextTable;
-import io.github.drakonforge.outspoken.database.DatabaseQuery;
+import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
 
 public class CriterionStatic extends CriterionInvertible {
+
+    public static final CriterionStatic IS_TRUE = new CriterionStatic(0.0f, 0.0f, true);
+    public static final CriterionStatic IS_FALSE = new CriterionStatic(0.0f, 0.0f, false);
 
     private final float min;
     private final float max;
@@ -15,10 +18,11 @@ public class CriterionStatic extends CriterionInvertible {
     }
 
     @Override
-    public boolean evaluate(String tableName, String key, DatabaseQuery query) {
+    public boolean evaluate(String tableName, String key, RulebankQuery query) {
         ContextTable contextTable = query.getContextTable(tableName);
         if (contextTable != null) {
             float value = contextTable.getRawValue(key);
+            return compare(value);
         }
         return false;
     }

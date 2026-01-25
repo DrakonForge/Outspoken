@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.database;
+package io.github.drakonforge.outspoken.rulebank;
 
 import io.github.drakonforge.outspoken.context.ContextManager;
 import io.github.drakonforge.outspoken.context.ContextTable;
@@ -7,10 +7,6 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 public class RuleDatabase {
-    public enum QueryReturnCode {
-        SUCCESS, FAILURE
-    }
-
     private record GroupCategory(String group, String category) {}
 
     private final ContextManager contextManager;
@@ -20,21 +16,30 @@ public class RuleDatabase {
         this.contextManager = contextManager;
     }
 
-    public QueryResult.BestMatch queryBestMatch(DatabaseQuery query) {
+    public RulebankQueryResult.BestMatch queryBestMatch(RulebankQuery query) {
         RuleTable table = getRuleTable(query.getGroup(), query.getCategory());
         if (table == null) {
-            return QueryResult.BestMatch.FAILURE;
+            return RulebankQueryResult.BestMatch.FAILURE;
         }
         return table.queryBestMatch(query);
     }
 
     @Nullable
-    private RuleTable getRuleTable(String group, String category) {
+    public RuleTable getRuleTable(String group, String category) {
         GroupCategory key = new GroupCategory(group, category);
         return groupCategoryToTable.get(key);
     }
 
+    public void addRuleTable(String group, String category, RuleTable ruleTable) {
+        GroupCategory key = new GroupCategory(group, category);
+        groupCategoryToTable.put(key, ruleTable);
+    }
+
     public ContextTable createBlankContextTable() {
         return new ContextTable(contextManager);
+    }
+
+    public ContextManager getContextManager() {
+        return contextManager;
     }
 }

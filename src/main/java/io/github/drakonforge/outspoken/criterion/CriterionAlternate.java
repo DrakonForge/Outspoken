@@ -1,30 +1,30 @@
 package io.github.drakonforge.outspoken.criterion;
 
 import io.github.drakonforge.outspoken.context.ContextTable;
-import io.github.drakonforge.outspoken.database.DatabaseQuery;
-import it.unimi.dsi.fastutil.ints.IntList;
+import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 public class CriterionAlternate extends CriterionInvertible {
 
-    private final IntList options;
+    private final IntSet options;
 
-    public CriterionAlternate(IntList options, boolean invert) {
+    public CriterionAlternate(IntSet options, boolean invert) {
         super(invert);
         this.options = options;
     }
 
     @Override
-    public boolean evaluate(String tableName, String key, DatabaseQuery query) {
+    public boolean evaluate(String tableName, String key, RulebankQuery query) {
         ContextTable contextTable = query.getContextTable(tableName);
         if (contextTable != null) {
             float value = contextTable.getRawValue(key);
-            return compare(value);
+            return compare((int) value);
         }
         return false;
     }
 
-    private boolean compare(float value) {
-        return invert != options.contains((int) value);
+    private boolean compare(int value) {
+        return invert != options.contains(value);
     }
 
     @Override

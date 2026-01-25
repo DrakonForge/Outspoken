@@ -1,0 +1,28 @@
+{
+  "Categories": {
+    "Greeting": [
+      {
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Table": "Relationship",
+            "Key": "BestFriend",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": true
+            },
+            "Invert": false
+          }
+        ],
+        "Responses": [
+          {
+            "Type": "Text",
+            "Value": [
+              "Hello!"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

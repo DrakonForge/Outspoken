@@ -1,11 +1,11 @@
-package io.github.drakonforge.outspoken.database;
+package io.github.drakonforge.outspoken.rulebank;
 
 import io.github.drakonforge.outspoken.context.ContextTable;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-public class DatabaseQuery {
+public class RulebankQuery {
     public enum PassthroughType {
         CHANCE, NEVER
     }
@@ -15,11 +15,11 @@ public class DatabaseQuery {
     private final Map<String, ContextTable> contexts = new HashMap<>();
     private final PassthroughType passthroughType;
 
-    public DatabaseQuery(String group, String category) {
+    public RulebankQuery(String group, String category) {
         this(group, category, PassthroughType.CHANCE);
     }
 
-    public DatabaseQuery(String group, String category, PassthroughType passthroughType) {
+    public RulebankQuery(String group, String category, PassthroughType passthroughType) {
         this.group = group;
         this.category = category;
         this.passthroughType = passthroughType;

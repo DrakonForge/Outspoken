@@ -1,7 +1,7 @@
 package io.github.drakonforge.outspoken.criterion;
 
-import io.github.drakonforge.outspoken.database.DatabaseQuery;
-import io.github.drakonforge.outspoken.database.DatabaseQuery.PassthroughType;
+import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
+import io.github.drakonforge.outspoken.rulebank.RulebankQuery.PassthroughType;
 
 public class CriterionPass extends Criterion {
 
@@ -12,8 +12,8 @@ public class CriterionPass extends Criterion {
     }
 
     @Override
-    public boolean evaluate(String tableName, String key, DatabaseQuery query) {
-        DatabaseQuery.PassthroughType passthroughType = query.getPassthroughType();
+    public boolean evaluate(String tableName, String key, RulebankQuery query) {
+        RulebankQuery.PassthroughType passthroughType = query.getPassthroughType();
         if (passthroughType == PassthroughType.NEVER) {
             return true;
         }
