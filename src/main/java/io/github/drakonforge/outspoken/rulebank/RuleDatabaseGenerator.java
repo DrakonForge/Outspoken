@@ -21,6 +21,7 @@ import io.github.drakonforge.outspoken.rulebank.Rule.CriteriaEntry;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,6 +30,17 @@ import javax.annotation.Nullable;
 public final class RuleDatabaseGenerator {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private static final float EPSILON = 1e-6f;
+
+    private static void sortRules(List<Rule> rules) {
+        // Sort by descending priority
+        rules.sort(Comparator.comparingInt(Rule::priority).reversed());
+    }
+
+    private static void sortCriteria(List<CriteriaEntry> criteria) {
+        // Sort by descending priority
+        criteria.sort(Comparator.comparingInt((CriteriaEntry entry) -> entry.criterion().getPriority())
+                .reversed());
+    }
 
     private static class Ref<T> {
         private T value = null;
@@ -48,7 +60,7 @@ public final class RuleDatabaseGenerator {
         FAILURE;
     }
 
-    public record Result(Status status, String message) {
+    private record Result(Status status, String message) {
         public static final Result SUCCESS = new Result(Status.SUCCESS, "");
 
         public static Result error(String message) {
@@ -86,6 +98,7 @@ public final class RuleDatabaseGenerator {
                     return result;
                 }
             }
+            sortRules(rules);
             RuleTable ruleTable = new RuleTable(rules);
             database.addRuleTable(id, category.getKey(), ruleTable);
         }
@@ -101,7 +114,9 @@ public final class RuleDatabaseGenerator {
         if (result.failed()) {
             return result;
         }
+        sortCriteria(criteriaEntries);
 
+        // TODO
         ResponseAsset[] responseAssets = ruleAsset.getResponses();
         // Response response = createResponseFromAsset(responseAssets, contextManager);
 
@@ -127,43 +142,43 @@ public final class RuleDatabaseGenerator {
 
             switch (criterionAsset.getType()) {
                 case CriterionType.Equals -> {
-                    Result result = collectEqualsCriteria(criterionRef, value, valueType, invert, contextManager);
+                    Result result = parseEqualsCriterion(criterionRef, value, valueType, invert, contextManager);
                     if (result.failed()) {
                         return result;
                     }
                 }
                 case CriterionType.Exists -> {
-                    Result result = collectExistsCriteria(criterionRef, invert);
+                    Result result = parseExistsCriterion(criterionRef, invert);
                     if (result.failed()) {
                         return result;
                     }
                 }
                 case Pass -> {
-                    Result result = collectPassCriteria(criterionRef, value);
+                    Result result = parsePassCriterion(criterionRef, value);
                     if (result.failed()) {
                         return result;
                     }
                 }
                 case GreaterThan -> {
-                    Result result = collectGreaterThanCriteria(criterionRef, value, valueType, invert);
+                    Result result = parseGreaterThanCriterion(criterionRef, value, valueType, invert);
                     if (result.failed()) {
                         return result;
                     }
                 }
                 case GreaterThanEquals -> {
-                    Result result = collectGreaterThanEqualsCriteria(criterionRef, value, valueType, invert);
+                    Result result = parseGreaterThanEqualsCriterion(criterionRef, value, valueType, invert);
                     if (result.failed()) {
                         return result;
                     }
                 }
                 case LessThan -> {
-                    Result result = collectLessThanCriteria(criterionRef, value, valueType, invert);
+                    Result result = parseLessThanCriterion(criterionRef, value, valueType, invert);
                     if (result.failed()) {
                         return result;
                     }
                 }
                 case LessThanEquals -> {
-                    Result result = collectLessThanEqualsCriteria(criterionRef, value, valueType, invert);
+                    Result result = parseLessThanEqualsCriterion(criterionRef, value, valueType, invert);
                     if (result.failed()) {
                         return result;
                     }
@@ -180,7 +195,7 @@ public final class RuleDatabaseGenerator {
         return Result.SUCCESS;
     }
 
-    private static Result collectEqualsCriteria(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert, ContextManager contextManager) {
+    private static Result parseEqualsCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert, ContextManager contextManager) {
         if (valueType == ValueType.Float) {
             float floatValue = value.getFloatValue();
             criterionRef.set(new CriterionStatic(floatValue - EPSILON, floatValue + EPSILON, invert));
@@ -223,12 +238,12 @@ public final class RuleDatabaseGenerator {
         return Result.error("Invalid type");
     }
 
-    private static Result collectExistsCriteria(Ref<Criterion> criterionRef, boolean invert) {
+    private static Result parseExistsCriterion(Ref<Criterion> criterionRef, boolean invert) {
         criterionRef.set(new CriterionExist(invert));
         return Result.SUCCESS;
     }
 
-    private static Result collectPassCriteria(Ref<Criterion> criterionRef, CriterionValue value) {
+    private static Result parsePassCriterion(Ref<Criterion> criterionRef, CriterionValue value) {
         float floatValue = value.getFloatValue();
         if (floatValue < 0 || floatValue > 1) {
             return Result.error("Pass criterion chance must be between 0 and 1");
@@ -237,7 +252,7 @@ public final class RuleDatabaseGenerator {
         return Result.SUCCESS;
     }
 
-    private static Result collectGreaterThanCriteria(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
+    private static Result parseGreaterThanCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
         if (valueType == ValueType.Float) {
             criterionRef.set(new CriterionStatic(value.getFloatValue() + EPSILON, Float.MAX_VALUE, invert));
             return Result.SUCCESS;
@@ -252,7 +267,7 @@ public final class RuleDatabaseGenerator {
         return Result.error("Invalid type");
     }
 
-    private static Result collectGreaterThanEqualsCriteria(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
+    private static Result parseGreaterThanEqualsCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
         if (valueType == ValueType.Float) {
             criterionRef.set(new CriterionStatic(value.getFloatValue() - EPSILON, Float.MAX_VALUE, invert));
             return Result.SUCCESS;
@@ -267,7 +282,7 @@ public final class RuleDatabaseGenerator {
         return Result.error("Invalid type");
     }
 
-    private static Result collectLessThanCriteria(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
+    private static Result parseLessThanCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
         if (valueType == ValueType.Float) {
             criterionRef.set(new CriterionStatic(Float.MIN_VALUE, value.getFloatValue() - EPSILON, invert));
             return Result.SUCCESS;
@@ -282,7 +297,7 @@ public final class RuleDatabaseGenerator {
         return Result.error("Invalid type");
     }
 
-    private static Result collectLessThanEqualsCriteria(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
+    private static Result parseLessThanEqualsCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
         if (valueType == ValueType.Float) {
             criterionRef.set(new CriterionStatic(Float.MIN_VALUE, value.getFloatValue() + EPSILON, invert));
             return Result.SUCCESS;
