@@ -18,7 +18,6 @@ import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
 import io.github.drakonforge.outspoken.rulebank.RulebankQuery.PassthroughType;
 import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.BestMatch;
 import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.QueryReturnCode;
-import java.time.LocalDateTime;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class OutspokenQueryCommand extends AbstractWorldCommand {

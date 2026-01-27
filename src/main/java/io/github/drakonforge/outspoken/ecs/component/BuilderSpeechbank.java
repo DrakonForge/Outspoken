@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.component;
+package io.github.drakonforge.outspoken.ecs.component;
 
 import com.google.gson.JsonElement;
 import com.hypixel.hytale.server.npc.asset.builder.Builder;

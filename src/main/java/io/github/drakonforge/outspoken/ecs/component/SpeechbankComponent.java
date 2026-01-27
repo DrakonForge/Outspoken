@@ -1,8 +1,6 @@
-package io.github.drakonforge.outspoken.component;
+package io.github.drakonforge.outspoken.ecs.component;
 
-import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class SpeechbankComponent {
     private String groupName;

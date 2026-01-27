@@ -25,8 +25,9 @@ public class RulebankQuery {
         this.passthroughType = passthroughType;
     }
 
-    public void addContextTable(String tableName, ContextTable contextTable) {
+    public RulebankQuery addContextTable(String tableName, ContextTable contextTable) {
         contexts.put(tableName, contextTable);
+        return this;
     }
 
     @Nullable
