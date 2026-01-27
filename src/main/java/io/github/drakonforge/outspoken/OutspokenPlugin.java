@@ -16,20 +16,17 @@ import com.hypixel.hytale.server.npc.NPCPlugin;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderFactory;
 import io.github.drakonforge.outspoken.asset.RulebankAsset;
 import io.github.drakonforge.outspoken.command.OutspokenCommand;
-import io.github.drakonforge.outspoken.ecs.component.BuilderSpeechbank;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
-import io.github.drakonforge.outspoken.ecs.system.NearbyEntityAmbientSpeechSystem;
+import io.github.drakonforge.outspoken.ecs.system.speechtrigger.NearbyEntityAmbientSpeechSystem;
 import io.github.drakonforge.outspoken.ecs.system.EntityContextUpdateThrottleSystem;
 import io.github.drakonforge.outspoken.ecs.system.InitEntityContextSystem;
 import io.github.drakonforge.outspoken.ecs.system.InitResourceSystem;
-import io.github.drakonforge.outspoken.ecs.system.speech.GatherBasicSpeechContextSystem;
-import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicEntityContextSystem;
-import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicNpcContextSystem;
-import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicPlayerContextSystem;
+import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicEntityContextSystems;
+import io.github.drakonforge.outspoken.ecs.system.speechevent.GatherBasicSpeechContextSystem;
 import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicWorldContextSystem;
-import io.github.drakonforge.outspoken.ecs.system.speech.QuerySpeechSystem;
+import io.github.drakonforge.outspoken.ecs.system.speechevent.QuerySpeechSystem;
 import javax.annotation.Nonnull;
 
 /**
@@ -84,13 +81,14 @@ public class OutspokenPlugin extends JavaPlugin {
 
         // Populates context table with basic context
         entityStoreRegistry.registerSystem(new UpdateBasicWorldContextSystem());
-        entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystem());
-        entityStoreRegistry.registerSystem(new UpdateBasicNpcContextSystem());
-        entityStoreRegistry.registerSystem(new UpdateBasicPlayerContextSystem());
+        entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdateEntityStats());
+        entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdatePosition());
+        entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdateNpc());
+        entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdatePlayer());
 
-        BuilderFactory<SpeechbankComponent> speechbankFactory = new BuilderFactory<>(SpeechbankComponent.class, "Type", BuilderSpeechbank::new);
-        NPCPlugin.get().getBuilderManager().registerFactory(speechbankFactory);
-        NPCPlugin.get().registerCoreComponentType("Speechbank", BuilderSpeechbank::new);
+        // BuilderFactory<SpeechbankComponent> speechbankFactory = new BuilderFactory<>(SpeechbankComponent.class, "Type", BuilderSpeechbank::new);
+        // NPCPlugin.get().getBuilderManager().registerFactory(speechbankFactory);
+        // NPCPlugin.get().registerCoreComponentType("Speechbank", BuilderSpeechbank::new);
 
         this.getCommandRegistry().registerCommand(new OutspokenCommand());
 

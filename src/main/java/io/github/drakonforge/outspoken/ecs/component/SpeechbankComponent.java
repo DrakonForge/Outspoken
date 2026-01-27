@@ -1,13 +1,23 @@
 package io.github.drakonforge.outspoken.ecs.component;
 
-import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
+import com.hypixel.hytale.codec.Codec;
+import com.hypixel.hytale.codec.KeyedCodec;
+import com.hypixel.hytale.codec.builder.BuilderCodec;
 
 public class SpeechbankComponent {
-    // TODO: Make a codec since this should be persistent
+
+    public static final BuilderCodec<SpeechbankComponent> CODEC = BuilderCodec.builder(
+                    SpeechbankComponent.class, SpeechbankComponent::new)
+            .append(new KeyedCodec<>("Group", Codec.STRING, true),
+                    (data, value) -> data.groupName = value, SpeechbankComponent::getGroupName)
+            .documentation("TODO")
+            .add()
+            .documentation("TODO")
+            .build();
+
     private String groupName;
 
-    public SpeechbankComponent(BuilderSpeechbank builder, BuilderSupport builderSupport) {
-        this.groupName = builder.getGroupName(builderSupport);
+    public SpeechbankComponent() {
     }
 
     public String getGroupName() {

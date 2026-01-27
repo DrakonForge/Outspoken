@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.ecs.system.speech;
+package io.github.drakonforge.outspoken.ecs.system.speechevent;
 
 import com.hypixel.hytale.component.system.EntityEventSystem;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;

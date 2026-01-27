@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.ecs.system.speech;
+package io.github.drakonforge.outspoken.ecs.system.speechevent;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;

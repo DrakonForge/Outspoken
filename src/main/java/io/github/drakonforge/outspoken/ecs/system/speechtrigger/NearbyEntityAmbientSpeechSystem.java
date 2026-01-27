@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.ecs.system;
+package io.github.drakonforge.outspoken.ecs.system.speechtrigger;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenApi;
+import io.github.drakonforge.outspoken.util.SpeechCategories;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -56,7 +57,7 @@ public class NearbyEntityAmbientSpeechSystem extends DelayedSystem<EntityStore> 
             queriedPositions.add(position);
             Ref<EntityStore> nearbyEntityRef = chooseRandomNearbyEntity(position, entitySpatialStructure);
             if (nearbyEntityRef != null) {
-                OutspokenApi.triggerSpeechEvent(store, nearbyEntityRef, "Ambient");
+                OutspokenApi.triggerSpeechEvent(store, nearbyEntityRef, SpeechCategories.AMBIENT);
             }
     }
 

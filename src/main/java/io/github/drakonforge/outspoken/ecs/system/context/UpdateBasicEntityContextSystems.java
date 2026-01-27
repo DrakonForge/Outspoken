@@ -1,0 +1,148 @@
+package io.github.drakonforge.outspoken.ecs.system.context;
+
+import com.hypixel.hytale.component.ArchetypeChunk;
+import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.query.Query;
+import com.hypixel.hytale.math.vector.Vector3d;
+import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.server.core.inventory.ItemStack;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
+import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import io.github.drakonforge.outspoken.database.context.ContextTable;
+import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
+import io.github.drakonforge.outspoken.ecs.event.UpdateEntityContextEvent;
+import java.util.Objects;
+import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+public final class UpdateBasicEntityContextSystems {
+    private UpdateBasicEntityContextSystems() {}
+
+    public static class UpdateEntityStats extends EntityContextSystem {
+        @Override
+        public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                @NonNullDecl Store<EntityStore> store,
+                @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
+                @NonNullDecl UpdateEntityContextEvent updateEntityContextEvent) {
+            ContextTable context = updateEntityContextEvent.getEntityContext();
+            EntityStatMap entityStatMap = archetypeChunk.getComponent(i, EntityStatMap.getComponentType());
+            assert entityStatMap != null;
+
+            EntityStatValue healthStat = entityStatMap.get(DefaultEntityStatTypes.getHealth());
+            if (healthStat != null) {
+                float maxHealth = healthStat.getMax();
+                float health = healthStat.get();
+                context.set("MaxHealth", maxHealth);
+                context.set("Health", health);
+                context.set("HealthPercentage", health / maxHealth);
+            }
+
+            EntityStatValue staminaStat = entityStatMap.get(DefaultEntityStatTypes.getStamina());
+            if (staminaStat != null) {
+                float maxStamina = staminaStat.getMax();
+                float stamina = staminaStat.get();
+                context.set("MaxStamina", maxStamina);
+                context.set("Stamina", stamina);
+                context.set("StaminaPercentage", stamina / maxStamina);
+            }
+        }
+
+        @NullableDecl
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.and(EntityContextComponent.getComponentType(), EntityStatMap.getComponentType());
+        }
+    }
+
+    public static class UpdatePosition extends EntityContextSystem {
+        @Override
+        public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                @NonNullDecl Store<EntityStore> store,
+                @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
+                @NonNullDecl UpdateEntityContextEvent updateEntityContextEvent) {
+            ContextTable context = updateEntityContextEvent.getEntityContext();
+            TransformComponent transform = archetypeChunk.getComponent(i, TransformComponent.getComponentType());
+            assert transform != null;
+
+            Vector3d position = transform.getPosition();
+            context.set("X", (float) position.getX());
+            context.set("Y", (float) position.getY());
+            context.set("Z", (float) position.getZ());
+        }
+
+        @NullableDecl
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.and(EntityContextComponent.getComponentType(), TransformComponent.getComponentType());
+        }
+    }
+
+    public static class UpdateNpc extends EntityContextSystem {
+
+        @Override
+        public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                @NonNullDecl Store<EntityStore> store,
+                @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
+                @NonNullDecl UpdateEntityContextEvent updateEntityContextEvent) {
+            ContextTable context = updateEntityContextEvent.getEntityContext();
+
+            NPCEntity npcEntityComponent = archetypeChunk.getComponent(i,
+                    Objects.requireNonNull(NPCEntity.getComponentType()));
+            assert npcEntityComponent != null;
+
+            context.set("Type", npcEntityComponent.getNPCTypeId());
+        }
+
+        @NullableDecl
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.and(EntityContextComponent.getComponentType(), NPCEntity.getComponentType());
+        }
+    }
+
+    public static class UpdatePlayer extends EntityContextSystem {
+
+        @Override
+        public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                @NonNullDecl Store<EntityStore> store,
+                @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
+                @NonNullDecl UpdateEntityContextEvent updateEntityContextEvent) {
+            ContextTable context = updateEntityContextEvent.getEntityContext();
+            boolean isInitial = updateEntityContextEvent.isInitial();
+
+            Player player = archetypeChunk.getComponent(i, Player.getComponentType());
+            assert player != null;
+            if (isInitial) {
+                context.set("Name", player.getDisplayName());
+            }
+
+            Inventory inventory = player.getInventory();
+            ItemStack mainhandStack = inventory.getActiveHotbarItem();
+            ItemStack offhandStack = inventory.getUtilityItem();
+            if (mainhandStack != null) {
+                context.set("Mainhand", mainhandStack.getItemId());
+            } else {
+                context.remove("Mainhand");
+            }
+            if (offhandStack != null) {
+                context.set("Offhand", offhandStack.getItemId());
+            } else {
+                context.remove("Offhand");
+            }
+        }
+
+        @NullableDecl
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.and(EntityContextComponent.getComponentType(), Player.getComponentType());
+        }
+    }
+
+
+}

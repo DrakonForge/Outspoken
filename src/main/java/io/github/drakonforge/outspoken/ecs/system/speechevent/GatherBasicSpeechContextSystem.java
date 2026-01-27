@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.ecs.system.speech;
+package io.github.drakonforge.outspoken.ecs.system.speechevent;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -14,6 +14,7 @@ import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
 import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
+import io.github.drakonforge.outspoken.util.ContextTables;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -29,10 +30,13 @@ public class GatherBasicSpeechContextSystem extends SpeechEventSystem {
             Ref<EntityStore> entityRef = archetypeChunk.getReferenceTo(i);
             EntityContextComponent contextComponent = archetypeChunk.getComponent(i, EntityContextComponent.getComponentType());
             assert contextComponent != null;
+
             ContextTable speaker = contextComponent.updateAndGetContext(entityRef, store);
+            query.addContextTable(ContextTables.SPEAKER, speaker);
 
             WorldContextResource worldContextResource = store.getResource(WorldContextResource.getResourceType());
             ContextTable world = worldContextResource.updateAndGetContext(store);
+            query.addContextTable(ContextTables.WORLD, world);
 
             // TODO: Make common table names into constants
             Ref<EntityStore> listenerRef = speechEvent.getListener();
@@ -40,11 +44,9 @@ public class GatherBasicSpeechContextSystem extends SpeechEventSystem {
                 EntityContextComponent listenerContextComponent = store.getComponent(listenerRef, EntityContextComponent.getComponentType());
                 if (listenerContextComponent != null) {
                     ContextTable listener = listenerContextComponent.updateAndGetContext(listenerRef, store);
-                    query.addContextTable("Listener", listener);
+                    query.addContextTable(ContextTables.LISTENER, listener);
                 }
             }
-
-            query.addContextTable("World", world).addContextTable("Speaker", speaker);
     }
 
     @NullableDecl
