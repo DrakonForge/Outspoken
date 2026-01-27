@@ -4,7 +4,8 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import io.github.drakonforge.outspoken.asset.CriterionAsset;
 import io.github.drakonforge.outspoken.asset.CriterionAsset.CriterionType;
 import io.github.drakonforge.outspoken.asset.CriterionValue;
-import io.github.drakonforge.outspoken.asset.CriterionValue.ContextValue;
+import io.github.drakonforge.outspoken.asset.CriterionValue.CompareValue;
+import io.github.drakonforge.outspoken.asset.CriterionValue.CompareValue.Operation;
 import io.github.drakonforge.outspoken.asset.CriterionValue.Range;
 import io.github.drakonforge.outspoken.asset.CriterionValue.ValueType;
 import io.github.drakonforge.outspoken.asset.ResponseAsset;
@@ -13,7 +14,7 @@ import io.github.drakonforge.outspoken.asset.RulebankAsset;
 import io.github.drakonforge.outspoken.context.ContextManager;
 import io.github.drakonforge.outspoken.criterion.Criterion;
 import io.github.drakonforge.outspoken.criterion.CriterionAlternate;
-import io.github.drakonforge.outspoken.criterion.CriterionDynamic;
+import io.github.drakonforge.outspoken.criterion.CriterionCompare;
 import io.github.drakonforge.outspoken.criterion.CriterionExist;
 import io.github.drakonforge.outspoken.criterion.CriterionPass;
 import io.github.drakonforge.outspoken.criterion.CriterionStatic;
@@ -171,14 +172,8 @@ public final class RuleDatabaseFactory {
                 case Equals -> result = parseEqualsCriterion(criterionRef, value, valueType, invert, contextManager);
                 case Exists -> result = parseExistsCriterion(criterionRef, invert);
                 case Pass -> result = parsePassCriterion(criterionRef, value);
-                case GreaterThan ->
-                        result = parseGreaterThanCriterion(criterionRef, value, valueType, invert);
-                case GreaterThanEquals ->
-                        result = parseGreaterThanEqualsCriterion(criterionRef, value, valueType, invert);
-                case LessThan ->
-                        result = parseLessThanCriterion(criterionRef, value, valueType, invert);
-                case LessThanEquals ->
-                        result = parseLessThanEqualsCriterion(criterionRef, value, valueType, invert);
+                case Compare ->
+                        result = parseCompareCriterion(criterionRef, value.getCompareValue(), invert);
                 case Range ->
                         result = parseRangeCriterion(criterionRef, value.getRangeValue(), invert);
                 default -> {
@@ -236,9 +231,6 @@ public final class RuleDatabaseFactory {
             }
             return Result.SUCCESS;
         }
-        if (valueType == ValueType.Context) {
-            return Result.SUCCESS;
-        }
         return Result.error("Invalid type");
     }
 
@@ -256,65 +248,25 @@ public final class RuleDatabaseFactory {
         return Result.SUCCESS;
     }
 
-    private static Result parseGreaterThanCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
-        if (valueType == ValueType.Float) {
-            criterionRef.set(new CriterionStatic(value.getFloatValue() + EPSILON, Float.MAX_VALUE, invert));
-            return Result.SUCCESS;
+    private static Result parseCompareCriterion(Ref<Criterion> criterionRef, CompareValue compareValue, boolean invert) {
+        Operation operation = compareValue.getOperation();
+        switch (operation) {
+            case Equals -> criterionRef.set(new CriterionCompare(-EPSILON, EPSILON, compareValue.getTableName(), compareValue.getKey(), invert));
+            case LessThan ->
+                    criterionRef.set(new CriterionCompare(Float.MIN_VALUE, -EPSILON, compareValue.getTableName(), compareValue.getKey(), invert));
+            case LessThanEquals ->
+                    criterionRef.set(new CriterionCompare(Float.MIN_VALUE, EPSILON, compareValue.getTableName(), compareValue.getKey(), invert));
+            case GreaterThan ->
+                    criterionRef.set(new CriterionCompare(EPSILON, Float.MAX_VALUE, compareValue.getTableName(), compareValue.getKey(), invert));
+            case GreaterThanEquals ->
+                    criterionRef.set(new CriterionCompare(-EPSILON, Float.MAX_VALUE, compareValue.getTableName(), compareValue.getKey(), invert));
+            default -> {
+                return Result.error("Unsupported operation: " + operation);
+            }
         }
-
-        if (valueType == ValueType.Context) {
-            ContextValue context = value.getContextValue();
-            criterionRef.set(new CriterionDynamic(EPSILON, Float.MAX_VALUE, context.getTableName(), context.getKey(), invert));
-            return Result.SUCCESS;
-        }
-
-        return Result.error("Invalid type");
+        return Result.SUCCESS;
     }
 
-    private static Result parseGreaterThanEqualsCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
-        if (valueType == ValueType.Float) {
-            criterionRef.set(new CriterionStatic(value.getFloatValue() - EPSILON, Float.MAX_VALUE, invert));
-            return Result.SUCCESS;
-        }
-
-        if (valueType == ValueType.Context) {
-            ContextValue context = value.getContextValue();
-            criterionRef.set(new CriterionDynamic(-EPSILON, Float.MAX_VALUE, context.getTableName(), context.getKey(), invert));
-            return Result.SUCCESS;
-        }
-
-        return Result.error("Invalid type");
-    }
-
-    private static Result parseLessThanCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
-        if (valueType == ValueType.Float) {
-            criterionRef.set(new CriterionStatic(Float.MIN_VALUE, value.getFloatValue() - EPSILON, invert));
-            return Result.SUCCESS;
-        }
-
-        if (valueType == ValueType.Context) {
-            ContextValue context = value.getContextValue();
-            criterionRef.set(new CriterionDynamic(Float.MIN_VALUE, -EPSILON, context.getTableName(), context.getKey(), invert));
-            return Result.SUCCESS;
-        }
-
-        return Result.error("Invalid type");
-    }
-
-    private static Result parseLessThanEqualsCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert) {
-        if (valueType == ValueType.Float) {
-            criterionRef.set(new CriterionStatic(Float.MIN_VALUE, value.getFloatValue() + EPSILON, invert));
-            return Result.SUCCESS;
-        }
-
-        if (valueType == ValueType.Context) {
-            ContextValue context = value.getContextValue();
-            criterionRef.set(new CriterionDynamic(Float.MIN_VALUE, EPSILON, context.getTableName(), context.getKey(), invert));
-            return Result.SUCCESS;
-        }
-
-        return Result.error("Invalid type");
-    }
 
     private static Result parseRangeCriterion(Ref<Criterion> criterionRef, Range rangeValue, boolean invert) {
         if (rangeValue == null) {

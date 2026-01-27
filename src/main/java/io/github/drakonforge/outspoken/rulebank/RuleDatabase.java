@@ -1,10 +1,11 @@
 package io.github.drakonforge.outspoken.rulebank;
 
 import io.github.drakonforge.outspoken.context.ContextManager;
-import io.github.drakonforge.outspoken.context.ContextTable;
 import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.BestMatch;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 public class RuleDatabase {
@@ -34,6 +35,24 @@ public class RuleDatabase {
     public void addRuleTable(String group, String category, RuleTable ruleTable) {
         GroupCategory key = new GroupCategory(group, category);
         groupCategoryToTable.put(key, ruleTable);
+    }
+
+    public Set<String> getAllGroups() {
+        Set<String> results = new HashSet<>();
+        for (GroupCategory groupCategory : groupCategoryToTable.keySet()) {
+            results.add(groupCategory.group());
+        }
+        return results;
+    }
+
+    public Set<String> getCategoriesForGroup(String group) {
+        Set<String> results = new HashSet<>();
+        for (GroupCategory groupCategory : groupCategoryToTable.keySet()) {
+            if (groupCategory.group().equals(group)) {
+                results.add(groupCategory.category());
+            }
+        }
+        return results;
     }
 
     public ContextManager getContextManager() {

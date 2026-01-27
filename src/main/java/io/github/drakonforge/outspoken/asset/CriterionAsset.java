@@ -10,13 +10,10 @@ import javax.annotation.Nonnull;
 
 public class CriterionAsset {
     public enum CriterionType {
-        Equals(Set.of(ValueType.Float, ValueType.String, ValueType.IntArray, ValueType.StringArray, ValueType.Context, ValueType.Boolean), true),
+        Equals(Set.of(ValueType.Float, ValueType.String, ValueType.IntArray, ValueType.StringArray, ValueType.Boolean), true),
         Exists(Set.of(ValueType.None), true),
         Pass(Set.of(ValueType.Float), false),
-        GreaterThan(Set.of(ValueType.Float, ValueType.Context), true),
-        GreaterThanEquals(Set.of(ValueType.Float, ValueType.Context), true),
-        LessThan(Set.of(ValueType.Float, ValueType.Context), true),
-        LessThanEquals(Set.of(ValueType.Float, ValueType.Context), true),
+        Compare(Set.of(ValueType.Compare), true),
         Range(Set.of(ValueType.Range, ValueType.Float), true);
 
         private final Set<ValueType> validValueTypes;

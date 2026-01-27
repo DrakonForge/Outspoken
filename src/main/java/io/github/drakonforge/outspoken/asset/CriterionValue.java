@@ -18,8 +18,8 @@ public class CriterionValue {
                     obj -> obj.floatValue)
             .documentation("TODO")
             .add()
-            .append(new KeyedCodec<>("Context", ContextValue.CODEC),
-                    (obj, value) -> obj.contextValue = value, obj -> obj.contextValue)
+            .append(new KeyedCodec<>("Context", CompareValue.CODEC),
+                    (obj, value) -> obj.compareValue = value, obj -> obj.compareValue)
             .documentation("TODO")
             .add()
             .append(new KeyedCodec<>("IntArray", Codec.INT_ARRAY),
@@ -52,7 +52,7 @@ public class CriterionValue {
     private String[] stringArrayValue;
     private String stringValue = "Invalid";
     private boolean booleanValue;
-    private ContextValue contextValue;
+    private CompareValue compareValue;
     private Range rangeValue;
     protected CriterionValue() {}
 
@@ -80,8 +80,8 @@ public class CriterionValue {
         return booleanValue;
     }
 
-    public ContextValue getContextValue() {
-        return contextValue;
+    public CompareValue getCompareValue() {
+        return compareValue;
     }
 
     public Range getRangeValue() {
@@ -89,27 +89,45 @@ public class CriterionValue {
     }
 
     public enum ValueType {
-        None, Float, IntArray, StringArray, String, Context, Boolean, Range
+        None, Float, IntArray, StringArray, String, Compare, Boolean, Range
     }
 
-    public static class ContextValue {
+    public static class CompareValue {
 
-        public static final BuilderCodec<ContextValue> CODEC = BuilderCodec.builder(ContextValue.class,
-                        ContextValue::new)
+        public enum Operation {
+            Equals,
+            LessThan,
+            LessThanEquals,
+            GreaterThan,
+            GreaterThanEquals
+        }
+
+        public static final BuilderCodec<CompareValue> CODEC = BuilderCodec.builder(CompareValue.class,
+                        CompareValue::new)
+                .append(new KeyedCodec<>("Operation", new EnumCodec<>(Operation.class), true),
+                        (pair, operation) -> pair.operation = operation, CompareValue::getOperation)
+                .documentation("TODO - Operation")
+                .add()
                 .append(new KeyedCodec<>("Table", Codec.STRING, true),
-                        (pair, tableName) -> pair.tableName = tableName, ContextValue::getTableName)
+                        (pair, tableName) -> pair.tableName = tableName, CompareValue::getTableName)
                 .documentation("TODO - Table")
                 .add()
                 .append(new KeyedCodec<>("Key", Codec.STRING, true), (pair, key) -> pair.key = key,
-                        ContextValue::getKey)
+                        CompareValue::getKey)
                 .documentation("TODO - Key")
                 .add()
-                .documentation("TODO - TableKeyPair")
+                .documentation("TODO - Compare")
                 .build();
+
+        private Operation operation;
         private String tableName;
         private String key;
 
-        protected ContextValue() {}
+        protected CompareValue() {}
+
+        public Operation getOperation() {
+            return operation;
+        }
 
         public String getTableName() {
             return tableName;

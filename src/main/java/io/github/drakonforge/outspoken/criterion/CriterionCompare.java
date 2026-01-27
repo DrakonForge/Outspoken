@@ -3,14 +3,14 @@ package io.github.drakonforge.outspoken.criterion;
 import io.github.drakonforge.outspoken.context.ContextTable;
 import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
 
-public class CriterionDynamic extends CriterionInvertible {
+public class CriterionCompare extends CriterionInvertible {
 
     private final float minDelta;
     private final float maxDelta;
     private final String otherTable;
     private final String otherKey;
 
-    public CriterionDynamic(float minDelta, float maxDelta, String otherTable, String otherKey,
+    public CriterionCompare(float minDelta, float maxDelta, String otherTable, String otherKey,
             boolean invert) {
         super(invert);
         this.minDelta = minDelta;

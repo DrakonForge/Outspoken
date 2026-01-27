@@ -9,5 +9,6 @@ public class OutspokenCommand extends AbstractCommandCollection {
     public OutspokenCommand() {
         super("outspoken", "server.commands.outspoken.desc");
         this.addSubCommand(new OutspokenQueryCommand());
+        this.addSubCommand(new OutspokenListCommand());
     }
 }
