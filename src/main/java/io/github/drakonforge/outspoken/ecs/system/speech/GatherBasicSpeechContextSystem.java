@@ -9,11 +9,11 @@ import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
-import io.github.drakonforge.outspoken.context.ContextTable;
+import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
 import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 

@@ -1,7 +1,7 @@
-package io.github.drakonforge.outspoken.criterion;
+package io.github.drakonforge.outspoken.database.criterion;
 
-import io.github.drakonforge.outspoken.context.ContextTable;
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
+import io.github.drakonforge.outspoken.database.context.ContextTable;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import it.unimi.dsi.fastutil.ints.IntSet;
 
 public class CriterionAlternate extends CriterionInvertible {

@@ -1,11 +1,9 @@
-package io.github.drakonforge.outspoken.rulebank;
+package io.github.drakonforge.outspoken.database.rulebank;
 
-import com.hypixel.hytale.codec.Codec;
-import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.math.util.MathUtil;
-import io.github.drakonforge.outspoken.response.Response;
-import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.BestMatch;
-import io.github.drakonforge.outspoken.rulebank.Rule.CriteriaEntry;
+import io.github.drakonforge.outspoken.database.response.Response;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.BestMatch;
+import io.github.drakonforge.outspoken.database.rulebank.Rule.CriteriaEntry;
 import java.util.ArrayList;
 import java.util.List;
 

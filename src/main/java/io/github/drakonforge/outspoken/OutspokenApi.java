@@ -4,12 +4,12 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.asset.RulebankAsset;
-import io.github.drakonforge.outspoken.context.ContextManager;
-import io.github.drakonforge.outspoken.context.ContextTable;
+import io.github.drakonforge.outspoken.database.context.ContextManager;
+import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
-import io.github.drakonforge.outspoken.rulebank.RuleDatabase;
-import io.github.drakonforge.outspoken.rulebank.RuleDatabaseFactory;
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
+import io.github.drakonforge.outspoken.database.rulebank.RuleDatabase;
+import io.github.drakonforge.outspoken.asset.RuleDatabaseFactory;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import java.util.Map;
 import javax.annotation.Nonnull;
 

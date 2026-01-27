@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.context;
+package io.github.drakonforge.outspoken.database.context;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;

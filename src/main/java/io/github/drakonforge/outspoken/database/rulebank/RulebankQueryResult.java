@@ -1,6 +1,6 @@
-package io.github.drakonforge.outspoken.rulebank;
+package io.github.drakonforge.outspoken.database.rulebank;
 
-import io.github.drakonforge.outspoken.response.Response;
+import io.github.drakonforge.outspoken.database.response.Response;
 import javax.annotation.Nonnull;
 
 public final class RulebankQueryResult {

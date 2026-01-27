@@ -3,7 +3,7 @@ package io.github.drakonforge.outspoken.ecs.event;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.system.CancellableEcsEvent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

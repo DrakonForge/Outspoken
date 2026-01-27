@@ -2,7 +2,7 @@ package io.github.drakonforge.outspoken.ecs.event;
 
 import com.hypixel.hytale.component.system.EcsEvent;
 import com.hypixel.hytale.server.core.universe.world.World;
-import io.github.drakonforge.outspoken.context.ContextTable;
+import io.github.drakonforge.outspoken.database.context.ContextTable;
 import javax.annotation.Nonnull;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 

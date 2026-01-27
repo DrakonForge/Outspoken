@@ -1,7 +1,7 @@
-package io.github.drakonforge.outspoken.rulebank;
+package io.github.drakonforge.outspoken.database.rulebank;
 
-import io.github.drakonforge.outspoken.context.ContextManager;
-import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.BestMatch;
+import io.github.drakonforge.outspoken.database.context.ContextManager;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.BestMatch;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

@@ -1,7 +1,7 @@
-package io.github.drakonforge.outspoken.rulebank;
+package io.github.drakonforge.outspoken.database.rulebank;
 
 import io.github.drakonforge.outspoken.OutspokenApi;
-import io.github.drakonforge.outspoken.context.ContextTable;
+import io.github.drakonforge.outspoken.database.context.ContextTable;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;

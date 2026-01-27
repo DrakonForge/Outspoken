@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.criterion;
+package io.github.drakonforge.outspoken.database.criterion;
 
 public abstract class CriterionInvertible extends Criterion {
 

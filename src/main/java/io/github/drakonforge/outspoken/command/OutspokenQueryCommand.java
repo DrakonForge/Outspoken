@@ -11,13 +11,13 @@ import com.hypixel.hytale.server.core.modules.time.WorldTimeResource;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenApi;
-import io.github.drakonforge.outspoken.context.ContextTable;
-import io.github.drakonforge.outspoken.response.PlainTextResponse;
-import io.github.drakonforge.outspoken.response.Response;
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery.PassthroughType;
-import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.BestMatch;
-import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.QueryReturnCode;
+import io.github.drakonforge.outspoken.database.context.ContextTable;
+import io.github.drakonforge.outspoken.database.response.PlainTextResponse;
+import io.github.drakonforge.outspoken.database.response.Response;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery.PassthroughType;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.BestMatch;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.QueryReturnCode;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class OutspokenQueryCommand extends AbstractWorldCommand {

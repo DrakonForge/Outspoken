@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.response;
+package io.github.drakonforge.outspoken.database.response;
 
 public class NoneResponse implements Response {
     NoneResponse() {}

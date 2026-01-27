@@ -1,7 +1,7 @@
-package io.github.drakonforge.outspoken.criterion;
+package io.github.drakonforge.outspoken.database.criterion;
 
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
-import io.github.drakonforge.outspoken.rulebank.RulebankQuery.PassthroughType;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery.PassthroughType;
 
 public class CriterionPass extends Criterion {
 

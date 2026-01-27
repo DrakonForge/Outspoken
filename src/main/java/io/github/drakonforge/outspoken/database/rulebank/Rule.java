@@ -1,7 +1,7 @@
-package io.github.drakonforge.outspoken.rulebank;
+package io.github.drakonforge.outspoken.database.rulebank;
 
-import io.github.drakonforge.outspoken.criterion.Criterion;
-import io.github.drakonforge.outspoken.response.Response;
+import io.github.drakonforge.outspoken.database.criterion.Criterion;
+import io.github.drakonforge.outspoken.database.response.Response;
 import java.util.List;
 import javax.annotation.Nonnull;
 
