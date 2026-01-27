@@ -51,6 +51,8 @@ public class OutspokenQueryCommand extends AbstractWorldCommand {
         worldTable.set("Hour", hour);
         query.addContextTable("World", worldTable);
 
+        // TODO: This should just trigger a speech event through the API
+
         for (int i = 0; i < count; ++i) {
             BestMatch bestMatch = OutspokenApi.getDatabase().queryBestMatch(query);
             if (bestMatch.code() != QueryReturnCode.SUCCESS) {

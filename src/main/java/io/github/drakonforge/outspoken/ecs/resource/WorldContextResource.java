@@ -28,6 +28,7 @@ public class WorldContextResource implements Resource<EntityStore> {
             worldContext = OutspokenApi.createBlankContextTable();
         }
         UpdateWorldContextEvent event = new UpdateWorldContextEvent(worldContext, entityStore.getExternalData().getWorld(), isInitial);
+        // Invoke world event
         entityStore.invoke(event);
         return worldContext;
     }

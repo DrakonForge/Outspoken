@@ -1,10 +1,9 @@
-package io.github.drakonforge.outspoken.ecs.system;
+package io.github.drakonforge.outspoken.ecs.system.context;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
-import com.hypixel.hytale.component.system.EntityEventSystem;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
@@ -15,11 +14,7 @@ import io.github.drakonforge.outspoken.ecs.event.UpdateEntityContextEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class UpdateBasicEntityContextSystem extends EntityEventSystem<EntityStore, UpdateEntityContextEvent> {
-
-    public UpdateBasicEntityContextSystem() {
-        super(UpdateEntityContextEvent.class);
-    }
+public class UpdateBasicEntityContextSystem extends EntityContextSystem {
 
     @Override
     public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,

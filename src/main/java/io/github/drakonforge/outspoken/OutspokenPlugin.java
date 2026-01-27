@@ -5,6 +5,7 @@ import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.ResourceType;
+import com.hypixel.hytale.component.SystemGroup;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
@@ -19,13 +20,16 @@ import io.github.drakonforge.outspoken.ecs.component.BuilderSpeechbank;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
-import io.github.drakonforge.outspoken.ecs.system.EntityAmbientSpeechSystem;
+import io.github.drakonforge.outspoken.ecs.system.NearbyEntityAmbientSpeechSystem;
+import io.github.drakonforge.outspoken.ecs.system.EntityContextUpdateThrottleSystem;
 import io.github.drakonforge.outspoken.ecs.system.InitEntityContextSystem;
 import io.github.drakonforge.outspoken.ecs.system.InitResourceSystem;
-import io.github.drakonforge.outspoken.ecs.system.UpdateBasicEntityContextSystem;
-import io.github.drakonforge.outspoken.ecs.system.UpdateBasicNpcContextSystem;
-import io.github.drakonforge.outspoken.ecs.system.UpdateBasicPlayerContextSystem;
-import io.github.drakonforge.outspoken.ecs.system.UpdateBasicWorldContextSystem;
+import io.github.drakonforge.outspoken.ecs.system.speech.GatherBasicSpeechContextSystem;
+import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicEntityContextSystem;
+import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicNpcContextSystem;
+import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicPlayerContextSystem;
+import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicWorldContextSystem;
+import io.github.drakonforge.outspoken.ecs.system.speech.QuerySpeechSystem;
 import javax.annotation.Nonnull;
 
 /**
@@ -43,6 +47,10 @@ public class OutspokenPlugin extends JavaPlugin {
 
     private ComponentType<EntityStore, EntityContextComponent> entityContextComponentType;
     private ResourceType<EntityStore, WorldContextResource> worldContextResourceType;
+    private SystemGroup<EntityStore> gatherSpeechEventGroup; // Gathers the context
+    private SystemGroup<EntityStore> filterSpeechEventGroup; // Filters the context
+    private SystemGroup<EntityStore> inspectSpeechEventGroup; // After the speech event has fired
+
 
     public OutspokenPlugin(@Nonnull JavaPluginInit init) {
         super(init);
@@ -62,9 +70,17 @@ public class OutspokenPlugin extends JavaPlugin {
         ComponentRegistryProxy<EntityStore> entityStoreRegistry = this.getEntityStoreRegistry();
         this.worldContextResourceType = entityStoreRegistry.registerResource(WorldContextResource.class, WorldContextResource::new);
         this.entityContextComponentType = entityStoreRegistry.registerComponent(EntityContextComponent.class, EntityContextComponent::new);
+        this.gatherSpeechEventGroup = entityStoreRegistry.registerSystemGroup();
+        this.filterSpeechEventGroup = entityStoreRegistry.registerSystemGroup();
+        this.inspectSpeechEventGroup = entityStoreRegistry.registerSystemGroup();
         entityStoreRegistry.registerSystem(new InitEntityContextSystem());
         entityStoreRegistry.registerSystem(new InitResourceSystem(this.worldContextResourceType));
-        entityStoreRegistry.registerSystem(new EntityAmbientSpeechSystem());
+        entityStoreRegistry.registerSystem(new EntityContextUpdateThrottleSystem(this.entityContextComponentType));
+        entityStoreRegistry.registerSystem(new GatherBasicSpeechContextSystem());
+        entityStoreRegistry.registerSystem(new QuerySpeechSystem());
+
+        // Triggers speech queries
+        entityStoreRegistry.registerSystem(new NearbyEntityAmbientSpeechSystem());
 
         // Populates context table with basic context
         entityStoreRegistry.registerSystem(new UpdateBasicWorldContextSystem());
@@ -92,5 +108,17 @@ public class OutspokenPlugin extends JavaPlugin {
 
     public ComponentType<EntityStore, EntityContextComponent> getEntityContextComponentType() {
         return entityContextComponentType;
+    }
+
+    public SystemGroup<EntityStore> getGatherSpeechEventGroup() {
+        return gatherSpeechEventGroup;
+    }
+
+    public SystemGroup<EntityStore> getFilterSpeechEventGroup() {
+        return filterSpeechEventGroup;
+    }
+
+    public SystemGroup<EntityStore> getInspectSpeechEventGroup() {
+        return inspectSpeechEventGroup;
     }
 }

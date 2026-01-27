@@ -1,8 +1,10 @@
 package io.github.drakonforge.outspoken.rulebank;
 
+import io.github.drakonforge.outspoken.OutspokenApi;
 import io.github.drakonforge.outspoken.context.ContextTable;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class RulebankQuery {
@@ -33,6 +35,17 @@ public class RulebankQuery {
     @Nullable
     public ContextTable getContextTable(String tableName) {
         return contexts.get(tableName);
+    }
+
+    @Nonnull
+    public ContextTable getOrCreateContextTable(String tableName) {
+        ContextTable contextTable = contexts.get(tableName);
+        if (contextTable == null) {
+            ContextTable newContextTable = OutspokenApi.createBlankContextTable();
+            contexts.put(tableName, newContextTable);
+            return newContextTable;
+        }
+        return contextTable;
     }
 
     public String getGroup() {

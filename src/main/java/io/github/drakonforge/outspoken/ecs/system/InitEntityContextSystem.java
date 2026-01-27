@@ -29,6 +29,7 @@ public class InitEntityContextSystem extends HolderSystem<EntityStore> {
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
+        // TODO: Filter to entities with the speechbank component, and maybe use RefChange instead
         return EntityStatMap.getComponentType();
     }
 }

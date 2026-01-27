@@ -1,0 +1,69 @@
+package io.github.drakonforge.outspoken.ecs.system.speech;
+
+import com.hypixel.hytale.component.ArchetypeChunk;
+import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.dependency.Dependency;
+import com.hypixel.hytale.component.dependency.Order;
+import com.hypixel.hytale.component.dependency.SystemGroupDependency;
+import com.hypixel.hytale.component.query.Query;
+import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.outspoken.OutspokenApi;
+import io.github.drakonforge.outspoken.OutspokenPlugin;
+import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
+import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
+import io.github.drakonforge.outspoken.response.PlainTextResponse;
+import io.github.drakonforge.outspoken.response.Response;
+import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.BestMatch;
+import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.QueryReturnCode;
+import java.util.Set;
+import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+public class QuerySpeechSystem extends SpeechEventSystem {
+
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+
+    @Override
+    public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
+            @NonNullDecl SpeechEvent speechEvent) {
+
+        LOGGER.atFine().log("Starting query");
+        BestMatch bestMatch = OutspokenApi.getDatabase().queryBestMatch(speechEvent.getQuery());
+        LOGGER.atFine().log("Finished query");
+
+        // TODO: Leverage the entity's speech state to display text
+        if (bestMatch.code() != QueryReturnCode.SUCCESS) {
+            LOGGER.atInfo().log("Query failed with status code: " + bestMatch.code().name());
+        } else {
+            Response response = bestMatch.response();
+            if (response instanceof PlainTextResponse plainTextResponse) {
+                LOGGER.atInfo().log(plainTextResponse.getRandomOption());
+            } else {
+                LOGGER.atInfo()
+                        .log("Response type not yet supported: " + response.getType().name());
+            }
+        }
+    }
+
+    @NonNullDecl
+    @Override
+    public Set<Dependency<EntityStore>> getDependencies() {
+        return Set.of(new SystemGroupDependency<>(Order.AFTER,
+                        OutspokenPlugin.getInstance().getGatherSpeechEventGroup()),
+                new SystemGroupDependency<>(Order.AFTER,
+                        OutspokenPlugin.getInstance().getFilterSpeechEventGroup()),
+                new SystemGroupDependency<>(Order.BEFORE,
+                        OutspokenPlugin.getInstance().getInspectSpeechEventGroup()));
+    }
+
+    @NullableDecl
+    @Override
+    // TODO: Filter to Speechbank Component & EntityContextComponent
+    public Query<EntityStore> getQuery() {
+        return EntityContextComponent.getComponentType();
+    }
+}

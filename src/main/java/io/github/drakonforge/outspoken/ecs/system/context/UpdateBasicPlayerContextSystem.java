@@ -1,29 +1,21 @@
-package io.github.drakonforge.outspoken.ecs.system;
+package io.github.drakonforge.outspoken.ecs.system.context;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
-import com.hypixel.hytale.component.system.EntityEventSystem;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
-import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
+import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import io.github.drakonforge.outspoken.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.event.UpdateEntityContextEvent;
-import java.util.Objects;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class UpdateBasicNpcContextSystem  extends
-        EntityEventSystem<EntityStore, UpdateEntityContextEvent> {
-
-    public UpdateBasicNpcContextSystem() {
-        super(UpdateEntityContextEvent.class);
-    }
+public class UpdateBasicPlayerContextSystem extends
+        EntityContextSystem {
 
     @Override
     public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
@@ -33,16 +25,30 @@ public class UpdateBasicNpcContextSystem  extends
         ContextTable context = updateEntityContextEvent.getEntityContext();
         boolean isInitial = updateEntityContextEvent.isInitial();
 
-        NPCEntity npcEntityComponent = archetypeChunk.getComponent(i,
-                Objects.requireNonNull(NPCEntity.getComponentType()));
-        assert npcEntityComponent != null;
+        Player player = archetypeChunk.getComponent(i, Player.getComponentType());
+        assert player != null;
+        if (isInitial) {
+            context.set("Name", player.getDisplayName());
+        }
 
-        context.set("Type", npcEntityComponent.getNPCTypeId());
+        Inventory inventory = player.getInventory();
+        ItemStack mainhandStack = inventory.getActiveHotbarItem();
+        ItemStack offhandStack = inventory.getUtilityItem();
+        if (mainhandStack != null) {
+            context.set("Mainhand", mainhandStack.getItemId());
+        } else {
+            context.remove("Mainhand");
+        }
+        if (offhandStack != null) {
+            context.set("Offhand", offhandStack.getItemId());
+        } else {
+            context.remove("Offhand");
+        }
     }
 
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(EntityContextComponent.getComponentType(), NPCEntity.getComponentType());
+        return Query.and(EntityContextComponent.getComponentType(), Player.getComponentType());
     }
 }

@@ -1,11 +1,17 @@
 package io.github.drakonforge.outspoken;
 
+import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.asset.RulebankAsset;
 import io.github.drakonforge.outspoken.context.ContextManager;
 import io.github.drakonforge.outspoken.context.ContextTable;
+import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
 import io.github.drakonforge.outspoken.rulebank.RuleDatabase;
 import io.github.drakonforge.outspoken.rulebank.RuleDatabaseFactory;
+import io.github.drakonforge.outspoken.rulebank.RulebankQuery;
 import java.util.Map;
+import javax.annotation.Nonnull;
 
 public final class OutspokenApi {
     private static RuleDatabase database;
@@ -14,6 +20,14 @@ public final class OutspokenApi {
         Map<String, RulebankAsset> assetMap = RulebankAsset.getAssetMap().getAssetMap();
         ContextManager contextManager = new ContextManager();
         database = RuleDatabaseFactory.createFromAssetMap(assetMap, contextManager);
+    }
+
+    // This library doesn't only work on speech, but
+    public static void triggerSpeechEvent(@Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> originRef, String category) {
+        String group = "Example"; // TODO: Pull from Speechbank component, and check if it exists
+        RulebankQuery query = new RulebankQuery(group, category);
+        SpeechEvent event = new SpeechEvent(query);
+        store.invoke(originRef, event);
     }
 
     public static RuleDatabase getDatabase() {
