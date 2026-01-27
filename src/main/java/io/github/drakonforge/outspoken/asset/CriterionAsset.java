@@ -14,7 +14,8 @@ public class CriterionAsset {
         Exists(Set.of(ValueType.None), true),
         Pass(Set.of(ValueType.Float), false),
         Compare(Set.of(ValueType.Compare), true),
-        Range(Set.of(ValueType.Range, ValueType.Float), true);
+        Range(Set.of(ValueType.Range, ValueType.Float), true),
+        Includes(Set.of(ValueType.String, ValueType.Float), true);
 
         private final Set<ValueType> validValueTypes;
         private final boolean invertible;

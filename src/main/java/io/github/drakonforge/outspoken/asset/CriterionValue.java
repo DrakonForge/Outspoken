@@ -99,7 +99,8 @@ public class CriterionValue {
             LessThan,
             LessThanEquals,
             GreaterThan,
-            GreaterThanEquals
+            GreaterThanEquals,
+            Includes,
         }
 
         public static final BuilderCodec<CompareValue> CODEC = BuilderCodec.builder(CompareValue.class,

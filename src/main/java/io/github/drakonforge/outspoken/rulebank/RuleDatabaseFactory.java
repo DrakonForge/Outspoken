@@ -16,6 +16,7 @@ import io.github.drakonforge.outspoken.criterion.Criterion;
 import io.github.drakonforge.outspoken.criterion.CriterionAlternate;
 import io.github.drakonforge.outspoken.criterion.CriterionCompare;
 import io.github.drakonforge.outspoken.criterion.CriterionExist;
+import io.github.drakonforge.outspoken.criterion.CriterionIncludes;
 import io.github.drakonforge.outspoken.criterion.CriterionPass;
 import io.github.drakonforge.outspoken.criterion.CriterionStatic;
 import io.github.drakonforge.outspoken.response.PlainTextResponse;
@@ -91,6 +92,7 @@ public final class RuleDatabaseFactory {
     public static RuleDatabase createFromAssetMap(Map<String, RulebankAsset> assetMap, ContextManager contextManager) {
         LOGGER.atInfo().log("Found " + assetMap.size() + " rulebank assets");
         RuleDatabase database = new RuleDatabase(contextManager);
+        List<String> failedRulebanks = new ArrayList<>();
         for (Entry<String, RulebankAsset> entry : assetMap.entrySet()) {
             RulebankAsset asset = entry.getValue();;
             String id = asset.getId();
@@ -98,26 +100,34 @@ public final class RuleDatabaseFactory {
             // TODO: Check dependencies
             Result result = processRulebank(id, asset, database);
             if (result.failed()) {
-                LOGGER.atWarning().log("Some rulebanks failed to parse: " + result.message());
+                failedRulebanks.add(result.message());
             }
+        }
+        if (!failedRulebanks.isEmpty()) {
+            LOGGER.atSevere().log("Some rulebanks failed to parse: " + String.join(", ", failedRulebanks));
         }
         return database;
     }
 
     private static Result processRulebank(String id, RulebankAsset asset, RuleDatabase database) {
         Map<String, RuleAsset[]> categoryMap = asset.getCategoryMap();
+        int numCategoryErrors = 0;
         for (Entry<String, RuleAsset[]> category : categoryMap.entrySet()) {
             List<Rule> rules = new ArrayList<>();
             LOGGER.atInfo().log("Found id " + id + ", category " + category.getKey());
             for (RuleAsset ruleAsset : category.getValue()) {
                 Result result = collectRuleFromAsset(rules, ruleAsset, database.getContextManager());
                 if (result.failed()) {
-                    return result;
+                    numCategoryErrors += 1;
+                    LOGGER.atSevere().log("Failed to parse rule in " + id + "." + category.getKey() + " at index " + rules.size() + ": " + result.message());
                 }
             }
             sortRules(rules);
             RuleTable ruleTable = new RuleTable(rules);
             database.addRuleTable(id, category.getKey(), ruleTable);
+        }
+        if (numCategoryErrors > 0) {
+            return Result.error(id + " (" + numCategoryErrors + ")");
         }
         return Result.SUCCESS;
     }
@@ -176,6 +186,8 @@ public final class RuleDatabaseFactory {
                         result = parseCompareCriterion(criterionRef, value.getCompareValue(), invert);
                 case Range ->
                         result = parseRangeCriterion(criterionRef, value.getRangeValue(), invert);
+                case Includes ->
+                    result = parseIncludesCriterion(criterionRef, value, valueType, invert, contextManager);
                 default -> {
                     return Result.error("Unknown criterion type: " + criterionAsset.getType());
                 }
@@ -284,6 +296,21 @@ public final class RuleDatabaseFactory {
 
         criterionRef.set(new CriterionStatic(min, max, invert));
         return Result.SUCCESS;
+    }
+
+    private static Result parseIncludesCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert, ContextManager contextManager) {
+        if (valueType == ValueType.Float) {
+            float floatValue = value.getFloatValue();
+            criterionRef.set(new CriterionIncludes((int) floatValue, invert));
+            return Result.SUCCESS;
+        }
+        if (valueType == ValueType.String) {
+            String stringValue = value.getStringValue();
+            int symbol = contextManager.getStringTable().cache(stringValue);
+            criterionRef.set(new CriterionIncludes(symbol, invert));
+            return Result.SUCCESS;
+        }
+        return Result.error("Invalid type");
     }
 
     private static Result collectResponseFromAsset(Ref<Response> responseRef, ResponseAsset responseAsset, ContextManager contextManager) {

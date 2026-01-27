@@ -2,24 +2,20 @@
   "Categories": {
     "Greeting": [
       {
+        "Priority": 1,
         "Criteria": [
           {
-            "Type": "GreaterThanEquals",
-            "Table": "World",
-            "Key": "Hour",
+            "Type": "Range",
             "Value": {
-              "Type": "Float",
-              "Float": 4
-            }
-          },
-          {
-            "Type": "LessThan",
+              "Type": "Range",
+              "Range": {
+                "Min": 4,
+                "Max": 12,
+                "MaxExclusive": true
+              }
+            },
             "Table": "World",
-            "Key": "Hour",
-            "Value": {
-              "Type": "Float",
-              "Float": 12
-            }
+            "Key": "Hour"
           }
         ],
         "Response": {
@@ -30,24 +26,20 @@
         }
       },
       {
+        "Priority": 1,
         "Criteria": [
           {
-            "Type": "GreaterThanEquals",
-            "Table": "World",
-            "Key": "Hour",
+            "Type": "Range",
             "Value": {
-              "Type": "Float",
-              "Float": 12
-            }
-          },
-          {
-            "Type": "LessThan",
+              "Type": "Range",
+              "Range": {
+                "Min": 12,
+                "Max": 19,
+                "MaxExclusive": true
+              }
+            },
             "Table": "World",
-            "Key": "Hour",
-            "Value": {
-              "Type": "Float",
-              "Float": 19
-            }
+            "Key": "Hour"
           }
         ],
         "Response": {
@@ -59,24 +51,20 @@
         }
       },
       {
+        "Priority": 1,
         "Criteria": [
           {
-            "Type": "GreaterThanEquals",
-            "Table": "World",
-            "Key": "Hour",
+            "Type": "Range",
             "Value": {
-              "Type": "Float",
-              "Float": 19
-            }
-          },
-          {
-            "Type": "LessThan",
+              "Type": "Range",
+              "Range": {
+                "Min": 19,
+                "Max": 21,
+                "MaxExclusive": true
+              }
+            },
             "Table": "World",
-            "Key": "Hour",
-            "Value": {
-              "Type": "Float",
-              "Float": 21
-            }
+            "Key": "Hour"
           }
         ],
         "Response": {
@@ -88,6 +76,7 @@
         }
       },
       {
+        "Priority": 0,
         "Response": {
           "Type": "PlainText",
           "Entries": [
