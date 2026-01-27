@@ -11,7 +11,9 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenApi;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
+import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
 import io.github.drakonforge.outspoken.database.response.PlainTextResponse;
 import io.github.drakonforge.outspoken.database.response.Response;
@@ -35,9 +37,11 @@ public class QuerySpeechSystem extends SpeechEventSystem {
         BestMatch bestMatch = OutspokenApi.getDatabase().queryBestMatch(speechEvent.getQuery());
         LOGGER.atFine().log("Finished query");
 
+        RulebankQuery query = speechEvent.getQuery();
+
         // TODO: Leverage the entity's speech state to display text
         if (bestMatch.code() != QueryReturnCode.SUCCESS) {
-            LOGGER.atInfo().log("Query failed with status code: " + bestMatch.code().name());
+            LOGGER.atInfo().log("Query failed with status code: " + bestMatch.code().name() + " for " + query.getGroup() + "." + query.getCategory());
         } else {
             Response response = bestMatch.response();
             if (response instanceof PlainTextResponse plainTextResponse) {
@@ -62,8 +66,7 @@ public class QuerySpeechSystem extends SpeechEventSystem {
 
     @NullableDecl
     @Override
-    // TODO: Filter to Speechbank Component & EntityContextComponent
     public Query<EntityStore> getQuery() {
-        return EntityContextComponent.getComponentType();
+        return Query.and(SpeechbankComponent.getComponentType(), EntityContextComponent.getComponentType());
     }
 }

@@ -11,6 +11,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
+import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
 import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
@@ -57,8 +58,7 @@ public class GatherBasicSpeechContextSystem extends SpeechEventSystem {
 
     @NullableDecl
     @Override
-    // TODO: Filter to Speechbank Component & EntityContextComponent
     public Query<EntityStore> getQuery() {
-        return EntityContextComponent.getComponentType();
+        return Query.and(SpeechbankComponent.getComponentType(), EntityContextComponent.getComponentType());
     }
 }

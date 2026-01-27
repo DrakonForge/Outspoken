@@ -14,9 +14,6 @@ import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class EntityContextComponent implements Component<EntityStore> {
-    private static final float CONTEXT_UPDATE_COOLDOWN = 1.0f;
-    // TODO: Make this configurable via config
-
     private ContextTable contextTable = null;
     private float contextUpdateCooldown = 0.0f;
     // TODO: Maybe want different tiers of updates, inventory that only updates every 5-10s, etc.
@@ -51,7 +48,7 @@ public class EntityContextComponent implements Component<EntityStore> {
         if (isInitial || !isUpdateThrottled()) {
             UpdateEntityContextEvent event = new UpdateEntityContextEvent(contextTable, entityStore.getExternalData().getWorld(), isInitial);
             entityStore.invoke(entityRef, event);
-            contextUpdateCooldown = CONTEXT_UPDATE_COOLDOWN;
+            contextUpdateCooldown = OutspokenPlugin.getInstance().getConfig().get().getContextThrottleCooldown();
         }
         return contextTable;
     }

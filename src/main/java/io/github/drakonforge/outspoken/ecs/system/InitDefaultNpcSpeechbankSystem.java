@@ -6,18 +6,28 @@ import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.HolderSystem;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
+import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import io.github.drakonforge.outspoken.OutspokenPlugin;
+import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class InitEntityContextSystem extends HolderSystem<EntityStore> {
+public class InitDefaultNpcSpeechbankSystem extends HolderSystem<EntityStore> {
 
     @Override
     public void onEntityAdd(@NonNullDecl Holder<EntityStore> holder,
             @NonNullDecl AddReason addReason, @NonNullDecl Store<EntityStore> store) {
-        holder.ensureComponent(EntityContextComponent.getComponentType());
+        NPCEntity npcComponent = holder.getComponent(
+                Objects.requireNonNull(NPCEntity.getComponentType()));
+        assert npcComponent != null;
+
+        String id = npcComponent.getNPCTypeId();
+        String speechbankGroup = OutspokenPlugin.getInstance().getConfig().get().getSpeechGroupMap().get(id);
+        if (speechbankGroup != null) {
+            holder.addComponent(SpeechbankComponent.getComponentType(), new SpeechbankComponent(speechbankGroup));
+        }
     }
 
     @Override
@@ -29,7 +39,6 @@ public class InitEntityContextSystem extends HolderSystem<EntityStore> {
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        // Many entities can have context without having a speechbank component
-        return EntityStatMap.getComponentType();
+        return Query.and(NPCEntity.getComponentType(), Query.not(SpeechbankComponent.getComponentType()));
     }
 }
