@@ -42,14 +42,10 @@ public class QuerySpeechSystem extends SpeechEventSystem {
         // TODO: Leverage the entity's speech state to display text
         if (bestMatch.code() != QueryReturnCode.SUCCESS) {
             LOGGER.atInfo().log("Query failed with status code: " + bestMatch.code().name() + " for " + query.getGroup() + "." + query.getCategory());
+            speechEvent.setCancelled(true);
         } else {
             Response response = bestMatch.response();
-            if (response instanceof PlainTextResponse plainTextResponse) {
-                LOGGER.atInfo().log(plainTextResponse.getRandomOption());
-            } else {
-                LOGGER.atInfo()
-                        .log("Response type not yet supported: " + response.getType().name());
-            }
+            speechEvent.setResponse(response);
         }
     }
 
@@ -57,9 +53,8 @@ public class QuerySpeechSystem extends SpeechEventSystem {
     @Override
     public Set<Dependency<EntityStore>> getDependencies() {
         return Set.of(new SystemGroupDependency<>(Order.AFTER,
+                OutspokenPlugin.getInstance().getInitSpeechEventGroup()), new SystemGroupDependency<>(Order.AFTER,
                         OutspokenPlugin.getInstance().getGatherSpeechEventGroup()),
-                new SystemGroupDependency<>(Order.AFTER,
-                        OutspokenPlugin.getInstance().getFilterSpeechEventGroup()),
                 new SystemGroupDependency<>(Order.BEFORE,
                         OutspokenPlugin.getInstance().getInspectSpeechEventGroup()));
     }

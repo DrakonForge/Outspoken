@@ -10,7 +10,7 @@ import com.hypixel.hytale.server.core.modules.entity.damage.DamageEventSystem;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenApi;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
-import io.github.drakonforge.outspoken.util.SpeechCategories;
+import io.github.drakonforge.outspoken.util.SpeechEvents;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -24,7 +24,7 @@ public class DamageTakenSpeechSystem extends DamageEventSystem {
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
 
         if (damage.getAmount() > 0.0f) {
-            OutspokenApi.triggerSpeechEvent(store, ref, SpeechCategories.DAMAGE_TAKEN);
+            OutspokenApi.triggerSpeechEvent(store, ref, SpeechEvents.DAMAGE_TAKEN);
         }
     }
 

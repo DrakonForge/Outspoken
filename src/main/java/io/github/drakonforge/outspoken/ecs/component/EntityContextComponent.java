@@ -14,13 +14,13 @@ import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class EntityContextComponent implements Component<EntityStore> {
-    private ContextTable contextTable = null;
-    private float contextUpdateCooldown = 0.0f;
-    // TODO: Maybe want different tiers of updates, inventory that only updates every 5-10s, etc.
-
     public static ComponentType<EntityStore, EntityContextComponent> getComponentType() {
         return OutspokenPlugin.getInstance().getEntityContextComponentType();
     }
+
+    private ContextTable contextTable = null;
+    private float contextUpdateCooldown = 0.0f;
+    // TODO: Maybe want different tiers of updates, inventory that only updates every 5-10s, etc.
 
     public EntityContextComponent() {}
 

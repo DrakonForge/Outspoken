@@ -4,18 +4,20 @@ import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.component.SystemGroup;
+import com.hypixel.hytale.component.dependency.Dependency;
+import com.hypixel.hytale.component.dependency.Order;
+import com.hypixel.hytale.component.dependency.SystemGroupDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
-import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
 import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import io.github.drakonforge.outspoken.util.ContextTables;
+import java.util.Set;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -50,15 +52,15 @@ public class GatherBasicSpeechContextSystem extends SpeechEventSystem {
             }
     }
 
-    @NullableDecl
+    @NonNullDecl
     @Override
-    public SystemGroup<EntityStore> getGroup() {
-        return OutspokenPlugin.getInstance().getGatherSpeechEventGroup();
+    public Set<Dependency<EntityStore>> getDependencies() {
+        return Set.of(new SystemGroupDependency<>(Order.AFTER, OutspokenPlugin.getInstance().getInitSpeechEventGroup()), new SystemGroupDependency<>(Order.BEFORE, OutspokenPlugin.getInstance().getGatherSpeechEventGroup()), new SystemGroupDependency<>(Order.BEFORE, OutspokenPlugin.getInstance().getInspectSpeechEventGroup()));
     }
 
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(SpeechbankComponent.getComponentType(), EntityContextComponent.getComponentType());
+        return EntityContextComponent.getComponentType();
     }
 }

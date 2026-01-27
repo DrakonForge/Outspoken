@@ -14,6 +14,7 @@ import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import com.hypixel.hytale.server.npc.role.Role;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.event.UpdateEntityContextEvent;
@@ -97,6 +98,15 @@ public final class UpdateBasicEntityContextSystems {
             assert npcEntityComponent != null;
 
             context.set("Type", npcEntityComponent.getNPCTypeId());
+
+            Inventory inventory = npcEntityComponent.getInventory();
+            addInventoryContext(context, inventory);
+
+            Role role = npcEntityComponent.getRole();
+            if (role != null) {
+                context.set("Role", role.getRoleName());
+                context.set("State", role.getStateSupport().getStateName());
+            }
         }
 
         @NullableDecl
@@ -122,25 +132,30 @@ public final class UpdateBasicEntityContextSystems {
                 context.set("Name", player.getDisplayName());
             }
 
+            // TODO: Make this a helper and also add it in NPC entity
             Inventory inventory = player.getInventory();
-            ItemStack mainhandStack = inventory.getActiveHotbarItem();
-            ItemStack offhandStack = inventory.getUtilityItem();
-            if (mainhandStack != null) {
-                context.set("Mainhand", mainhandStack.getItemId());
-            } else {
-                context.remove("Mainhand");
-            }
-            if (offhandStack != null) {
-                context.set("Offhand", offhandStack.getItemId());
-            } else {
-                context.remove("Offhand");
-            }
+            addInventoryContext(context, inventory);
         }
 
         @NullableDecl
         @Override
         public Query<EntityStore> getQuery() {
             return Query.and(EntityContextComponent.getComponentType(), Player.getComponentType());
+        }
+    }
+
+    private static void addInventoryContext(ContextTable context, Inventory inventory) {
+        ItemStack mainhandStack = inventory.getActiveHotbarItem();
+        ItemStack offhandStack = inventory.getUtilityItem();
+        if (mainhandStack != null) {
+            context.set("Mainhand", mainhandStack.getItemId());
+        } else {
+            context.remove("Mainhand");
+        }
+        if (offhandStack != null) {
+            context.set("Offhand", offhandStack.getItemId());
+        } else {
+            context.remove("Offhand");
         }
     }
 

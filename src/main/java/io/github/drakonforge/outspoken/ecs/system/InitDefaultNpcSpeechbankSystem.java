@@ -24,7 +24,7 @@ public class InitDefaultNpcSpeechbankSystem extends HolderSystem<EntityStore> {
         assert npcComponent != null;
 
         String id = npcComponent.getNPCTypeId();
-        String speechbankGroup = OutspokenPlugin.getInstance().getConfig().get().getSpeechGroupMap().get(id);
+        String speechbankGroup = OutspokenPlugin.getInstance().getConfig().get().getSpeechGroupFor(id);
         if (speechbankGroup != null) {
             holder.addComponent(SpeechbankComponent.getComponentType(), new SpeechbankComponent(speechbankGroup));
         }

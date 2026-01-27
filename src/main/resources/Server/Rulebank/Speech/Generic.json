@@ -1,5 +1,22 @@
 {
   "Categories": {
+    "AmbientIdle": [
+      {
+        "Priority": 0
+      }
+    ],
+    "AmbientCombat": [
+      {
+        "Priority": 0,
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "I'll get you!",
+            "You're not getting away!"
+          ]
+        }
+      }
+    ],
     "Greeting": [
       {
         "Priority": 1,
@@ -91,6 +108,54 @@
           "Entries": [
             "Good night!",
             "Zzzz...."
+          ]
+        }
+      }
+    ],
+    "StateChange": [
+      {
+        "Priority": 2,
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Now you've made me mad!"
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "The danger is passed."
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Where'd you go?",
+            "There's no hiding from us..."
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Intruder!"
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Now I have you!"
           ]
         }
       }

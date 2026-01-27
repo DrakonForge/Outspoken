@@ -7,4 +7,9 @@ public class ContextManager {
     public StringTable getStringTable() {
         return stringTable;
     }
+
+    public ContextTable createBlankContextTable() {
+        // TODO: Consider object pooling
+        return new ContextTable(this);
+    }
 }

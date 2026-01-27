@@ -16,6 +16,9 @@ public class StringTable {
     }
 
     public int cache(String str) {
+        if (str == null) {
+            return 0;
+        }
         return cache.computeIfAbsent(str, (String s) -> {
             int id = nextId++;
             lookup.put(id, s);

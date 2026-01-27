@@ -21,7 +21,7 @@ public class ContextTable {
         INT_LIST,
         STRING_LIST;
 
-        boolean isArray() {
+        public boolean isArray() {
             return this == INT_LIST || this == STRING_LIST;
         }
     }
