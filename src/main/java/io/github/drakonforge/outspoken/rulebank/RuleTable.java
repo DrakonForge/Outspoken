@@ -2,6 +2,8 @@ package io.github.drakonforge.outspoken.rulebank;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.math.util.MathUtil;
+import io.github.drakonforge.outspoken.response.Response;
 import io.github.drakonforge.outspoken.rulebank.RulebankQueryResult.BestMatch;
 import io.github.drakonforge.outspoken.rulebank.Rule.CriteriaEntry;
 import java.util.ArrayList;
@@ -25,11 +27,23 @@ public class RuleTable {
     }
 
     public BestMatch queryBestMatch(final RulebankQuery query) {
+        int bestPriority = -99;
+        List<Response> matchingResponses = new ArrayList<>();
         for (Rule rule : rules) {
+            if (bestPriority >= 0 && rule.priority() < bestPriority) {
+                break;
+            }
             if (match(query, rule.criteria())) {
-                return new BestMatch(RulebankQueryResult.QueryReturnCode.SUCCESS, rule.response());
+                bestPriority = rule.priority();
+                matchingResponses.add(rule.response());
             }
         }
-        return BestMatch.NO_VALID_ENTRY;
+        if (matchingResponses.isEmpty()) {
+            return BestMatch.NO_VALID_ENTRY;
+        }
+
+        // Not sure if this is the best strategy, but it works
+        Response randomMatchingResponse = matchingResponses.get(MathUtil.floor(Math.random() * matchingResponses.size()));
+        return new BestMatch(RulebankQueryResult.QueryReturnCode.SUCCESS, randomMatchingResponse);
     }
 }
