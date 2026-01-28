@@ -21,7 +21,6 @@ import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
 import io.github.drakonforge.outspoken.ecs.system.InitDefaultNpcSpeechbankSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechevent.LogSpeechEventSystem;
-import io.github.drakonforge.outspoken.ecs.system.speechevent.SkipSpeechEventSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechtrigger.DamageTakenSpeechSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechtrigger.AmbientSpeechSystem;
 import io.github.drakonforge.outspoken.ecs.system.EntityContextUpdateThrottleSystem;

@@ -7,6 +7,7 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.EntityEventSystem;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import io.github.drakonforge.outspoken.OutspokenApi;
@@ -43,6 +44,7 @@ public class StateChangeSpeechSystem extends EntityEventSystem<EntityStore, Chan
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(NPCEntity.getComponentType(), SpeechbankComponent.getComponentType());
+        return Query.and(NPCEntity.getComponentType(), SpeechbankComponent.getComponentType(), Query.not(
+                DeathComponent.getComponentType()));
     }
 }

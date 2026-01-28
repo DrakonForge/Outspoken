@@ -15,7 +15,6 @@ import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
-import io.github.drakonforge.outspoken.database.response.PlainTextResponse;
 import io.github.drakonforge.outspoken.database.response.Response;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.BestMatch;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.QueryReturnCode;
@@ -28,11 +27,10 @@ public class QuerySpeechSystem extends SpeechEventSystem {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
     @Override
-    public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+    public void handleSpeechEvent(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
             @NonNullDecl SpeechEvent speechEvent) {
-
         LOGGER.atFine().log("Starting query");
         BestMatch bestMatch = OutspokenApi.getDatabase().queryBestMatch(speechEvent.getQuery());
         LOGGER.atFine().log("Finished query");

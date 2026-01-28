@@ -1,18 +1,33 @@
 {
   "Categories": {
-    "AmbientIdle": [
-      {
-        "Priority": 0
-      }
-    ],
-    "AmbientCombat": [
+    "Ambient": [
       {
         "Priority": 0,
         "Response": {
           "Type": "PlainText",
           "Entries": [
-            "I'll get you!",
-            "You're not getting away!"
+            "The forest is quiet.",
+            "Do you hear anything?"
+          ]
+        }
+      },
+      {
+        "Priority": 1,
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": true
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Get 'em!"
           ]
         }
       }
@@ -20,6 +35,17 @@
     "Greeting": [
       {
         "Priority": 1,
+        "Criteria": [
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Confused"
+            },
+            "Table": "Speaker",
+            "Key": "Traits"
+          }
+        ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
@@ -115,6 +141,26 @@
     "StateChange": [
       {
         "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Idle"
+            },
+            "Table": "Event",
+            "Key": "PrevState"
+          },
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Attack"
+            },
+            "Table": "Event",
+            "Key": "State"
+          }
+        ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
@@ -124,6 +170,26 @@
       },
       {
         "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Attack"
+            },
+            "Table": "Event",
+            "Key": "PrevState"
+          },
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Idle"
+            },
+            "Table": "Event",
+            "Key": "State"
+          }
+        ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
@@ -133,6 +199,26 @@
       },
       {
         "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Attack"
+            },
+            "Table": "Event",
+            "Key": "PrevState"
+          },
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Search"
+            },
+            "Table": "Event",
+            "Key": "State"
+          }
+        ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
@@ -143,6 +229,26 @@
       },
       {
         "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Idle"
+            },
+            "Table": "Event",
+            "Key": "PrevState"
+          },
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Alerted"
+            },
+            "Table": "Event",
+            "Key": "State"
+          }
+        ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
@@ -152,6 +258,26 @@
       },
       {
         "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Alerted"
+            },
+            "Table": "Event",
+            "Key": "PrevState"
+          },
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Idle"
+            },
+            "Table": "Event",
+            "Key": "State"
+          }
+        ],
         "Response": {
           "Type": "PlainText",
           "Entries": [

@@ -5,6 +5,7 @@ import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.math.vector.Vector3d;
+import com.hypixel.hytale.server.core.entity.damage.DamageDataComponent;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.inventory.Inventory;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
@@ -12,12 +13,14 @@ import com.hypixel.hytale.server.core.modules.entity.component.TransformComponen
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
+import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import com.hypixel.hytale.server.npc.role.Role;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.event.UpdateEntityContextEvent;
+import io.github.drakonforge.outspoken.util.NpcHelpers;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -58,6 +61,27 @@ public final class UpdateBasicEntityContextSystems {
         @Override
         public Query<EntityStore> getQuery() {
             return Query.and(EntityContextComponent.getComponentType(), EntityStatMap.getComponentType());
+        }
+    }
+
+    public static class UpdateInCombat extends EntityContextSystem {
+
+        @Override
+        public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                @NonNullDecl Store<EntityStore> store,
+                @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
+                @NonNullDecl UpdateEntityContextEvent updateEntityContextEvent) {
+            World world = store.getExternalData().getWorld();
+            DamageDataComponent damageData = archetypeChunk.getComponent(i, DamageDataComponent.getComponentType());
+            assert damageData != null;
+            updateEntityContextEvent.getEntityContext().set("InCombat", NpcHelpers.isInCombat(damageData, world));
+
+        }
+
+        @NullableDecl
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.and(EntityContextComponent.getComponentType(), DamageDataComponent.getComponentType());
         }
     }
 

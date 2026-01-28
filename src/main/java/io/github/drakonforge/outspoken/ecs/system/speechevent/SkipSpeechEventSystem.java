@@ -16,7 +16,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class SkipSpeechEventSystem extends SpeechEventSystem {
 
     @Override
-    public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+    public void handleSpeechEvent(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
             @NonNullDecl SpeechEvent speechEvent) {

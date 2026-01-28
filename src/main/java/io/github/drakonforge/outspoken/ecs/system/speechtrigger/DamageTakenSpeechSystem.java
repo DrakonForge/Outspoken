@@ -7,6 +7,7 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageEventSystem;
+import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenApi;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
@@ -31,6 +32,7 @@ public class DamageTakenSpeechSystem extends DamageEventSystem {
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(SpeechbankComponent.getComponentType());
+        return Query.and(SpeechbankComponent.getComponentType(), Query.not(
+                DeathComponent.getComponentType()));
     }
 }
