@@ -20,7 +20,7 @@ import io.github.drakonforge.outspoken.speech.SpeechResult;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class ChatSpeechEventSystem extends SpeechEventSystem {
+public class TriggerChatMessageSpeechSystem extends SpeechEventSystem {
 
     @Override
     public void handleSpeechEvent(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,

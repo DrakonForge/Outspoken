@@ -6,8 +6,6 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.SystemGroup;
 import com.hypixel.hytale.component.query.Query;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenConfig;
@@ -22,7 +20,7 @@ import io.github.drakonforge.outspoken.util.SpeechHelpers;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class ChatBubbleSpeechEventSystem extends SpeechEventSystem {
+public class TriggerSpeechBubbleSpeechSystem extends SpeechEventSystem {
     @Override
     public void handleSpeechEvent(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
             @NonNullDecl Store<EntityStore> store,
@@ -46,7 +44,7 @@ public class ChatBubbleSpeechEventSystem extends SpeechEventSystem {
 
         // TODO: Doing the model logic here in case we can move it, can add it to main QueryDatabaseSpeechSystem later if we want
         // TODO: See if we can remove - .clone().add(new Vector3d(0, eyeHeight + 0.5f, 0))
-        SpeechHelpers.createChatBubble(world, ref, speechStateComponent, result.origin(), result.text());
+        SpeechHelpers.createSpeechBubble(world, ref, speechStateComponent, result.origin(), result.text());
     }
 
     @NullableDecl

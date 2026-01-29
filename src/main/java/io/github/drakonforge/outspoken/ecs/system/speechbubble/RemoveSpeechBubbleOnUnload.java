@@ -1,21 +1,18 @@
-package io.github.drakonforge.outspoken.ecs.system.chatbubble;
+package io.github.drakonforge.outspoken.ecs.system.speechbubble;
 
 import com.hypixel.hytale.component.AddReason;
-import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.HolderSystem;
-import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
-import com.hypixel.hytale.server.core.modules.entity.damage.DeathSystems;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class RemoveChatBubbleOnUnload extends HolderSystem<EntityStore> {
+public class RemoveSpeechBubbleOnUnload extends HolderSystem<EntityStore> {
 
     @NullableDecl
     @Override
@@ -37,6 +34,7 @@ public class RemoveChatBubbleOnUnload extends HolderSystem<EntityStore> {
 
         Ref<EntityStore> chatBubbleRef = speechStateComponent.getChatBubble();
         if (chatBubbleRef != null && chatBubbleRef.isValid()) {
+            // TODO: This needs to be run in command buffer
             store.removeEntity(chatBubbleRef, RemoveReason.REMOVE);
         }
     }

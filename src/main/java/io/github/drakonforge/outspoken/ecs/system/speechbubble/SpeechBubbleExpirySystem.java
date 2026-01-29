@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.ecs.system.chatbubble;
+package io.github.drakonforge.outspoken.ecs.system.speechbubble;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -8,11 +8,11 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.outspoken.ecs.component.ChatBubbleComponent;
+import io.github.drakonforge.outspoken.ecs.component.SpeechBubbleComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class ChatBubbleExpirySystem extends EntityTickingSystem<EntityStore> {
+public class SpeechBubbleExpirySystem extends EntityTickingSystem<EntityStore> {
     private static final float EXPIRY_TIME = 5.0f;
 
     @Override
@@ -20,7 +20,7 @@ public class ChatBubbleExpirySystem extends EntityTickingSystem<EntityStore> {
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
-        ChatBubbleComponent chatBubble = archetypeChunk.getComponent(i, ChatBubbleComponent.getComponentType());
+        SpeechBubbleComponent chatBubble = archetypeChunk.getComponent(i, SpeechBubbleComponent.getComponentType());
         assert chatBubble != null;
 
         chatBubble.addAge(v);
@@ -33,6 +33,6 @@ public class ChatBubbleExpirySystem extends EntityTickingSystem<EntityStore> {
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(ChatBubbleComponent.getComponentType());
+        return Query.and(SpeechBubbleComponent.getComponentType());
     }
 }

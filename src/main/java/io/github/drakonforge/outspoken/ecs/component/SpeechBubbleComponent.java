@@ -8,8 +8,8 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class ChatBubbleComponent implements Component<EntityStore> {
-    public static ComponentType<EntityStore, ChatBubbleComponent> getComponentType() {
+public class SpeechBubbleComponent implements Component<EntityStore> {
+    public static ComponentType<EntityStore, SpeechBubbleComponent> getComponentType() {
         return OutspokenPlugin.getInstance().getChatBubbleComponentType();
     }
 
@@ -17,9 +17,9 @@ public class ChatBubbleComponent implements Component<EntityStore> {
     private float age;
     private Ref<EntityStore> anchor;
 
-    public ChatBubbleComponent() {}
+    public SpeechBubbleComponent() {}
 
-    public ChatBubbleComponent(Message fullText, Ref<EntityStore> anchor) {
+    public SpeechBubbleComponent(Message fullText, Ref<EntityStore> anchor) {
         this.fullText = fullText;
         this.anchor = anchor;
     }
@@ -56,7 +56,7 @@ public class ChatBubbleComponent implements Component<EntityStore> {
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
-        ChatBubbleComponent clone = new ChatBubbleComponent();
+        SpeechBubbleComponent clone = new SpeechBubbleComponent();
         clone.age = age;
         clone.fullText = fullText;
         clone.anchor = anchor;

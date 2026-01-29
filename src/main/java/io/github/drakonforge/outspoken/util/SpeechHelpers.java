@@ -15,12 +15,12 @@ import com.hypixel.hytale.server.core.modules.entity.component.TransformComponen
 import com.hypixel.hytale.server.core.modules.entity.tracker.NetworkId;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.outspoken.ecs.component.ChatBubbleComponent;
+import io.github.drakonforge.outspoken.ecs.component.SpeechBubbleComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
 import javax.annotation.Nullable;
 
 public final class SpeechHelpers {
-    public static void createChatBubble(World world, Ref<EntityStore> anchor, @Nullable SpeechStateComponent speechStateComponent, Vector3d position, Message fullText) {
+    public static void createSpeechBubble(World world, Ref<EntityStore> anchor, @Nullable SpeechStateComponent speechStateComponent, Vector3d position, Message fullText) {
         world.execute(() -> {
             Holder<EntityStore> holder = EntityStore.REGISTRY.newHolder();
             ProjectileComponent projectileComponent = new ProjectileComponent("Projectile");
@@ -38,7 +38,7 @@ public final class SpeechHelpers {
 
             holder.addComponent(NetworkId.getComponentType(), new NetworkId(world.getEntityStore().getStore().getExternalData().takeNextNetworkId()));
             // TODO: Set origin
-            holder.addComponent(ChatBubbleComponent.getComponentType(), new ChatBubbleComponent(fullText, anchor));
+            holder.addComponent(SpeechBubbleComponent.getComponentType(), new SpeechBubbleComponent(fullText, anchor));
 
             Store<EntityStore> store = world.getEntityStore().getStore();
             Ref<EntityStore> ref = store.addEntity(holder, AddReason.SPAWN);

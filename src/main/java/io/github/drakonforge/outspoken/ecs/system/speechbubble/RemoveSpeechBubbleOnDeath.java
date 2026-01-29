@@ -1,4 +1,4 @@
-package io.github.drakonforge.outspoken.ecs.system.chatbubble;
+package io.github.drakonforge.outspoken.ecs.system.speechbubble;
 
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -12,7 +12,7 @@ import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class RemoveChatBubbleOnDeath extends DeathSystems.OnDeathSystem {
+public class RemoveSpeechBubbleOnDeath extends DeathSystems.OnDeathSystem {
 
     @Override
     public void onComponentAdded(@NonNullDecl Ref<EntityStore> ref,
