@@ -18,6 +18,7 @@ import io.github.drakonforge.outspoken.OutspokenPlugin;
 import io.github.drakonforge.outspoken.database.response.PlainTextResponse;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
+import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
 import io.github.drakonforge.outspoken.database.response.Response;
@@ -59,6 +60,8 @@ public class QueryDatabaseSpeechSystem extends SpeechEventSystem {
         assert transform != null;
         DisplayNameComponent displayNameComponent = archetypeChunk.getComponent(i, DisplayNameComponent.getComponentType());
         assert displayNameComponent != null;
+        SpeechStateComponent speechStateComponent = archetypeChunk.getComponent(i, SpeechStateComponent.getComponentType());
+        assert speechStateComponent != null;
         Response response = bestMatch.response();
         // TODO: Eventually support fancier speech responses
         if (response instanceof PlainTextResponse plainTextResponse) {
@@ -67,6 +70,7 @@ public class QueryDatabaseSpeechSystem extends SpeechEventSystem {
             // TODO: Also add on the NPC's name, possibly as a separate option;
             SpeechResult speechResult = new SpeechResult(displayNameComponent.getDisplayName(), Message.raw(option), transform.getPosition().clone());
             speechEvent.setSpeechResult(speechResult);
+            speechStateComponent.setSpeechCooldown(3.0f); // TODO: Calculate how long the line should take
         } else {
             LOGGER.atWarning().log("Speech response type currently not supported: " + response.getType());
         }
@@ -86,6 +90,7 @@ public class QueryDatabaseSpeechSystem extends SpeechEventSystem {
     @Override
     public Query<EntityStore> getQuery() {
         return Query.and(SpeechbankComponent.getComponentType(), EntityContextComponent.getComponentType(),
-                TransformComponent.getComponentType(), DisplayNameComponent.getComponentType());
+                TransformComponent.getComponentType(), DisplayNameComponent.getComponentType(),
+                SpeechStateComponent.getComponentType());
     }
 }

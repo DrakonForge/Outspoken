@@ -11,6 +11,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenConfig;
+import io.github.drakonforge.outspoken.OutspokenConfig.ChatMessageMode;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
@@ -37,10 +38,10 @@ public class ChatSpeechEventSystem extends SpeechEventSystem {
         Message speakerName = result.displayName();
         // Message outputLine = Message.translation("chat.outspoken.speechLine").param("speaker", speakerName).param("message", speechLine);
         // TODO: Replace with translation once I figure out how to fix it
-        Message outputLine = Message.join(speakerName, Message.raw("(NPC): "), speechLine);
-        if (config.isUniversalSpeechMessages()) {
+        Message outputLine = Message.join(speakerName, Message.raw(" (NPC): "), speechLine);
+        if (config.getChatMessageMode() == ChatMessageMode.World) {
             world.sendMessage(outputLine);
-        } else {
+        } else if (config.getChatMessageMode() == ChatMessageMode.Local) {
             float maxDistance = config.getSpeechMessageVisibleDistance();
             store.forEachEntityParallel(Query.and(PlayerRef.getComponentType(), TransformComponent.getComponentType()), (index, chunk, buffer) -> {
                 TransformComponent transform = chunk.getComponent(index, TransformComponent.getComponentType());

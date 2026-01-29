@@ -21,12 +21,17 @@ import io.github.drakonforge.outspoken.ecs.component.PreviousStateComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
+import io.github.drakonforge.outspoken.ecs.system.CooldownSpeechStateSystem;
 import io.github.drakonforge.outspoken.ecs.system.InitDefaultNpcSpeechbankSystem;
+import io.github.drakonforge.outspoken.ecs.system.InitSpeechStateSystem;
 import io.github.drakonforge.outspoken.ecs.system.chatbubble.ChatBubbleExpirySystem;
 import io.github.drakonforge.outspoken.ecs.system.chatbubble.ChatBubbleTextDisplaySystem;
+import io.github.drakonforge.outspoken.ecs.system.chatbubble.RemoveChatBubbleOnDeath;
+import io.github.drakonforge.outspoken.ecs.system.chatbubble.RemoveChatBubbleOnUnload;
 import io.github.drakonforge.outspoken.ecs.system.speechevent.ChatBubbleSpeechEventSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechevent.ChatSpeechEventSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechevent.LogSpeechEventSystem;
+import io.github.drakonforge.outspoken.ecs.system.speechevent.SkipSpeechEventIfBusySystem;
 import io.github.drakonforge.outspoken.ecs.system.speechtrigger.DamageTakenSpeechSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechtrigger.AmbientSpeechSystem;
 import io.github.drakonforge.outspoken.ecs.system.EntityContextUpdateThrottleSystem;
@@ -88,6 +93,7 @@ public class OutspokenPlugin extends JavaPlugin {
         this.speechbankComponentType = entityStoreRegistry.registerComponent(SpeechbankComponent.class, "Speechbank", SpeechbankComponent.CODEC);
         this.previousStateComponentType = entityStoreRegistry.registerComponent(PreviousStateComponent.class, PreviousStateComponent::new);
         this.chatBubbleComponentType = entityStoreRegistry.registerComponent(ChatBubbleComponent.class, ChatBubbleComponent::new);  // TODO: Remove chat bubble entity on world restart
+        this.speechStateComponentType = entityStoreRegistry.registerComponent(SpeechStateComponent.class, SpeechStateComponent::new);
 
         this.gatherSpeechEventGroup = entityStoreRegistry.registerSystemGroup();
         this.initSpeechEventGroup = entityStoreRegistry.registerSystemGroup();
@@ -97,8 +103,11 @@ public class OutspokenPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new InitDefaultNpcSpeechbankSystem());
         entityStoreRegistry.registerSystem(new ChangeNpcStateSystem());
         entityStoreRegistry.registerSystem(new EntityContextUpdateThrottleSystem(this.entityContextComponentType));
+        entityStoreRegistry.registerSystem(new CooldownSpeechStateSystem());
+        entityStoreRegistry.registerSystem(new InitSpeechStateSystem());
 
         // Speech event - Init context
+        entityStoreRegistry.registerSystem(new SkipSpeechEventIfBusySystem());
         // entityStoreRegistry.registerSystem(new SkipSpeechEventSystem());
 
         // Speech event - Gather context
@@ -127,8 +136,11 @@ public class OutspokenPlugin extends JavaPlugin {
         // NPCPlugin.get().getBuilderManager().registerFactory(speechbankFactory);
         // NPCPlugin.get().registerCoreComponentType("Speechbank", BuilderSpeechbank::new);
 
+        // Chat Bubble
         entityStoreRegistry.registerSystem(new ChatBubbleExpirySystem());
         entityStoreRegistry.registerSystem(new ChatBubbleTextDisplaySystem());
+        entityStoreRegistry.registerSystem(new RemoveChatBubbleOnDeath());
+        entityStoreRegistry.registerSystem(new RemoveChatBubbleOnUnload());
 
         this.getCommandRegistry().registerCommand(new OutspokenCommand());
 

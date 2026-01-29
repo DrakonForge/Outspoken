@@ -1,7 +1,10 @@
 package io.github.drakonforge.outspoken.util;
 
+import com.hypixel.hytale.component.AddReason;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.RemoveReason;
+import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
 import com.hypixel.hytale.server.core.Message;
@@ -13,9 +16,11 @@ import com.hypixel.hytale.server.core.modules.entity.tracker.NetworkId;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.ecs.component.ChatBubbleComponent;
+import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
+import javax.annotation.Nullable;
 
-public final class ChatBubbleHelpers {
-    public static void createChatBubble(World world, Ref<EntityStore> origin, Vector3d position, Message fullText) {
+public final class SpeechHelpers {
+    public static void createChatBubble(World world, Ref<EntityStore> anchor, @Nullable SpeechStateComponent speechStateComponent, Vector3d position, Message fullText) {
         world.execute(() -> {
             Holder<EntityStore> holder = EntityStore.REGISTRY.newHolder();
             ProjectileComponent projectileComponent = new ProjectileComponent("Projectile");
@@ -33,9 +38,18 @@ public final class ChatBubbleHelpers {
 
             holder.addComponent(NetworkId.getComponentType(), new NetworkId(world.getEntityStore().getStore().getExternalData().takeNextNetworkId()));
             // TODO: Set origin
-            holder.addComponent(ChatBubbleComponent.getComponentType(), new ChatBubbleComponent(fullText));
+            holder.addComponent(ChatBubbleComponent.getComponentType(), new ChatBubbleComponent(fullText, anchor));
 
-            world.getEntityStore().getStore().addEntity(holder, com.hypixel.hytale.component.AddReason.SPAWN);
+            Store<EntityStore> store = world.getEntityStore().getStore();
+            Ref<EntityStore> ref = store.addEntity(holder, AddReason.SPAWN);
+
+            if (speechStateComponent != null) {
+                Ref<EntityStore> oldRef = speechStateComponent.getChatBubble();
+                if (oldRef != null && oldRef.isValid()) {
+                    store.removeEntity(oldRef, RemoveReason.REMOVE);
+                }
+                speechStateComponent.setChatBubble(ref);
+            }
         });
     }
 }

@@ -24,7 +24,8 @@ public class ChatBubbleExpirySystem extends EntityTickingSystem<EntityStore> {
         assert chatBubble != null;
 
         chatBubble.addAge(v);
-        if (chatBubble.getAge() > EXPIRY_TIME) {
+        Ref<EntityStore> anchor = chatBubble.getAnchor();
+        if (chatBubble.getAge() > EXPIRY_TIME || anchor == null || !anchor.isValid()) {
             commandBuffer.removeEntity(ref, RemoveReason.REMOVE);
         }
     }

@@ -3,6 +3,7 @@ package io.github.drakonforge.outspoken;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.codec.codecs.map.Object2FloatMapCodec;
 import io.github.drakonforge.outspoken.util.SpeechEvents;
@@ -32,9 +33,13 @@ public class OutspokenConfig {
                     (config, value) -> config.speechMessageVisibleDistance = value,
                     OutspokenConfig::getSpeechMessageVisibleDistance)
             .add()
-            .append(new KeyedCodec<>("UniversalSpeechMessages", Codec.BOOLEAN),
-                    (config, value) -> config.universalSpeechMessages = value,
-                    OutspokenConfig::isUniversalSpeechMessages)
+            .append(new KeyedCodec<>("ChatMessageMode", new EnumCodec<>(ChatMessageMode.class)),
+                    (config, value) -> config.chatMessageMode = value,
+                    OutspokenConfig::getChatMessageMode)
+            .add()
+            .append(new KeyedCodec<>("ChatBubbleMode", new EnumCodec<>(ChatBubbleMode.class)),
+                    (config, value) -> config.chatBubbleMode = value,
+                    OutspokenConfig::getChatBubbleMode)
             .add()
             .build();
 
@@ -46,19 +51,31 @@ public class OutspokenConfig {
 
     private static Object2FloatMap<String> createDefaultSpeechEventFrequencyMap() {
         Object2FloatMap<String> eventFrequencyMap = new Object2FloatOpenHashMap<>();
-        eventFrequencyMap.put(SpeechEvents.AMBIENT_IDLE_MODIFIER, 0.01f);
-        eventFrequencyMap.put(SpeechEvents.AMBIENT, 0.1f);
+        eventFrequencyMap.put(SpeechEvents.AMBIENT_IDLE_MODIFIER, 0.05f);
+        eventFrequencyMap.put(SpeechEvents.AMBIENT, 0.05f);
         eventFrequencyMap.put(SpeechEvents.GREETING, 0.25f);
         eventFrequencyMap.put(SpeechEvents.STATE_CHANGE, 1.0f);
         eventFrequencyMap.put(SpeechEvents.DAMAGE_TAKEN, 0.5f);
         return eventFrequencyMap;
     }
 
+    public enum ChatMessageMode {
+        Never,
+        Local,
+        World;
+    }
+
+    public enum ChatBubbleMode {
+        Never,
+        Always
+    }
+
     private float contextThrottleCooldown = 1.0f;
     private Map<String, String> speechGroupMap = createDefaultSpeechGroupMap();
     private Object2FloatMap<String> speechEventFrequencyMap = createDefaultSpeechEventFrequencyMap();
     private float speechMessageVisibleDistance = 64.0f;
-    private boolean universalSpeechMessages = false;
+    private ChatMessageMode chatMessageMode = ChatMessageMode.Local;
+    private ChatBubbleMode chatBubbleMode = ChatBubbleMode.Always;
 
     public OutspokenConfig() {}
 
@@ -74,8 +91,12 @@ public class OutspokenConfig {
         return speechMessageVisibleDistance;
     }
 
-    public boolean isUniversalSpeechMessages() {
-        return universalSpeechMessages;
+    public ChatBubbleMode getChatBubbleMode() {
+        return chatBubbleMode;
+    }
+
+    public ChatMessageMode getChatMessageMode() {
+        return chatMessageMode;
     }
 
     @Nullable
