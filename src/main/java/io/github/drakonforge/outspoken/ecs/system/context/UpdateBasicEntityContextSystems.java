@@ -5,8 +5,13 @@ import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.math.vector.Vector3d;
+import com.hypixel.hytale.protocol.MovementStates;
+import com.hypixel.hytale.server.core.asset.type.entityeffect.config.EntityEffect;
 import com.hypixel.hytale.server.core.entity.damage.DamageDataComponent;
+import com.hypixel.hytale.server.core.entity.effect.ActiveEntityEffect;
+import com.hypixel.hytale.server.core.entity.effect.EffectControllerComponent;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
 import com.hypixel.hytale.server.core.inventory.Inventory;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
@@ -17,12 +22,13 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import com.hypixel.hytale.server.npc.role.Role;
-import com.hypixel.hytale.server.npc.role.support.MarkedEntitySupport;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.event.UpdateEntityContextEvent;
 import io.github.drakonforge.outspoken.util.NpcHelpers;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -86,7 +92,7 @@ public final class UpdateBasicEntityContextSystems {
         }
     }
 
-    public static class UpdatePosition extends EntityContextSystem {
+    public static class UpdateLocation extends EntityContextSystem {
         @Override
         public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                 @NonNullDecl Store<EntityStore> store,
@@ -100,12 +106,80 @@ public final class UpdateBasicEntityContextSystems {
             context.set("X", (float) position.getX());
             context.set("Y", (float) position.getY());
             context.set("Z", (float) position.getZ());
+
+            // TODO: Can we grab region info too?
         }
 
         @NullableDecl
         @Override
         public Query<EntityStore> getQuery() {
             return Query.and(EntityContextComponent.getComponentType(), TransformComponent.getComponentType());
+        }
+    }
+
+    public static class UpdateEffects extends EntityContextSystem {
+        @Override
+        public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                @NonNullDecl Store<EntityStore> store,
+                @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
+                @NonNullDecl UpdateEntityContextEvent updateEntityContextEvent) {
+            ContextTable context = updateEntityContextEvent.getEntityContext();
+            EffectControllerComponent effectControllerComponent = archetypeChunk.getComponent(i, EffectControllerComponent.getComponentType());
+            assert effectControllerComponent != null;
+
+            ActiveEntityEffect[] effects = effectControllerComponent.getAllActiveEntityEffects();
+            if (effects == null) {
+                return;
+            }
+            Set<String> activeEffectIds = new HashSet<>();
+            for (ActiveEntityEffect effect : effects) {
+                int effectIndex = effect.getEntityEffectIndex();
+                EntityEffect entityEffect = EntityEffect.getAssetMap().getAsset(effectIndex);
+                if (entityEffect != null) {
+                    activeEffectIds.add(entityEffect.getId());
+                }
+            }
+
+            context.set("ActiveEffects", activeEffectIds);
+        }
+
+        @NullableDecl
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.and(EntityContextComponent.getComponentType(), EffectControllerComponent.getComponentType());
+        }
+    }
+
+    public static class UpdateMovementState extends EntityContextSystem {
+        @Override
+        public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                @NonNullDecl Store<EntityStore> store,
+                @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
+                @NonNullDecl UpdateEntityContextEvent updateEntityContextEvent) {
+            ContextTable context = updateEntityContextEvent.getEntityContext();
+            MovementStatesComponent movementStatesComponent = archetypeChunk.getComponent(i, MovementStatesComponent.getComponentType());
+            assert movementStatesComponent != null;
+
+            MovementStates movementStates = movementStatesComponent.getMovementStates();
+            context.set("Crouching", movementStates.crouching || movementStates.forcedCrouching);
+            context.set("Walking", movementStates.walking);
+            context.set("Idle", movementStates.idle);
+            context.set("Flying", movementStates.flying);
+            context.set("Running", movementStates.running);
+            context.set("Sprinting", movementStates.sprinting);
+            context.set("Swimming", movementStates.swimming);
+            context.set("Sitting", movementStates.sitting);
+            context.set("Sleeping", movementStates.sleeping);
+            context.set("Gliding", movementStates.gliding);
+            context.set("Climbing", movementStates.climbing || movementStates.mantling);
+            context.set("InFluid", movementStates.inFluid);
+            context.set("OnGround", movementStates.onGround);
+        }
+
+        @NullableDecl
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.and(EntityContextComponent.getComponentType(), MovementStatesComponent.getComponentType());
         }
     }
 

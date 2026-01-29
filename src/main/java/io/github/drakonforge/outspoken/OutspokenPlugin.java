@@ -24,6 +24,7 @@ import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
 import io.github.drakonforge.outspoken.ecs.system.CooldownSpeechStateSystem;
 import io.github.drakonforge.outspoken.ecs.system.InitDefaultNpcSpeechbankSystem;
 import io.github.drakonforge.outspoken.ecs.system.InitSpeechStateSystem;
+import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicEntityContextSystems.UpdateLocation;
 import io.github.drakonforge.outspoken.ecs.system.speechbubble.RemoveSpeechBubbleOnUnload;
 import io.github.drakonforge.outspoken.ecs.system.speechbubble.SpeechBubbleExpirySystem;
 import io.github.drakonforge.outspoken.ecs.system.speechbubble.SpeechBubbleTextDisplaySystem;
@@ -127,10 +128,12 @@ public class OutspokenPlugin extends JavaPlugin {
         // Context update systems
         entityStoreRegistry.registerSystem(new UpdateBasicWorldContextSystem());
         entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdateEntityStats());
-        entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdatePosition());
+        entityStoreRegistry.registerSystem(new UpdateLocation());
         entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdateNpc());
         entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdatePlayer());
         entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdateInCombat());
+        entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdateMovementState());
+        entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdateEffects());
 
         // BuilderFactory<SpeechbankComponent> speechbankFactory = new BuilderFactory<>(SpeechbankComponent.class, "Type", BuilderSpeechbank::new);
         // NPCPlugin.get().getBuilderManager().registerFactory(speechbankFactory);

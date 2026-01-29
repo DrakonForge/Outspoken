@@ -15,6 +15,30 @@
         "Priority": 1,
         "Criteria": [
           {
+            "Type": "Range",
+            "Value": {
+              "Type": "Range",
+              "Range": {
+                "Min": 6,
+                "Max": 18,
+                "MaxExclusive": true
+              }
+            },
+            "Table": "World",
+            "Key": "Hour"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Ah, what a nice day!"
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Criteria": [
+          {
             "Type": "Equals",
             "Value": {
               "Type": "Boolean",
@@ -22,37 +46,85 @@
             },
             "Table": "Speaker",
             "Key": "InCombat"
+          },
+          {
+            "Type": "Range",
+            "Value": {
+              "Type": "Range",
+              "Range": {
+                "Min": 8,
+                "MinExclusive": true
+              }
+            },
+            "Table": "Event",
+            "Key": "Distance"
           }
         ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
-            "Get 'em!"
+            "Hey, get back here!",
+            "You're not getting away so easily!"
           ]
         }
-      }
-    ],
-    "Greeting": [
+      },
       {
-        "Priority": 1,
+        "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Range",
+            "Value": {
+              "Type": "Range",
+              "Range": {
+                "Min": 12,
+                "Max": 19,
+                "MaxExclusive": true
+              }
+            },
+            "Table": "World",
+            "Key": "Hour"
+          },
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": true
+            },
+            "Table": "Listener",
+            "Key": "Sleeping"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "It's far too early to be going to bed, my friend!"
+          ]
+        }
+      },
+      {
+        "Priority": 11,
         "Criteria": [
           {
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Confused"
+              "String": "Burn"
             },
             "Table": "Speaker",
-            "Key": "Traits"
+            "Key": "ActiveEffects"
           }
         ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
-            "Wha?"
+            "Ah! I'm burning!",
+            "Help! I'm on fire!",
+            "Someone help me!"
           ]
         }
-      },
+      }
+    ],
+    "Greeting": [
       {
         "Priority": 1,
         "Criteria": [
@@ -146,7 +218,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "String": "Idle."
             },
             "Table": "Event",
             "Key": "PrevState"
@@ -155,7 +227,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Attack"
+              "String": "Attack."
             },
             "Table": "Event",
             "Key": "State"
@@ -175,7 +247,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Attack"
+              "String": "Attack."
             },
             "Table": "Event",
             "Key": "PrevState"
@@ -184,7 +256,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "String": "Idle."
             },
             "Table": "Event",
             "Key": "State"
@@ -204,7 +276,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Attack"
+              "String": "Attack."
             },
             "Table": "Event",
             "Key": "PrevState"
@@ -213,7 +285,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Search"
+              "String": "Search."
             },
             "Table": "Event",
             "Key": "State"
@@ -223,7 +295,7 @@
           "Type": "PlainText",
           "Entries": [
             "Where'd you go?",
-            "There's no hiding from us..."
+            "There's no hiding from me..."
           ]
         }
       },
@@ -234,7 +306,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "String": "Idle."
             },
             "Table": "Event",
             "Key": "PrevState"
@@ -243,7 +315,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Alerted"
+              "String": "Alerted."
             },
             "Table": "Event",
             "Key": "State"
@@ -252,36 +324,38 @@
         "Response": {
           "Type": "PlainText",
           "Entries": [
-            "Intruder!"
-          ]
-        }
-      },
-      {
-        "Priority": 2,
-        "Criteria": [
-          {
-            "Type": "Includes",
-            "Value": {
-              "Type": "String",
-              "String": "Alerted"
-            },
-            "Table": "Event",
-            "Key": "PrevState"
-          },
-          {
-            "Type": "Includes",
-            "Value": {
-              "Type": "String",
-              "String": "Idle"
-            },
-            "Table": "Event",
-            "Key": "State"
-          }
-        ],
-        "Response": {
-          "Type": "PlainText",
-          "Entries": [
+            "Intruder!",
             "Now I have you!"
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Alerted."
+            },
+            "Table": "Event",
+            "Key": "PrevState"
+          },
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Idle."
+            },
+            "Table": "Event",
+            "Key": "State"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Must've been the wind...",
+            "Hm...nothing."
           ]
         }
       }
@@ -315,6 +389,29 @@
           "Type": "PlainText",
           "Entries": [
             "Attacking me on this fine morning? How dare you!"
+          ]
+        }
+      },
+      {
+        "Priority": 1,
+        "Criteria": [
+          {
+            "Type": "Range",
+            "Value": {
+              "Type": "Range",
+              "Range": {
+                "Min": 0.8,
+                "MinExclusive": true
+              }
+            },
+            "Table": "Speaker",
+            "Key": "HealthPercentage"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Ha! Is that all you got?"
           ]
         }
       },
