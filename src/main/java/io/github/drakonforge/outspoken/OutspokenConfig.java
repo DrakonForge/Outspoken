@@ -28,6 +28,14 @@ public class OutspokenConfig {
                     (config, value) -> config.speechEventFrequencyMap = value,
                     OutspokenConfig::getSpeechEventFrequencyMap)
             .add()
+            .append(new KeyedCodec<>("SpeechMessageVisibleDistance", Codec.FLOAT),
+                    (config, value) -> config.speechMessageVisibleDistance = value,
+                    OutspokenConfig::getSpeechMessageVisibleDistance)
+            .add()
+            .append(new KeyedCodec<>("UniversalSpeechMessages", Codec.BOOLEAN),
+                    (config, value) -> config.universalSpeechMessages = value,
+                    OutspokenConfig::isUniversalSpeechMessages)
+            .add()
             .build();
 
     private static Map<String, String> createDefaultSpeechGroupMap() {
@@ -49,6 +57,8 @@ public class OutspokenConfig {
     private float contextThrottleCooldown = 1.0f;
     private Map<String, String> speechGroupMap = createDefaultSpeechGroupMap();
     private Object2FloatMap<String> speechEventFrequencyMap = createDefaultSpeechEventFrequencyMap();
+    private float speechMessageVisibleDistance = 64.0f;
+    private boolean universalSpeechMessages = false;
 
     public OutspokenConfig() {}
 
@@ -58,6 +68,14 @@ public class OutspokenConfig {
 
     protected Object2FloatMap<String> getSpeechEventFrequencyMap() {
         return speechEventFrequencyMap;
+    }
+
+    public float getSpeechMessageVisibleDistance() {
+        return speechMessageVisibleDistance;
+    }
+
+    public boolean isUniversalSpeechMessages() {
+        return universalSpeechMessages;
     }
 
     @Nullable

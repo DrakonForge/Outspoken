@@ -1,5 +1,6 @@
 package io.github.drakonforge.outspoken.ecs.system.speechevent;
 
+import com.hypixel.hytale.common.util.FormatUtil;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Store;
@@ -8,9 +9,12 @@ import com.hypixel.hytale.component.dependency.Order;
 import com.hypixel.hytale.component.dependency.SystemGroupDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenApi;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
+import io.github.drakonforge.outspoken.database.response.PlainTextResponse;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
@@ -18,11 +22,15 @@ import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
 import io.github.drakonforge.outspoken.database.response.Response;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.BestMatch;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.QueryReturnCode;
+import io.github.drakonforge.outspoken.speech.SpeechResult;
 import java.util.Set;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class QuerySpeechSystem extends SpeechEventSystem {
+// This is the critical system that makes speech work. Upon receiving a speech event and gathering
+// all the context, it queries the database and creates the result. Then inspect events can
+// handle how the result is displayed.
+public class QueryDatabaseSpeechSystem extends SpeechEventSystem {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
@@ -32,8 +40,10 @@ public class QuerySpeechSystem extends SpeechEventSystem {
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
             @NonNullDecl SpeechEvent speechEvent) {
         LOGGER.atFine().log("Starting query");
+        long startTime = System.nanoTime();
         BestMatch bestMatch = OutspokenApi.getDatabase().queryBestMatch(speechEvent.getQuery());
-        LOGGER.atFine().log("Finished query");
+        long endTime = System.nanoTime();
+        LOGGER.atFine().log("Finished query in " + FormatUtil.nanosToString(endTime - startTime));
 
         RulebankQuery query = speechEvent.getQuery();
 
@@ -41,9 +51,20 @@ public class QuerySpeechSystem extends SpeechEventSystem {
         if (bestMatch.code() != QueryReturnCode.SUCCESS) {
             LOGGER.atInfo().log("Query failed with status code: " + bestMatch.code().name() + " for " + query.getGroup() + "." + query.getCategory());
             speechEvent.setCancelled(true);
+            return;
+        }
+
+        TransformComponent transform = archetypeChunk.getComponent(i, TransformComponent.getComponentType());
+        assert transform != null;
+        Response response = bestMatch.response();
+        // TODO: Eventually support fancier speech responses
+        if (response instanceof PlainTextResponse plainTextResponse) {
+            String option = plainTextResponse.getRandomOption();
+            // TODO: Do text replacement and other parsing here
+            // TODO: Also add on the NPC's name, possibly as a separate option
+            speechEvent.setSpeechResult(new SpeechResult(Message.raw(option), transform.getPosition()));
         } else {
-            Response response = bestMatch.response();
-            speechEvent.setResponse(response);
+            LOGGER.atWarning().log("Speech response type currently not supported: " + response.getType());
         }
     }
 
@@ -60,6 +81,7 @@ public class QuerySpeechSystem extends SpeechEventSystem {
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(SpeechbankComponent.getComponentType(), EntityContextComponent.getComponentType());
+        return Query.and(SpeechbankComponent.getComponentType(), EntityContextComponent.getComponentType(),
+                TransformComponent.getComponentType());
     }
 }

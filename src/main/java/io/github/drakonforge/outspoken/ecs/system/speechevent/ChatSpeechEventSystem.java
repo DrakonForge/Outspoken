@@ -5,8 +5,12 @@ import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.SystemGroup;
 import com.hypixel.hytale.component.query.Query;
-import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.outspoken.OutspokenConfig;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
@@ -15,9 +19,7 @@ import io.github.drakonforge.outspoken.speech.SpeechResult;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class LogSpeechEventSystem extends SpeechEventSystem {
-
-    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+public class ChatSpeechEventSystem extends SpeechEventSystem{
 
     @Override
     public void handleSpeechEvent(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
@@ -29,7 +31,23 @@ public class LogSpeechEventSystem extends SpeechEventSystem {
             return;
         }
 
-        LOGGER.atInfo().log(result.text().getAnsiMessage());
+        OutspokenConfig config = OutspokenPlugin.getInstance().getConfig().get();
+        World world = store.getExternalData().getWorld();
+        if (config.isUniversalSpeechMessages()) {
+            world.sendMessage(result.text());
+        } else {
+            float maxDistance = config.getSpeechMessageVisibleDistance();
+            store.forEachEntityParallel(Query.and(PlayerRef.getComponentType(), TransformComponent.getComponentType()), (index, chunk, buffer) -> {
+                TransformComponent transform = chunk.getComponent(index, TransformComponent.getComponentType());
+                assert transform != null;
+                if (transform.getPosition().distanceSquaredTo(result.origin()) <= maxDistance * maxDistance) {
+                    PlayerRef playerRefComponent = chunk.getComponent(index, PlayerRef.getComponentType());
+                    assert playerRefComponent != null;
+                    playerRefComponent.sendMessage(result.text());
+                }
+            });
+        }
+
     }
 
     @NullableDecl

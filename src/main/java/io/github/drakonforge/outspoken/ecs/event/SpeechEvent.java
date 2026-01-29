@@ -2,9 +2,10 @@ package io.github.drakonforge.outspoken.ecs.event;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.system.CancellableEcsEvent;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.outspoken.database.response.Response;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
+import io.github.drakonforge.outspoken.speech.SpeechResult;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -15,7 +16,7 @@ public class SpeechEvent extends CancellableEcsEvent {
     @Nonnull
     private final RulebankQuery query;
 
-    private Response response = null;
+    private SpeechResult speechResult = null;
 
     public SpeechEvent(@Nonnull RulebankQuery query) {
         this.query = query;
@@ -25,8 +26,8 @@ public class SpeechEvent extends CancellableEcsEvent {
         this.listener = listener;
     }
 
-    public void setResponse(Response response) {
-        this.response = response;
+    public void setSpeechResult(SpeechResult response) {
+        this.speechResult = response;
     }
 
     @Nonnull
@@ -39,7 +40,7 @@ public class SpeechEvent extends CancellableEcsEvent {
         return listener;
     }
 
-    public Response getResponse() {
-        return response;
+    public SpeechResult getSpeechResult() {
+        return speechResult;
     }
 }

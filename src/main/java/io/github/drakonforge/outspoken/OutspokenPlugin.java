@@ -20,6 +20,7 @@ import io.github.drakonforge.outspoken.ecs.component.PreviousStateComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.resource.WorldContextResource;
 import io.github.drakonforge.outspoken.ecs.system.InitDefaultNpcSpeechbankSystem;
+import io.github.drakonforge.outspoken.ecs.system.speechevent.ChatSpeechEventSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechevent.LogSpeechEventSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechtrigger.DamageTakenSpeechSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechtrigger.AmbientSpeechSystem;
@@ -29,7 +30,7 @@ import io.github.drakonforge.outspoken.ecs.system.InitResourceSystem;
 import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicEntityContextSystems;
 import io.github.drakonforge.outspoken.ecs.system.speechevent.GatherBasicSpeechContextSystem;
 import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicWorldContextSystem;
-import io.github.drakonforge.outspoken.ecs.system.speechevent.QuerySpeechSystem;
+import io.github.drakonforge.outspoken.ecs.system.speechevent.QueryDatabaseSpeechSystem;
 import io.github.drakonforge.outspoken.ecs.system.ChangeNpcStateSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechtrigger.StateChangeSpeechSystem;
 import javax.annotation.Nonnull;
@@ -47,7 +48,7 @@ public class OutspokenPlugin extends JavaPlugin {
         return instance;
     }
 
-    private Config<OutspokenConfig> config;
+    private final Config<OutspokenConfig> config;
     private ComponentType<EntityStore, EntityContextComponent> entityContextComponentType;
     private ComponentType<EntityStore, SpeechbankComponent> speechbankComponentType;
     private ResourceType<EntityStore, WorldContextResource> worldContextResourceType;
@@ -93,8 +94,9 @@ public class OutspokenPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new GatherBasicSpeechContextSystem());
 
         // Speech event - Query and inspect
-        entityStoreRegistry.registerSystem(new QuerySpeechSystem());
+        entityStoreRegistry.registerSystem(new QueryDatabaseSpeechSystem());
         entityStoreRegistry.registerSystem(new LogSpeechEventSystem());
+        entityStoreRegistry.registerSystem(new ChatSpeechEventSystem());
 
         // Triggers speech queries
         entityStoreRegistry.registerSystem(new AmbientSpeechSystem());
