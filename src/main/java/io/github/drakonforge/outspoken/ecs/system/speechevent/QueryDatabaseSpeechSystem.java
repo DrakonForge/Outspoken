@@ -10,6 +10,7 @@ import com.hypixel.hytale.component.dependency.SystemGroupDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenApi;
@@ -56,13 +57,16 @@ public class QueryDatabaseSpeechSystem extends SpeechEventSystem {
 
         TransformComponent transform = archetypeChunk.getComponent(i, TransformComponent.getComponentType());
         assert transform != null;
+        DisplayNameComponent displayNameComponent = archetypeChunk.getComponent(i, DisplayNameComponent.getComponentType());
+        assert displayNameComponent != null;
         Response response = bestMatch.response();
         // TODO: Eventually support fancier speech responses
         if (response instanceof PlainTextResponse plainTextResponse) {
             String option = plainTextResponse.getRandomOption();
             // TODO: Do text replacement and other parsing here
-            // TODO: Also add on the NPC's name, possibly as a separate option
-            speechEvent.setSpeechResult(new SpeechResult(Message.raw(option), transform.getPosition()));
+            // TODO: Also add on the NPC's name, possibly as a separate option;
+            SpeechResult speechResult = new SpeechResult(displayNameComponent.getDisplayName(), Message.raw(option), transform.getPosition().clone());
+            speechEvent.setSpeechResult(speechResult);
         } else {
             LOGGER.atWarning().log("Speech response type currently not supported: " + response.getType());
         }
@@ -82,6 +86,6 @@ public class QueryDatabaseSpeechSystem extends SpeechEventSystem {
     @Override
     public Query<EntityStore> getQuery() {
         return Query.and(SpeechbankComponent.getComponentType(), EntityContextComponent.getComponentType(),
-                TransformComponent.getComponentType());
+                TransformComponent.getComponentType(), DisplayNameComponent.getComponentType());
     }
 }

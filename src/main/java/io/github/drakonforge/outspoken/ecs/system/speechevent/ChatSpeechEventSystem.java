@@ -19,7 +19,7 @@ import io.github.drakonforge.outspoken.speech.SpeechResult;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class ChatSpeechEventSystem extends SpeechEventSystem{
+public class ChatSpeechEventSystem extends SpeechEventSystem {
 
     @Override
     public void handleSpeechEvent(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
@@ -33,8 +33,13 @@ public class ChatSpeechEventSystem extends SpeechEventSystem{
 
         OutspokenConfig config = OutspokenPlugin.getInstance().getConfig().get();
         World world = store.getExternalData().getWorld();
+        Message speechLine = result.text();
+        Message speakerName = result.displayName();
+        // Message outputLine = Message.translation("chat.outspoken.speechLine").param("speaker", speakerName).param("message", speechLine);
+        // TODO: Replace with translation once I figure out how to fix it
+        Message outputLine = Message.join(speakerName, Message.raw("(NPC): "), speechLine);
         if (config.isUniversalSpeechMessages()) {
-            world.sendMessage(result.text());
+            world.sendMessage(outputLine);
         } else {
             float maxDistance = config.getSpeechMessageVisibleDistance();
             store.forEachEntityParallel(Query.and(PlayerRef.getComponentType(), TransformComponent.getComponentType()), (index, chunk, buffer) -> {
@@ -43,11 +48,10 @@ public class ChatSpeechEventSystem extends SpeechEventSystem{
                 if (transform.getPosition().distanceSquaredTo(result.origin()) <= maxDistance * maxDistance) {
                     PlayerRef playerRefComponent = chunk.getComponent(index, PlayerRef.getComponentType());
                     assert playerRefComponent != null;
-                    playerRefComponent.sendMessage(result.text());
+                    playerRefComponent.sendMessage(outputLine);
                 }
             });
         }
-
     }
 
     @NullableDecl
