@@ -15,6 +15,7 @@ import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.ecs.event.ChangeNpcStateEvent;
 import io.github.drakonforge.outspoken.util.ContextTables;
+import io.github.drakonforge.outspoken.util.NpcHelpers;
 import io.github.drakonforge.outspoken.util.SpeechEvents;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -32,12 +33,12 @@ public class StateChangeSpeechSystem extends EntityEventSystem<EntityStore, Chan
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
             @NonNullDecl ChangeNpcStateEvent changeNpcStateEvent) {
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
+        Ref<EntityStore> target = NpcHelpers.getLockedTarget(ref, store);
         LOGGER.atInfo().log("State change from " + changeNpcStateEvent.getPrevState() + " to " + changeNpcStateEvent.getCurrentState());
-        OutspokenApi.triggerSpeechEvent(store, ref, SpeechEvents.STATE_CHANGE, query -> {
-            ContextTable contextTable = OutspokenApi.createBlankContextTable();
+        OutspokenApi.triggerSpeechEvent(store, SpeechEvents.STATE_CHANGE, ref, target, query -> {
+            ContextTable contextTable = query.getOrCreateContextTable(ContextTables.EVENT);
             contextTable.set("State", changeNpcStateEvent.getCurrentState());
             contextTable.set("PrevState", changeNpcStateEvent.getPrevState());
-            query.addContextTable(ContextTables.EVENT, contextTable);
         });
     }
 

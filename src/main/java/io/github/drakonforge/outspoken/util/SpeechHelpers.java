@@ -15,11 +15,22 @@ import com.hypixel.hytale.server.core.modules.entity.component.TransformComponen
 import com.hypixel.hytale.server.core.modules.entity.tracker.NetworkId;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.outspoken.database.context.ContextTable;
+import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import io.github.drakonforge.outspoken.ecs.component.SpeechBubbleComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
 import javax.annotation.Nullable;
 
 public final class SpeechHelpers {
+    @Nullable
+    public static String getListenerName(RulebankQuery query) {
+        ContextTable listenerTable = query.getContextTable(ContextTables.LISTENER);
+        if (listenerTable != null) {
+            return listenerTable.getStringOrDefault("Name", null);
+        }
+        return null;
+    }
+
     public static void createSpeechBubble(World world, Ref<EntityStore> anchor, @Nullable SpeechStateComponent speechStateComponent, Vector3d position, Message fullText) {
         world.execute(() -> {
             Holder<EntityStore> holder = EntityStore.REGISTRY.newHolder();

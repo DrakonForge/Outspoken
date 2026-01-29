@@ -32,7 +32,7 @@ public final class OutspokenApi {
     // This library doesn't only work on speech, but we provide some methods to support it
 
     public static void triggerSpeechEvent(@Nonnull Store<EntityStore> store,
-            @Nonnull Ref<EntityStore> originRef, String category,
+            @Nonnull String category, @Nonnull Ref<EntityStore> originRef, @Nullable Ref<EntityStore> listenerRef,
             @Nullable Consumer<RulebankQuery> modifyQuery) {
         if (OutspokenPlugin.getInstance().getConfig().get().shouldSkipEvent(category)) {
             return;
@@ -49,12 +49,15 @@ public final class OutspokenApi {
             modifyQuery.accept(query);
         }
         SpeechEvent event = new SpeechEvent(query);
+        if (listenerRef != null && listenerRef.isValid()) {
+            event.setListener(listenerRef);
+        }
         store.invoke(originRef, event);
     }
 
-    public static void triggerSpeechEvent(@Nonnull Store<EntityStore> store,
-            @Nonnull Ref<EntityStore> originRef, String category) {
-        triggerSpeechEvent(store, originRef, category, null);
+    public static void triggerSpeechEvent(@Nonnull Store<EntityStore> store, String category, @Nonnull Ref<EntityStore> originRef,
+            @Nullable Ref<EntityStore> listenerRef) {
+        triggerSpeechEvent(store, category, originRef, listenerRef, null);
     }
 
     public static RuleDatabase getDatabase() {

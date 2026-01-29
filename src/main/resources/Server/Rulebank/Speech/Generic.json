@@ -2,7 +2,18 @@
   "Categories": {
     "Ambient": [
       {
-        "Priority": 0,
+        "Priority": 1,
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": false
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          }
+        ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
@@ -12,8 +23,17 @@
         }
       },
       {
-        "Priority": 1,
+        "Priority": 2,
         "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": false
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          },
           {
             "Type": "Range",
             "Value": {
@@ -32,6 +52,123 @@
           "Type": "PlainText",
           "Entries": [
             "Ah, what a nice day!"
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": false
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          },
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "String",
+              "String": "Axe"
+            },
+            "Table": "Listener",
+            "Key": "Mainhand"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Please, put away your axe!",
+            "Keep that axe away from our trees, @name!"
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": false
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          },
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Skeleton"
+            },
+            "Table": "Speaker",
+            "Key": "NearbyMobs"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Careful, adventurer! There are skeletons about."
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": false
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          },
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Skeleton"
+            },
+            "Table": "Speaker",
+            "Key": "NearbyMobs"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Careful, adventurer! There are foes about."
+          ]
+        }
+      },
+      {
+        "Priority": 2,
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": false
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          },
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": false
+            },
+            "Table": "Speaker",
+            "Key": "Idle"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "I love being in motion!"
           ]
         }
       },
@@ -64,7 +201,8 @@
           "Type": "PlainText",
           "Entries": [
             "Hey, get back here!",
-            "You're not getting away so easily!"
+            "You're not getting away so easily, @name!",
+            "Die, @name!"
           ]
         }
       },
@@ -212,7 +350,28 @@
     ],
     "StateChange": [
       {
-        "Priority": 2,
+        "Priority": 1,
+        "Criteria": [
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Attack."
+            },
+            "Table": "Event",
+            "Key": "State"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Get 'em!",
+            "Now you die, @name!"
+          ]
+        }
+      },
+      {
+        "Priority": 3,
         "Criteria": [
           {
             "Type": "Includes",
@@ -231,12 +390,19 @@
             },
             "Table": "Event",
             "Key": "State"
+          },
+          {
+            "Type": "Pass",
+            "Value": {
+              "Type": "Float",
+              "Float": 0.2
+            }
           }
         ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
-            "Now you've made me mad!"
+            "Now you've made me mad, @name!"
           ]
         }
       },
@@ -411,7 +577,53 @@
         "Response": {
           "Type": "PlainText",
           "Entries": [
-            "Ha! Is that all you got?"
+            "Ha! Is that all you got?",
+            "Barely a scratch!"
+          ]
+        }
+      },
+      {
+        "Priority": 1,
+        "Criteria": [
+          {
+            "Type": "Range",
+            "Value": {
+              "Type": "Range",
+              "Range": {
+                "Max": 0.5
+              }
+            },
+            "Table": "Speaker",
+            "Key": "HealthPercentage"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "That one stings!",
+            "Ow! I felt that one."
+          ]
+        }
+      },
+      {
+        "Priority": 11,
+        "Criteria": [
+          {
+            "Type": "Includes",
+            "Value": {
+              "Type": "String",
+              "String": "Burn"
+            },
+            "Table": "Speaker",
+            "Key": "ActiveEffects"
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Ah! I'm burning!",
+            "Help! I'm on fire!",
+            "Someone help me!"
           ]
         }
       },
@@ -420,9 +632,7 @@
         "Response": {
           "Type": "PlainText",
           "Entries": [
-            "Ow!",
-            "That hurts!",
-            "Stop that!"
+            "You'll need to do better than that!"
           ]
         }
       }

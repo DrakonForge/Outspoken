@@ -2,10 +2,13 @@ package io.github.drakonforge.outspoken.ecs.system.context;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.MovementStates;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.asset.type.entityeffect.config.EntityEffect;
 import com.hypixel.hytale.server.core.entity.damage.DamageDataComponent;
 import com.hypixel.hytale.server.core.entity.effect.ActiveEntityEffect;
@@ -14,6 +17,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
 import com.hypixel.hytale.server.core.inventory.Inventory;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
+import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
@@ -22,6 +26,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import com.hypixel.hytale.server.npc.role.Role;
+import com.hypixel.hytale.server.npc.role.support.MarkedEntitySupport;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.event.UpdateEntityContextEvent;
@@ -33,6 +38,8 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public final class UpdateBasicEntityContextSystems {
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+
     private UpdateBasicEntityContextSystems() {}
 
     public static class UpdateEntityStats extends EntityContextSystem {
@@ -150,6 +157,31 @@ public final class UpdateBasicEntityContextSystems {
         }
     }
 
+    public static class UpdateName extends EntityContextSystem {
+        @Override
+        public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                @NonNullDecl Store<EntityStore> store,
+                @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
+                @NonNullDecl UpdateEntityContextEvent updateEntityContextEvent) {
+            ContextTable context = updateEntityContextEvent.getEntityContext();
+
+            if (updateEntityContextEvent.isInitial()) {
+                DisplayNameComponent displayNameComponent = archetypeChunk.getComponent(i, DisplayNameComponent.getComponentType());
+                assert displayNameComponent != null;
+                Message displayName = displayNameComponent.getDisplayName();
+                if (displayName != null) {
+                    context.set("Name", displayName.getAnsiMessage());
+                }
+            }
+        }
+
+        @NullableDecl
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.and(EntityContextComponent.getComponentType(), DisplayNameComponent.getComponentType());
+        }
+    }
+
     public static class UpdateMovementState extends EntityContextSystem {
         @Override
         public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
@@ -207,7 +239,16 @@ public final class UpdateBasicEntityContextSystems {
                 context.set("State", role.getStateSupport().getStateName());
                 // TODO: Get entity targets?
                 // MarkedEntitySupport markedEntitySupport = role.getMarkedEntitySupport();
-                // markedEntitySupport.getEntityTargets();
+                // Ref<EntityStore>[] entityTargets = markedEntitySupport.getEntityTargets();
+                // for (int j = 0; j < entityTargets.length; ++j) {
+                //     String slotName = markedEntitySupport.getSlotName(j);
+                //     Ref<EntityStore> ref = markedEntitySupport.getMarkedEntityRef(j);
+                //     if (ref != null && ref.isValid() && slotName != null) {
+                //         DisplayNameComponent refName = store.getComponent(ref, DisplayNameComponent.getComponentType());
+                //         String markedEntityName = refName == null ? "Unknown" : (refName.getDisplayName() == null ? "Unknown" : refName.getDisplayName().getAnsiMessage());
+                //         LOGGER.atInfo().log("Found marked entity context for " + role.getRoleName() + " in state " + role.getStateSupport().getStateName() + ": " + slotName + " = " + markedEntityName);
+                //     }
+                // }
             }
         }
 

@@ -25,6 +25,8 @@ import io.github.drakonforge.outspoken.database.response.Response;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.BestMatch;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.QueryReturnCode;
 import io.github.drakonforge.outspoken.speech.SpeechResult;
+import io.github.drakonforge.outspoken.util.ContextTables;
+import io.github.drakonforge.outspoken.util.SpeechHelpers;
 import java.util.Set;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -66,8 +68,12 @@ public class QueryDatabaseSpeechSystem extends SpeechEventSystem {
         // TODO: Eventually support fancier speech responses
         if (response instanceof PlainTextResponse plainTextResponse) {
             String option = plainTextResponse.getRandomOption();
+            String listenerName = SpeechHelpers.getListenerName(query);
+            if (listenerName != null) {
+                option = option.replaceAll("@name", listenerName);
+            }
+            // TODO: Reject if the context isn't available? Maybe do multiple attempts or add a "Listener Name exists" criterion automatically?
             // TODO: Do text replacement and other parsing here
-            // TODO: Also add on the NPC's name, possibly as a separate option;
             SpeechResult speechResult = new SpeechResult(displayNameComponent.getDisplayName(), Message.raw(option), transform.getPosition().clone());
             speechEvent.setSpeechResult(speechResult);
             speechStateComponent.setSpeechCooldown(3.0f); // TODO: Calculate how long the line should take

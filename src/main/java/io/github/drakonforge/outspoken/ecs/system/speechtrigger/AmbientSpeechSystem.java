@@ -33,8 +33,15 @@ public class AmbientSpeechSystem extends DelayedEntitySystem<EntityStore> {
         assert damageDataComponent != null;
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
         // If not actively in combat, updates happen much more slowly
-        if (NpcHelpers.isInCombat(damageDataComponent, world) || OutspokenPlugin.getInstance().getConfig().get().shouldSkipEvent(SpeechEvents.AMBIENT_IDLE_MODIFIER)) {
-            OutspokenApi.triggerSpeechEvent(store, ref, SpeechEvents.AMBIENT);
+        boolean inCombat = NpcHelpers.isInCombat(damageDataComponent, world);
+        if (inCombat || OutspokenPlugin.getInstance().getConfig().get().shouldSkipEvent(SpeechEvents.AMBIENT_IDLE_MODIFIER)) {
+            Ref<EntityStore> listenerRef = null;
+            if (inCombat) {
+                listenerRef = NpcHelpers.getLockedTarget(ref, store);
+            } else {
+                // Choose a listener within 8 blocks or so? Maybe that the entity can see?
+            }
+            OutspokenApi.triggerSpeechEvent(store, SpeechEvents.AMBIENT, ref, listenerRef);
         }
     }
 
