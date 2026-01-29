@@ -17,6 +17,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import com.hypixel.hytale.server.npc.role.Role;
+import com.hypixel.hytale.server.npc.role.support.MarkedEntitySupport;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.event.UpdateEntityContextEvent;
@@ -130,6 +131,9 @@ public final class UpdateBasicEntityContextSystems {
             if (role != null) {
                 context.set("Role", role.getRoleName());
                 context.set("State", role.getStateSupport().getStateName());
+                // TODO: Get entity targets?
+                // MarkedEntitySupport markedEntitySupport = role.getMarkedEntitySupport();
+                // markedEntitySupport.getEntityTargets();
             }
         }
 

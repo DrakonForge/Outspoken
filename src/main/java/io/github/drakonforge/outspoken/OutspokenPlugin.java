@@ -107,6 +107,7 @@ public class OutspokenPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdatePosition());
         entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdateNpc());
         entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdatePlayer());
+        entityStoreRegistry.registerSystem(new UpdateBasicEntityContextSystems.UpdateInCombat());
 
         // BuilderFactory<SpeechbankComponent> speechbankFactory = new BuilderFactory<>(SpeechbankComponent.class, "Type", BuilderSpeechbank::new);
         // NPCPlugin.get().getBuilderManager().registerFactory(speechbankFactory);
