@@ -21,13 +21,13 @@ public class SpeechBubbleTextDisplaySystem extends EntityTickingSystem<EntitySto
     public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        SpeechBubbleComponent chatBubble = archetypeChunk.getComponent(i, SpeechBubbleComponent.getComponentType());
+        SpeechBubbleComponent speechBubble = archetypeChunk.getComponent(i, SpeechBubbleComponent.getComponentType());
         Nameplate nameplate = archetypeChunk.getComponent(i, Nameplate.getComponentType());
-        assert chatBubble != null;
+        assert speechBubble != null;
         assert nameplate != null;
 
         // TODO: Can move out to another system later if we want
-        Ref<EntityStore> anchor = chatBubble.getAnchor();
+        Ref<EntityStore> anchor = speechBubble.getAnchor();
         if (anchor != null && anchor.isValid()) {
             TransformComponent anchorTransform = store.getComponent(anchor, TransformComponent.getComponentType());
             ModelComponent anchorModel = store.getComponent(anchor, ModelComponent.getComponentType());
@@ -38,7 +38,7 @@ public class SpeechBubbleTextDisplaySystem extends EntityTickingSystem<EntitySto
             }
         }
 
-        nameplate.setText(chatBubble.getFullText().getAnsiMessage());
+        nameplate.setText(speechBubble.getFullText().getAnsiMessage());
     }
 
     @NullableDecl

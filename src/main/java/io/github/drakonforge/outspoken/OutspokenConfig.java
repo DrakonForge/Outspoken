@@ -37,9 +37,9 @@ public class OutspokenConfig {
                     (config, value) -> config.chatMessageMode = value,
                     OutspokenConfig::getChatMessageMode)
             .add()
-            .append(new KeyedCodec<>("ChatBubbleMode", new EnumCodec<>(ChatBubbleMode.class)),
-                    (config, value) -> config.chatBubbleMode = value,
-                    OutspokenConfig::getChatBubbleMode)
+            .append(new KeyedCodec<>("SpeechBubbleMode", new EnumCodec<>(SpeechBubbleMode.class)),
+                    (config, value) -> config.speechBubbleMode = value,
+                    OutspokenConfig::getSpeechBubbleMode)
             .add()
             .build();
 
@@ -65,7 +65,7 @@ public class OutspokenConfig {
         World;
     }
 
-    public enum ChatBubbleMode {
+    public enum SpeechBubbleMode {
         Never,
         Always
     }
@@ -75,7 +75,7 @@ public class OutspokenConfig {
     private Object2FloatMap<String> speechEventFrequencyMap = createDefaultSpeechEventFrequencyMap();
     private float speechMessageVisibleDistance = 64.0f;
     private ChatMessageMode chatMessageMode = ChatMessageMode.Local;
-    private ChatBubbleMode chatBubbleMode = ChatBubbleMode.Always;
+    private SpeechBubbleMode speechBubbleMode = SpeechBubbleMode.Always;
 
     public OutspokenConfig() {}
 
@@ -91,8 +91,8 @@ public class OutspokenConfig {
         return speechMessageVisibleDistance;
     }
 
-    public ChatBubbleMode getChatBubbleMode() {
-        return chatBubbleMode;
+    public SpeechBubbleMode getSpeechBubbleMode() {
+        return speechBubbleMode;
     }
 
     public ChatMessageMode getChatMessageMode() {

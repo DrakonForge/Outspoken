@@ -21,9 +21,9 @@ public class RemoveSpeechBubbleOnDeath extends DeathSystems.OnDeathSystem {
         SpeechStateComponent speechStateComponent = store.getComponent(ref, SpeechStateComponent.getComponentType());
         assert speechStateComponent != null;
 
-        Ref<EntityStore> chatBubbleRef = speechStateComponent.getChatBubble();
-        if (chatBubbleRef != null && chatBubbleRef.isValid()) {
-            commandBuffer.removeEntity(chatBubbleRef, RemoveReason.REMOVE);
+        Ref<EntityStore> speechBubbleRef = speechStateComponent.getSpeechBubble();
+        if (speechBubbleRef != null && speechBubbleRef.isValid()) {
+            commandBuffer.removeEntity(speechBubbleRef, RemoveReason.REMOVE);
         }
     }
 

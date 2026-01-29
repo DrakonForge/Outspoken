@@ -68,7 +68,7 @@ public class OutspokenPlugin extends JavaPlugin {
     private SystemGroup<EntityStore> inspectSpeechEventGroup; // After the speech event has fired
     private ComponentType<EntityStore, PreviousStateComponent> previousStateComponentType;
     private ComponentType<EntityStore, SpeechStateComponent> speechStateComponentType;
-    private ComponentType<EntityStore, SpeechBubbleComponent> chatBubbleComponentType;
+    private ComponentType<EntityStore, SpeechBubbleComponent> speechBubbleComponentType;
 
 
     public OutspokenPlugin(@Nonnull JavaPluginInit init) {
@@ -93,7 +93,7 @@ public class OutspokenPlugin extends JavaPlugin {
         this.entityContextComponentType = entityStoreRegistry.registerComponent(EntityContextComponent.class, EntityContextComponent::new);
         this.speechbankComponentType = entityStoreRegistry.registerComponent(SpeechbankComponent.class, "Speechbank", SpeechbankComponent.CODEC);
         this.previousStateComponentType = entityStoreRegistry.registerComponent(PreviousStateComponent.class, PreviousStateComponent::new);
-        this.chatBubbleComponentType = entityStoreRegistry.registerComponent(SpeechBubbleComponent.class, SpeechBubbleComponent::new);  // TODO: Remove chat bubble entity on world restart
+        this.speechBubbleComponentType = entityStoreRegistry.registerComponent(SpeechBubbleComponent.class, SpeechBubbleComponent::new);  // TODO: Remove chat bubble entity on world restart
         this.speechStateComponentType = entityStoreRegistry.registerComponent(SpeechStateComponent.class, SpeechStateComponent::new);
 
         this.gatherSpeechEventGroup = entityStoreRegistry.registerSystemGroup();
@@ -188,8 +188,8 @@ public class OutspokenPlugin extends JavaPlugin {
         return previousStateComponentType;
     }
 
-    public ComponentType<EntityStore, SpeechBubbleComponent> getChatBubbleComponentType() {
-        return chatBubbleComponentType;
+    public ComponentType<EntityStore, SpeechBubbleComponent> getSpeechBubbleComponentType() {
+        return speechBubbleComponentType;
     }
 
     public ComponentType<EntityStore, SpeechStateComponent> getSpeechStateComponentType() {

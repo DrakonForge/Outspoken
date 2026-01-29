@@ -9,7 +9,7 @@ import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenConfig;
-import io.github.drakonforge.outspoken.OutspokenConfig.ChatBubbleMode;
+import io.github.drakonforge.outspoken.OutspokenConfig.SpeechBubbleMode;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
@@ -33,7 +33,7 @@ public class TriggerSpeechBubbleSpeechSystem extends SpeechEventSystem {
         }
 
         OutspokenConfig config = OutspokenPlugin.getInstance().getConfig().get();
-        if (config.getChatBubbleMode() == ChatBubbleMode.Never) {
+        if (config.getSpeechBubbleMode() == SpeechBubbleMode.Never) {
             return;
         }
 

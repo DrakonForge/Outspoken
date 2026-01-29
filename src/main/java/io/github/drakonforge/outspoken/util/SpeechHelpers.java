@@ -44,11 +44,11 @@ public final class SpeechHelpers {
             Ref<EntityStore> ref = store.addEntity(holder, AddReason.SPAWN);
 
             if (speechStateComponent != null) {
-                Ref<EntityStore> oldRef = speechStateComponent.getChatBubble();
+                Ref<EntityStore> oldRef = speechStateComponent.getSpeechBubble();
                 if (oldRef != null && oldRef.isValid()) {
                     store.removeEntity(oldRef, RemoveReason.REMOVE);
                 }
-                speechStateComponent.setChatBubble(ref);
+                speechStateComponent.setSpeechBubble(ref);
             }
         });
     }

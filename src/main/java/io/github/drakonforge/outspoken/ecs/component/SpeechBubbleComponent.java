@@ -10,7 +10,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class SpeechBubbleComponent implements Component<EntityStore> {
     public static ComponentType<EntityStore, SpeechBubbleComponent> getComponentType() {
-        return OutspokenPlugin.getInstance().getChatBubbleComponentType();
+        return OutspokenPlugin.getInstance().getSpeechBubbleComponentType();
     }
 
     private Message fullText;

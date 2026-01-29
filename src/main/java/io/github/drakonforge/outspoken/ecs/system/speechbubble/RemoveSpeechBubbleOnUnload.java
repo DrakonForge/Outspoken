@@ -32,10 +32,10 @@ public class RemoveSpeechBubbleOnUnload extends HolderSystem<EntityStore> {
         SpeechStateComponent speechStateComponent = holder.getComponent(SpeechStateComponent.getComponentType());
         assert speechStateComponent != null;
 
-        Ref<EntityStore> chatBubbleRef = speechStateComponent.getChatBubble();
-        if (chatBubbleRef != null && chatBubbleRef.isValid()) {
+        Ref<EntityStore> speechBubbleRef = speechStateComponent.getSpeechBubble();
+        if (speechBubbleRef != null && speechBubbleRef.isValid()) {
             // TODO: This needs to be run in command buffer
-            store.removeEntity(chatBubbleRef, RemoveReason.REMOVE);
+            store.removeEntity(speechBubbleRef, RemoveReason.REMOVE);
         }
     }
 }

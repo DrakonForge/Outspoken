@@ -16,7 +16,7 @@ public class SpeechStateComponent implements Component<EntityStore> {
 
     private float speechCooldown = 0.0f;
     @Nullable
-    private Ref<EntityStore> chatBubble = null;
+    private Ref<EntityStore> speechBubble = null;
 
     public void decrementSpeechCooldown(float deltaTime) {
         speechCooldown = Math.max(0.0f, speechCooldown - deltaTime);
@@ -26,13 +26,13 @@ public class SpeechStateComponent implements Component<EntityStore> {
         this.speechCooldown = speechCooldown;
     }
 
-    public void setChatBubble(@Nullable Ref<EntityStore> chatBubble) {
-        this.chatBubble = chatBubble;
+    public void setSpeechBubble(@Nullable Ref<EntityStore> speechBubble) {
+        this.speechBubble = speechBubble;
     }
 
     @Nullable
-    public Ref<EntityStore> getChatBubble() {
-        return chatBubble;
+    public Ref<EntityStore> getSpeechBubble() {
+        return speechBubble;
     }
 
     public boolean isBusy() {

@@ -20,12 +20,12 @@ public class SpeechBubbleExpirySystem extends EntityTickingSystem<EntityStore> {
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
-        SpeechBubbleComponent chatBubble = archetypeChunk.getComponent(i, SpeechBubbleComponent.getComponentType());
-        assert chatBubble != null;
+        SpeechBubbleComponent speechBubble = archetypeChunk.getComponent(i, SpeechBubbleComponent.getComponentType());
+        assert speechBubble != null;
 
-        chatBubble.addAge(v);
-        Ref<EntityStore> anchor = chatBubble.getAnchor();
-        if (chatBubble.getAge() > EXPIRY_TIME || anchor == null || !anchor.isValid()) {
+        speechBubble.addAge(v);
+        Ref<EntityStore> anchor = speechBubble.getAnchor();
+        if (speechBubble.getAge() > EXPIRY_TIME || anchor == null || !anchor.isValid()) {
             commandBuffer.removeEntity(ref, RemoveReason.REMOVE);
         }
     }
