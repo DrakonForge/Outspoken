@@ -12,6 +12,7 @@ import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
+// TODO: Might not need this one
 public class RemoveSpeechBubbleOnUnload extends HolderSystem<EntityStore> {
 
     @NullableDecl

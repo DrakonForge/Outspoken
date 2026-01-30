@@ -13,7 +13,6 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class SpeechBubbleExpirySystem extends EntityTickingSystem<EntityStore> {
-    private static final float EXPIRY_TIME = 5.0f;
 
     @Override
     public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
@@ -25,7 +24,7 @@ public class SpeechBubbleExpirySystem extends EntityTickingSystem<EntityStore> {
 
         speechBubble.addAge(v);
         Ref<EntityStore> anchor = speechBubble.getAnchor();
-        if (speechBubble.getAge() > EXPIRY_TIME || anchor == null || !anchor.isValid()) {
+        if (speechBubble.getAge() > speechBubble.getMaxAge() || anchor == null || !anchor.isValid()) {
             commandBuffer.removeEntity(ref, RemoveReason.REMOVE);
         }
     }

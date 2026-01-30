@@ -44,7 +44,7 @@ public class TriggerSpeechBubbleSpeechSystem extends SpeechEventSystem {
 
         // TODO: Doing the model logic here in case we can move it, can add it to main QueryDatabaseSpeechSystem later if we want
         // TODO: See if we can remove - .clone().add(new Vector3d(0, eyeHeight + 0.5f, 0))
-        SpeechHelpers.createSpeechBubble(world, ref, speechStateComponent, result.origin(), result.text());
+        SpeechHelpers.createSpeechBubble(world, ref, speechStateComponent, result);
     }
 
     @NullableDecl

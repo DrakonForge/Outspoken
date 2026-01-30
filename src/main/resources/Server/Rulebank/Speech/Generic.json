@@ -23,6 +23,45 @@
         }
       },
       {
+        "Priority": 3,
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": true
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          },
+          {
+            "Type": "Range",
+            "Value": {
+              "Type": "Range",
+              "Range": {
+                "Max": 0.2,
+                "MaxExclusive": true
+              }
+            },
+            "Table": "Speaker",
+            "Key": "HealthPercentage"
+          },
+          {
+            "Type": "Pass",
+            "Value": {
+              "Type": "Float",
+              "Float": 0.5
+            }
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "They're too strong!"
+          ]
+        }
+      },
+      {
         "Priority": 2,
         "Criteria": [
           {
@@ -144,7 +183,7 @@
         }
       },
       {
-        "Priority": 2,
+        "Priority": 3,
         "Criteria": [
           {
             "Type": "Equals",
@@ -163,12 +202,59 @@
             },
             "Table": "Speaker",
             "Key": "Idle"
+          },
+          {
+            "Type": "Pass",
+            "Value": {
+              "Type": "Float",
+              "Float": 0.75
+            }
           }
         ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
-            "I love being in motion!"
+            "It's good to keep moving!"
+          ]
+        }
+      },
+      {
+        "Priority": 3,
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": true
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          },
+          {
+            "Type": "Range",
+            "Value": {
+              "Type": "Range",
+              "Range": {
+                "Min": 5
+              }
+            },
+            "Table": "Event",
+            "Key": "Distance"
+          },
+          {
+            "Type": "Pass",
+            "Value": {
+              "Type": "Float",
+              "Float": 0.3
+            }
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "Hey, get back here!",
+            "You're not getting away so easily, @name!",
+            "Die, @name!"
           ]
         }
       },
@@ -185,23 +271,16 @@
             "Key": "InCombat"
           },
           {
-            "Type": "Range",
+            "Type": "Pass",
             "Value": {
-              "Type": "Range",
-              "Range": {
-                "Min": 8,
-                "MinExclusive": true
-              }
-            },
-            "Table": "Event",
-            "Key": "Distance"
+              "Type": "Float",
+              "Float": 0.3
+            }
           }
         ],
         "Response": {
           "Type": "PlainText",
           "Entries": [
-            "Hey, get back here!",
-            "You're not getting away so easily, @name!",
             "Die, @name!"
           ]
         }

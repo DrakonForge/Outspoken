@@ -15,25 +15,21 @@ public class SpeechBubbleComponent implements Component<EntityStore> {
 
     private Message fullText;
     private float age;
+    private float finishTime;
+    private float maxAge;
     private Ref<EntityStore> anchor;
 
     public SpeechBubbleComponent() {}
 
-    public SpeechBubbleComponent(Message fullText, Ref<EntityStore> anchor) {
+    public SpeechBubbleComponent(Message fullText, Ref<EntityStore> anchor, float finishTime, float maxAge) {
         this.fullText = fullText;
         this.anchor = anchor;
+        this.finishTime = finishTime;
+        this.maxAge = maxAge;
     }
 
     public void addAge(float deltaTime) {
         age += deltaTime;
-    }
-
-    public void setFullText(Message text) {
-        this.fullText = text;
-    }
-
-    public void setAnchor(Ref<EntityStore> anchor) {
-        this.anchor = anchor;
     }
 
     public void clear() {
@@ -43,6 +39,14 @@ public class SpeechBubbleComponent implements Component<EntityStore> {
 
     public float getAge() {
         return age;
+    }
+
+    public float getFinishTime() {
+        return finishTime;
+    }
+
+    public float getMaxAge() {
+        return maxAge;
     }
 
     public Message getFullText() {

@@ -60,12 +60,16 @@ public class OutspokenPlugin extends JavaPlugin {
     }
 
     private final Config<OutspokenConfig> config;
+    private ResourceType<EntityStore, WorldContextResource> worldContextResourceType;
+
+    // System Groups
+    private SystemGroup<EntityStore> initSpeechEventGroup; // Can cancel the event before context is gathered
+    private SystemGroup<EntityStore> gatherSpeechEventGroup; // Gathers the context
+    private SystemGroup<EntityStore> inspectSpeechEventGroup; // After the speech event has fired
+
+    // Components
     private ComponentType<EntityStore, EntityContextComponent> entityContextComponentType;
     private ComponentType<EntityStore, SpeechbankComponent> speechbankComponentType;
-    private ResourceType<EntityStore, WorldContextResource> worldContextResourceType;
-    private SystemGroup<EntityStore> gatherSpeechEventGroup; // Gathers the context
-    private SystemGroup<EntityStore> initSpeechEventGroup; // Filters the context
-    private SystemGroup<EntityStore> inspectSpeechEventGroup; // After the speech event has fired
     private ComponentType<EntityStore, PreviousStateComponent> previousStateComponentType;
     private ComponentType<EntityStore, SpeechStateComponent> speechStateComponentType;
     private ComponentType<EntityStore, SpeechBubbleComponent> speechBubbleComponentType;
@@ -144,7 +148,7 @@ public class OutspokenPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new SpeechBubbleExpirySystem());
         entityStoreRegistry.registerSystem(new SpeechBubbleTextDisplaySystem());
         entityStoreRegistry.registerSystem(new RemoveSpeechBubbleOnDeath());
-        entityStoreRegistry.registerSystem(new RemoveSpeechBubbleOnUnload());
+        // entityStoreRegistry.registerSystem(new RemoveSpeechBubbleOnUnload());
 
         this.getCommandRegistry().registerCommand(new OutspokenCommand());
 

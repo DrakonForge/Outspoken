@@ -41,6 +41,10 @@ public class OutspokenConfig {
                     (config, value) -> config.speechBubbleMode = value,
                     OutspokenConfig::getSpeechBubbleMode)
             .add()
+            .append(new KeyedCodec<>("DefaultCharactersPerSecond", Codec.FLOAT),
+                    (config, value) -> config.defaultCharactersPerSecond = value,
+                    OutspokenConfig::getDefaultCharactersPerSecond)
+            .add()
             .build();
 
     private static Map<String, String> createDefaultSpeechGroupMap() {
@@ -55,7 +59,7 @@ public class OutspokenConfig {
         eventFrequencyMap.put(SpeechEvents.AMBIENT, 0.05f);
         eventFrequencyMap.put(SpeechEvents.GREETING, 0.25f);
         eventFrequencyMap.put(SpeechEvents.STATE_CHANGE, 1.0f);
-        eventFrequencyMap.put(SpeechEvents.DAMAGE_TAKEN, 0.5f);
+        eventFrequencyMap.put(SpeechEvents.DAMAGE_TAKEN, 0.2f);
         return eventFrequencyMap;
     }
 
@@ -76,6 +80,7 @@ public class OutspokenConfig {
     private float speechMessageVisibleDistance = 64.0f;
     private ChatMessageMode chatMessageMode = ChatMessageMode.Local;
     private SpeechBubbleMode speechBubbleMode = SpeechBubbleMode.Always;
+    private float defaultCharactersPerSecond = 50.0f;
 
     public OutspokenConfig() {}
 
@@ -97,6 +102,10 @@ public class OutspokenConfig {
 
     public ChatMessageMode getChatMessageMode() {
         return chatMessageMode;
+    }
+
+    public float getDefaultCharactersPerSecond() {
+        return defaultCharactersPerSecond;
     }
 
     @Nullable

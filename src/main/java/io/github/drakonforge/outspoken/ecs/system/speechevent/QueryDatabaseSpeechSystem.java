@@ -74,9 +74,11 @@ public class QueryDatabaseSpeechSystem extends SpeechEventSystem {
             }
             // TODO: Reject if the context isn't available? Maybe do multiple attempts or add a "Listener Name exists" criterion automatically?
             // TODO: Do text replacement and other parsing here
-            SpeechResult speechResult = new SpeechResult(displayNameComponent.getDisplayName(), Message.raw(option), transform.getPosition().clone());
+            Message text = Message.raw(option);
+            float timeToSpeakLine = SpeechHelpers.getTimeToSpeakLine(text);
+            SpeechResult speechResult = new SpeechResult(displayNameComponent.getDisplayName(), text, transform.getPosition().clone(), timeToSpeakLine);
             speechEvent.setSpeechResult(speechResult);
-            speechStateComponent.setSpeechCooldown(3.0f); // TODO: Calculate how long the line should take
+            speechStateComponent.setSpeechCooldown(timeToSpeakLine + 3.0f);
         } else {
             LOGGER.atWarning().log("Speech response type currently not supported: " + response.getType());
         }

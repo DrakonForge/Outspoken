@@ -6,6 +6,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
+import com.hypixel.hytale.math.util.MathUtil;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.entity.nameplate.Nameplate;
 import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
@@ -38,12 +39,16 @@ public class SpeechBubbleTextDisplaySystem extends EntityTickingSystem<EntitySto
             }
         }
 
-        nameplate.setText(speechBubble.getFullText().getAnsiMessage());
+        String fullText = speechBubble.getFullText().getAnsiMessage();
+        float progress = Math.clamp(speechBubble.getAge() / speechBubble.getFinishTime(), 0.0f, 1.0f);
+        int numCharactersToShow = MathUtil.floor(fullText.length() * progress);
+        String substring = fullText.substring(0, numCharactersToShow);
+        nameplate.setText(substring);
     }
 
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(SpeechBubbleComponent.getComponentType(), Nameplate.getComponentType());
+        return Query.and(SpeechBubbleComponent.getComponentType(), Nameplate.getComponentType(), TransformComponent.getComponentType());
     }
 }
