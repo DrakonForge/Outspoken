@@ -47,12 +47,6 @@ public class OutspokenConfig {
             .add()
             .build();
 
-    private static Map<String, String> createDefaultSpeechGroupMap() {
-        Map<String, String> speechGroupMap = new HashMap<>();
-        speechGroupMap.put("Kweebec_Razorleaf", "Generic");
-        return speechGroupMap;
-    }
-
     private static Object2FloatMap<String> createDefaultSpeechEventFrequencyMap() {
         Object2FloatMap<String> eventFrequencyMap = new Object2FloatOpenHashMap<>();
         eventFrequencyMap.put(SpeechEvents.AMBIENT_IDLE_MODIFIER, 0.05f);
@@ -75,7 +69,7 @@ public class OutspokenConfig {
     }
 
     private float contextThrottleCooldown = 1.0f;
-    private Map<String, String> speechGroupMap = createDefaultSpeechGroupMap();
+    private Map<String, String> speechGroupMap = new HashMap<>();
     private Object2FloatMap<String> speechEventFrequencyMap = createDefaultSpeechEventFrequencyMap();
     private float speechMessageVisibleDistance = 64.0f;
     private ChatMessageMode chatMessageMode = ChatMessageMode.Local;
@@ -83,6 +77,15 @@ public class OutspokenConfig {
     private float defaultCharactersPerSecond = 50.0f;
 
     public OutspokenConfig() {}
+
+    // Make sure to save the config after calling this!
+    public void mergeSpeechGroups(Map<String, String> speechGroupMap, boolean overwrite) {
+        for (Map.Entry<String, String> entry : speechGroupMap.entrySet()) {
+            if (!this.speechGroupMap.containsKey(entry.getKey()) || overwrite) {
+                this.speechGroupMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
 
     protected Map<String, String> getSpeechGroupMap() {
         return speechGroupMap;

@@ -25,7 +25,6 @@ import io.github.drakonforge.outspoken.ecs.system.CooldownSpeechStateSystem;
 import io.github.drakonforge.outspoken.ecs.system.InitDefaultNpcSpeechbankSystem;
 import io.github.drakonforge.outspoken.ecs.system.InitSpeechStateSystem;
 import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicEntityContextSystems.UpdateLocation;
-import io.github.drakonforge.outspoken.ecs.system.speechbubble.RemoveSpeechBubbleOnUnload;
 import io.github.drakonforge.outspoken.ecs.system.speechbubble.SpeechBubbleExpirySystem;
 import io.github.drakonforge.outspoken.ecs.system.speechbubble.SpeechBubbleTextDisplaySystem;
 import io.github.drakonforge.outspoken.ecs.system.speechbubble.RemoveSpeechBubbleOnDeath;
@@ -44,6 +43,8 @@ import io.github.drakonforge.outspoken.ecs.system.context.UpdateBasicWorldContex
 import io.github.drakonforge.outspoken.ecs.system.speechevent.QueryDatabaseSpeechSystem;
 import io.github.drakonforge.outspoken.ecs.system.ChangeNpcStateSystem;
 import io.github.drakonforge.outspoken.ecs.system.speechtrigger.StateChangeSpeechSystem;
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.Nonnull;
 
 /**
@@ -150,9 +151,115 @@ public class OutspokenPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new RemoveSpeechBubbleOnDeath());
         // entityStoreRegistry.registerSystem(new RemoveSpeechBubbleOnUnload());
 
+        registerDefaultSpeechGroups();
+
         this.getCommandRegistry().registerCommand(new OutspokenCommand());
 
         config.save();
+    }
+
+    private void registerDefaultSpeechGroups() {
+        Map<String, String> speechGroupMap = new HashMap<>();
+        // Kweebecs
+        registerSpeechGroup(speechGroupMap, "Generic", new String[] {
+                "Kweebec_Elder",
+                "Kweebec_Merchant",
+                "Kweebec_Razorleaf",
+                "Kweebec_Razorleaf_Patrol",
+                "Kweebec_Rootling",
+                "Kweebec_Sapling",
+                "Kweebec_Sapling_Orange",
+                "Kweebec_Sapling_Pink",
+                // "Kweebec_Seedling", // Cannot talk
+                "Kweebec_Sproutling",
+                "Kweebec_Sproutling_Patrol",
+                "Temple_Kweebec",
+                "Temple_Kweebec_Elder",
+                "Temple_Kweebec_Merchant",
+                "Temple_Kweebec_Razorleaf_Patrol",
+                "Temple_Kweebec_Razorleaf_Patrol1",
+                "Temple_Kweebec_Razorleaf_Patrol2",
+                "Temple_Kweebec_Razorleaf_Patrol3",
+                "Temple_Kweebec_Razorleaf_Patrol4",
+        });
+        // Goblins
+        registerSpeechGroup(speechGroupMap, "Generic", new String[] {
+                "Goblin_Duke",
+                "Goblin_Duke_Phase_2",
+                "Goblin_Duke_Phase_3_Fast",
+                "Goblin_Duke_Phase_3_Slow",
+                "Goblin_Hermit",
+                "Goblin_Lobber",
+                "Goblin_Lobber_Patrol",
+                "Goblin_Miner",
+                "Goblin_Miner_Patrol",
+                "Goblin_Ogre",
+                "Goblin_Scavenger",
+                "Goblin_Scavenger_Battleaxe",
+                "Goblin_Scavenger_Sword",
+                "Goblin_Scrapper",
+                "Goblin_Scrapper_Patrol",
+                "Goblin_Thief",
+                "Goblin_Thief_Patrol",
+        });
+        // Trorks
+        registerSpeechGroup(speechGroupMap, "Generic", new String[] {
+                "Trork_Brawler",
+                "Trork_Chieftain",
+                "Trork_Doctor_Witch",
+                "Trork_Guard",
+                "Trork_Hunter",
+                "Trork_Mauler",
+                "Trork_Sentry",
+                "Trork_Sentry_Patrol",
+                "Trork_Shaman",
+                "Trork_Unarmed",
+                "Trork_Warrior",
+                "Trork_Warrior_Patrol",
+        });
+        // Outlanders
+        registerSpeechGroup(speechGroupMap, "Generic", new String[] {
+                "Outlander_Berserker",
+                "Outlander_Brute",
+                "Outlander_Cultist",
+                "Outlander_Hunter",
+                "Outlander_Marauder",
+                // "Outlander_Peon", // Cannot talk
+                "Outlander_Priest",
+                "Outlander_Sorcerer",
+                "Outlander_Stalker",
+        });
+        // Ferans
+        registerSpeechGroup(speechGroupMap, "Generic", new String[] {
+                "Feran_Burrower",
+                "Feran_Civilian",
+                "Feran_Cub",
+                "Feran_Longtooth",
+                "Feran_Sharptooth",
+                "Feran_Windwalker",
+                "Temple_Feran",
+                "Temple_Feran_Longtooth",
+        });
+        // Klops!
+        registerSpeechGroup(speechGroupMap, "Generic", new String[] {
+                "Klops_Gentleman",
+                "Klops_Merchant",
+                "Klops_Merchant_Patrol",
+                "Klops_Merchant_Wandering",
+                "Klops_Miner",
+                "Klops_Miner_Patrol",
+                "Temple_Klops",
+                "Temple_Klop_Merchant",
+        });
+        // Intelligent but we likely cannot understand them: Scarak, Skeleton
+
+        config.get().mergeSpeechGroups(speechGroupMap, false);
+    }
+
+    private void registerSpeechGroup(Map<String, String> speechGroupMap, String group, String[] entityIds) {
+        for (String entityId : entityIds) {
+            speechGroupMap.put(entityId, group);
+        }
     }
 
     @Override
