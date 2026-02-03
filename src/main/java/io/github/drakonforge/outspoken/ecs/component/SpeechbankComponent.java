@@ -11,9 +11,6 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class SpeechbankComponent implements Component<EntityStore> {
 
-    public static ComponentType<EntityStore, SpeechbankComponent> getComponentType() {
-        return OutspokenPlugin.getInstance().getSpeechbankComponentType();
-    }
     public static final BuilderCodec<SpeechbankComponent> CODEC = BuilderCodec.builder(
                     SpeechbankComponent.class, SpeechbankComponent::new)
             .append(new KeyedCodec<>("Group", Codec.STRING, true),
@@ -22,6 +19,10 @@ public class SpeechbankComponent implements Component<EntityStore> {
             .add()
             .documentation("TODO")
             .build();
+
+    public static ComponentType<EntityStore, SpeechbankComponent> getComponentType() {
+        return OutspokenPlugin.getInstance().getSpeechbankComponentType();
+    }
 
     private String groupName;
 

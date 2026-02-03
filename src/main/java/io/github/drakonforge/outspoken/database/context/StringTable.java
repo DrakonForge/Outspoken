@@ -10,8 +10,10 @@ public class StringTable {
     private final Object2IntOpenHashMap<String> cache = new Object2IntOpenHashMap<>();
     private final Int2ObjectOpenHashMap<String> lookup = new Int2ObjectOpenHashMap<>();
     private int nextId;
+    private final boolean caseInsensitive; // Will preserve the casing of the original cache
 
-    public StringTable() {
+    public StringTable(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
         clear();
     }
 
@@ -19,7 +21,7 @@ public class StringTable {
         if (str == null) {
             return 0;
         }
-        return cache.computeIfAbsent(str, (String s) -> {
+        return cache.computeIfAbsent(caseInsensitive ? str.toLowerCase() : str, (String s) -> {
             int id = nextId++;
             lookup.put(id, s);
             return id;

@@ -48,6 +48,10 @@ public class RulebankQuery {
         return contextTable;
     }
 
+    public Map<String, ContextTable> getContexts() {
+        return contexts;
+    }
+
     public String getGroup() {
         return group;
     }

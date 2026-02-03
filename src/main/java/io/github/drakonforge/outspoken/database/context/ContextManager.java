@@ -2,7 +2,8 @@ package io.github.drakonforge.outspoken.database.context;
 
 public class ContextManager {
     // TODO: Record validator issues
-    private final StringTable stringTable = new StringTable();
+    // TODO: Move case insensitive to config later
+    private final StringTable stringTable = new StringTable(true);
 
     public StringTable getStringTable() {
         return stringTable;

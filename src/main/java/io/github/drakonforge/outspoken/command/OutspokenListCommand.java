@@ -1,18 +1,15 @@
 package io.github.drakonforge.outspoken.command;
 
-import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.OptionalArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
-import com.hypixel.hytale.server.core.command.system.basecommands.AbstractWorldCommand;
-import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.core.command.system.basecommands.CommandBase;
 import io.github.drakonforge.outspoken.OutspokenApi;
 import java.util.Set;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-public class OutspokenListCommand extends AbstractWorldCommand {
+public class OutspokenListCommand extends CommandBase {
 
     private final OptionalArg<String> groupArg;
 
@@ -23,8 +20,7 @@ public class OutspokenListCommand extends AbstractWorldCommand {
     }
 
     @Override
-    protected void execute(@NonNullDecl CommandContext context, @NonNullDecl World world,
-            @NonNullDecl Store<EntityStore> store) {
+    protected void executeSync(@NonNullDecl CommandContext context) {
         String group = context.get(this.groupArg);
 
         if (group == null) {

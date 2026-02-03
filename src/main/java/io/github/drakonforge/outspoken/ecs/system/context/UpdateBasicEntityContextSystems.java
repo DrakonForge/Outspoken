@@ -247,6 +247,8 @@ public final class UpdateBasicEntityContextSystems {
                     context.remove("Substate");
                 }
                 MotionController motionController = role.getActiveMotionController();
+
+                // TODO: Consider making these more accessible, booleans based on the state, etc.?
                 context.set("NavState", motionController.getNavState().name());
                 context.set("TargetDeltaSquared", (float) motionController.getTargetDeltaSquared());
 
