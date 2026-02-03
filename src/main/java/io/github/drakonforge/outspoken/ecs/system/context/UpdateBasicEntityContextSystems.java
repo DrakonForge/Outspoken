@@ -25,6 +25,7 @@ import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntitySta
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import com.hypixel.hytale.server.npc.movement.controllers.MotionController;
 import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.role.support.MarkedEntitySupport;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
@@ -236,7 +237,20 @@ public final class UpdateBasicEntityContextSystems {
             Role role = npcEntityComponent.getRole();
             if (role != null) {
                 context.set("Role", role.getRoleName());
-                context.set("State", role.getStateSupport().getStateName());
+                String state = role.getStateSupport().getStateName();
+                int separator = state.indexOf('.');
+                if (separator > -1) {
+                    context.set("State", state.substring(0, separator));
+                    context.set("Substate", state.substring(separator + 1));
+                } else {
+                    context.set("State", state);
+                    context.remove("Substate");
+                }
+                MotionController motionController = role.getActiveMotionController();
+                context.set("NavState", motionController.getNavState().name());
+                context.set("TargetDeltaSquared", (float) motionController.getTargetDeltaSquared());
+
+
                 // TODO: Get entity targets?
                 // MarkedEntitySupport markedEntitySupport = role.getMarkedEntitySupport();
                 // Ref<EntityStore>[] entityTargets = markedEntitySupport.getEntityTargets();
