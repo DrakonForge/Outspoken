@@ -80,11 +80,13 @@ public class OutspokenConfig {
 
     // Make sure to save the config after calling this!
     public void mergeSpeechGroups(Map<String, String> speechGroupMap, boolean overwrite) {
+        Map<String, String> newSpeechGroupMap = new HashMap<>(this.speechGroupMap);
         for (Map.Entry<String, String> entry : speechGroupMap.entrySet()) {
-            if (!this.speechGroupMap.containsKey(entry.getKey()) || overwrite) {
-                this.speechGroupMap.put(entry.getKey(), entry.getValue());
+            if (!newSpeechGroupMap.containsKey(entry.getKey()) || overwrite) {
+                newSpeechGroupMap.put(entry.getKey(), entry.getValue());
             }
         }
+        this.speechGroupMap = newSpeechGroupMap;
     }
 
     protected Map<String, String> getSpeechGroupMap() {

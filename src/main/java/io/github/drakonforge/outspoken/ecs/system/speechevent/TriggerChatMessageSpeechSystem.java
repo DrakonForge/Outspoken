@@ -36,9 +36,7 @@ public class TriggerChatMessageSpeechSystem extends SpeechEventSystem {
         World world = store.getExternalData().getWorld();
         Message speechLine = result.text();
         Message speakerName = result.displayName();
-        // Message outputLine = Message.translation("chat.outspoken.speechLine").param("speaker", speakerName).param("message", speechLine);
-        // TODO: Replace with translation once I figure out how to fix it
-        Message outputLine = Message.join(speakerName, Message.raw(" (NPC): "), speechLine);
+        Message outputLine = Message.translation("outspoken.chat.speechLine").param("speaker", speakerName).param("message", speechLine);
         if (config.getChatMessageMode() == ChatMessageMode.World) {
             world.sendMessage(outputLine);
         } else if (config.getChatMessageMode() == ChatMessageMode.Local) {

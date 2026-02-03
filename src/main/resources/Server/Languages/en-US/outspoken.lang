@@ -1,2 +1,1 @@
-chat.outspoken.speechLine = {speaker}: {message}
-chat.outspoken.hello = Hi
+chat.speechLine = {speaker} (NPC): {message}
