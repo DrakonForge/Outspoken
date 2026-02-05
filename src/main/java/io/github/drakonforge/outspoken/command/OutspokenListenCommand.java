@@ -1,5 +1,6 @@
 package io.github.drakonforge.outspoken.command;
 
+import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
@@ -16,12 +17,18 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 public class OutspokenListenCommand extends AbstractPlayerCommand {
 
     private final DefaultArg<Float> distanceArg;
+    private final DefaultArg<Integer> limitArg;
 
     public OutspokenListenCommand() {
         super("listen", "server.commands.outspoken.listen.desc");
-        // TODO: Add non-negative constraint, and maybe a max
         this.distanceArg = this.withDefaultArg("distance", "server.commands.outspoken.listen.arg.distance",
-                ArgTypes.FLOAT, 16.0f, "server.commands.outspoken.listen.arg.distance.default");
+                ArgTypes.FLOAT, 256.0f, "server.commands.outspoken.listen.arg.distance.default").addValidator(
+                Validators.min(0.0f)).addValidator(Validators.max(256.0f));
+        this.limitArg = this.withDefaultArg("limit", "server.commands.outspoken.listen.arg.limit", ArgTypes.INTEGER, -1, "server.commands.outspoken.listen.arg.distance.default").addValidator(Validators.notEqual(0));
+
+
+        this.addSubCommand(new OutspokenListenStopCommand());
+        this.addSubCommand(new OutspokenListenNextCommand());
     }
 
     @Override
@@ -29,6 +36,12 @@ public class OutspokenListenCommand extends AbstractPlayerCommand {
             @NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
             @NonNullDecl PlayerRef playerRef, @NonNullDecl World world) {
         float distance = context.get(this.distanceArg);
+        int limit = context.get(this.limitArg);
+        updateDebugListenComponent(context, store, ref, distance, limit);
+    }
+
+    private static void updateDebugListenComponent(@NonNullDecl CommandContext context,
+            @NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref, float distance, int limit) {
         DebugListenComponent component = store.getComponent(ref, DebugListenComponent.getComponentType());
         if (distance <= 0) {
             if (component == null) {
@@ -43,7 +56,47 @@ public class OutspokenListenCommand extends AbstractPlayerCommand {
                 component = store.addComponent(ref, DebugListenComponent.getComponentType());
             }
             component.setDistance(distance);
-            context.sendMessage(Message.raw("Now listening to all speech events within " + distance + " blocks"));
+            component.setLimit(limit);
+            if (limit < 0) {
+                context.sendMessage(Message.raw("Now listening to all speech events within " + distance + " blocks"));
+            } else if (limit == 1) {
+                context.sendMessage(Message.raw("Now listening to the next speech event within " + distance + " blocks"));
+            } else {
+                context.sendMessage(Message.raw("Now listening to the next " + limit + " speech events within " + distance + " blocks"));
+            }
+        }
+    }
+
+    private static class OutspokenListenStopCommand extends AbstractPlayerCommand {
+
+        public OutspokenListenStopCommand() {
+            super("stop", "server.commands.outspoken.listen.stop.desc" );
+        }
+
+        @Override
+        protected void execute(@NonNullDecl CommandContext commandContext,
+                @NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
+                @NonNullDecl PlayerRef playerRef, @NonNullDecl World world) {
+            updateDebugListenComponent(commandContext, store, ref, 0.0f, 0);
+        }
+    }
+
+    private static class OutspokenListenNextCommand extends AbstractPlayerCommand {
+        private final DefaultArg<Float> distanceArg;
+
+
+        public OutspokenListenNextCommand() {
+            super("next", "server.commands.outspoken.listen.next.desc" );
+            this.distanceArg = this.withDefaultArg("distance", "server.commands.outspoken.listen.arg.distance",
+                    ArgTypes.FLOAT, 256.0f, "server.commands.outspoken.listen.arg.distance.default").addValidator(
+                    Validators.min(0.0f)).addValidator(Validators.max(256.0f));
+        }
+
+        @Override
+        protected void execute(@NonNullDecl CommandContext commandContext,
+                @NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
+                @NonNullDecl PlayerRef playerRef, @NonNullDecl World world) {
+            updateDebugListenComponent(commandContext, store, ref, distanceArg.get(commandContext), 1);
         }
     }
 }

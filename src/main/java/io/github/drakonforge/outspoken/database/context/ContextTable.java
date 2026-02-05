@@ -1,11 +1,15 @@
 package io.github.drakonforge.outspoken.database.context;
 
+import com.hypixel.hytale.server.core.Message;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
@@ -21,7 +25,7 @@ public class ContextTable {
         INT_LIST,
         STRING_LIST;
 
-        public boolean isArray() {
+        public boolean isList() {
             return this == INT_LIST || this == STRING_LIST;
         }
     }
@@ -158,7 +162,7 @@ public class ContextTable {
 
     public boolean doesListContainValue(String key, int value) {
         FactType type = getType(key);
-        if (type.isArray() && contextListMap != null) {
+        if (type.isList() && contextListMap != null) {
             IntSet list = contextListMap.get(key);
             if (list != null) {
                 return list.contains(value);
@@ -188,5 +192,71 @@ public class ContextTable {
             }
         }
         return false;
+    }
+
+    // Print out contents of ContextTable to be used in a MessageFormat.list() call
+    public List<Message> toMessages() {
+        List<Message> entries = new ArrayList<>();
+        for (Entry<String, FactType> typeEntry : contextTypeMap.entrySet()) {
+            String factName = typeEntry.getKey();
+            FactType factType = typeEntry.getValue();
+            entries.add(factToMessage(factName, factType));
+        }
+        return entries;
+    }
+
+    // TODO: Color formatting
+    private Message factToMessage(String factName, FactType factType) {
+        if (factType.isList()) {
+            if (contextListMap == null) {
+                return Message.raw("ERROR: Fact " + factName + " cannot be of type " + factType.name() + " while contextListMap is not instantiated");
+            }
+            IntSet set = contextListMap.get(factName);
+            StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            if (factType == FactType.INT_LIST) {
+                for (int i : set) {
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    sb.append(i);
+                    first = false;
+                }
+                return Message.raw(factName + " = " + sb);
+            }
+
+            if (factType == FactType.STRING_LIST) {
+                for (int i : set) {
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    Optional<String> str = contextManager.getStringTable().lookup(i);
+                    if (str.isPresent()) {
+                        sb.append(str.get());
+                    } else {
+                        sb.append("STRING ");
+                        sb.append(i);
+                    }
+                    first = false;
+                }
+                return Message.raw(factName + " = " + sb);
+            }
+
+            return Message.raw("ERROR: Fact " + factName + " cannot is of unsupported list type " + factType.name());
+        }
+
+        if (factType == FactType.BOOLEAN) {
+            return Message.raw(factName + " = " + getBooleanOrDefault(factName, false));
+        }
+
+        if (factType == FactType.STRING) {
+            return Message.raw(factName + " = " + getStringOrDefault(factName, "NULL STRING"));
+        }
+
+        if (factType == FactType.NUMBER) {
+            return Message.raw(factName + " = " + getFloatOrDefault(factName, -99.0f));
+        }
+
+        return Message.raw(factName + " = UNKNOWN VALUE of type " + factType.name());
     }
 }

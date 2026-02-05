@@ -26,7 +26,7 @@ public class CriterionIncludes extends CriterionInvertible {
                 if (contextString.isPresent() && lookupString.isPresent()) {
                     return contextString.get().contains(lookupString.get());
                 }
-            } else if (type.isArray()) {
+            } else if (type.isList()) {
                 return invert != contextTable.doesListContainValue(key, value);
             }
         }

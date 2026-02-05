@@ -23,7 +23,7 @@ public class StringTable {
         }
         return cache.computeIfAbsent(caseInsensitive ? str.toLowerCase() : str, (String s) -> {
             int id = nextId++;
-            lookup.put(id, s);
+            lookup.put(id, str);
             return id;
         });
     }
