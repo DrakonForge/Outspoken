@@ -27,12 +27,11 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 public final class RuleDatabaseFactory {
@@ -96,23 +95,22 @@ public final class RuleDatabaseFactory {
         RuleDatabase database = new RuleDatabase(contextManager);
         Queue<RulebankAsset> toParse = new ArrayDeque<>(assetMap.values());
         List<String> failedRulebanks = new ArrayList<>();
-        Set<String> parsedGroups = new HashSet<>();
+        Map<String, ParsedRulebankInfo> parsedRulebanks = new HashMap<>();
         int checkAfter = toParse.size();
         boolean anyChanged = false;
         while (!toParse.isEmpty()) {
             RulebankAsset asset = toParse.poll();
             String id = asset.getId();
             String parentId = asset.getParent();
-            if (parentId != null && !parsedGroups.contains(parentId)) {
+            if (parentId != null && !parsedRulebanks.containsKey(parentId)) {
                 toParse.add(asset);
                 continue;
             } else {
                 LOGGER.atFine().log("Processing rulebank " + id);
-                Result result = processRulebank(id, asset, database);
+                Result result = processRulebank(id, asset, database, parsedRulebanks);
                 if (result.failed()) {
                     failedRulebanks.add(result.message());
                 } else {
-                    parsedGroups.add(id);
                     anyChanged = true;
                 }
             }
@@ -138,17 +136,31 @@ public final class RuleDatabaseFactory {
         return database;
     }
 
-    private static Result processRulebank(String id, RulebankAsset asset, RuleDatabase database) {
+    public record ParsedRulebankInfo(Map<String, Rule> namedRules) {
+        public static ParsedRulebankInfo create() {
+            return new ParsedRulebankInfo(new HashMap<>());
+        }
+    }
+
+    private static Result processRulebank(String id, RulebankAsset asset, RuleDatabase database, Map<String, ParsedRulebankInfo> parsedRulebanks) {
         Map<String, RuleAsset[]> categoryMap = asset.getCategoryMap();
         int numCategoryErrors = 0;
         String parent = asset.getParent();
+        ParsedRulebankInfo info = ParsedRulebankInfo.create();
+        if (parent != null) {
+            ParsedRulebankInfo parentInfo = parsedRulebanks.get(parent);
+            if (parentInfo == null) {
+                return Result.error("Parent info cannot be null");
+            }
+            info.namedRules().putAll(parentInfo.namedRules());
+        }
 
         for (Entry<String, RuleAsset[]> category : categoryMap.entrySet()) {
             List<Rule> rules = new ArrayList<>();
             String categoryName = category.getKey();
             LOGGER.atInfo().log("Found id " + id + ", category " + categoryName);
             for (RuleAsset ruleAsset : category.getValue()) {
-                Result result = collectRuleFromAsset(rules, ruleAsset, database.getContextManager());
+                Result result = collectRuleFromAsset(rules, ruleAsset, database.getContextManager(), info);
                 if (result.failed()) {
                     numCategoryErrors += 1;
                     LOGGER.atSevere().log("Failed to parse rule in " + id + "." + categoryName + " at index " + rules.size() + ": " + result.message());
@@ -171,17 +183,20 @@ public final class RuleDatabaseFactory {
         if (numCategoryErrors > 0) {
             return Result.error(id + " (" + numCategoryErrors + ")");
         }
+        // Save the parsed info so other rulebanks can reference it
+        parsedRulebanks.put(id, info);
         return Result.SUCCESS;
     }
 
-    private static Result collectRuleFromAsset(List<Rule> rules, RuleAsset ruleAsset, ContextManager contextManager) {
-        int priority = ruleAsset.getPriority();
+    private static Result collectRuleFromAsset(List<Rule> rules, RuleAsset ruleAsset, ContextManager contextManager,
+            ParsedRulebankInfo info) {
+        int priorityModifier = ruleAsset.getPriorityModifier();
 
         CriterionAsset[] criteriaAssets = ruleAsset.getCriteria();
         List<CriteriaEntry> criteriaEntries;
         if (criteriaAssets != null) {
             criteriaEntries = new ArrayList<>();
-            Result result = collectCriteriaFromAsset(criteriaEntries, criteriaAssets, contextManager);
+            Result result = collectCriteriaFromAsset(criteriaEntries, criteriaAssets, contextManager, info);
             if (result.failed()) {
                 return result;
             }
@@ -199,11 +214,21 @@ public final class RuleDatabaseFactory {
             }
         }
 
-        rules.add(new Rule(criteriaEntries, responseRef.getOrElse(Response.EMPTY), priority));
+        String ruleName = ruleAsset.getId();
+        int priority = criteriaEntries.size() + priorityModifier;
+        Rule rule = new Rule(criteriaEntries, responseRef.getOrElse(Response.EMPTY), priority);
+        if (ruleName != null) {
+            if (info.namedRules().containsKey(ruleName)) {
+                LOGGER.atWarning().log("Rule " + ruleName + " already exists for this group, replacing the old definition");
+            }
+            info.namedRules.put(ruleName, rule);
+        }
+        rules.add(rule);
         return Result.SUCCESS;
     }
 
-    private static Result collectCriteriaFromAsset(List<CriteriaEntry> criteriaEntries, CriterionAsset[] criteriaAssets, ContextManager contextManager) {
+    private static Result collectCriteriaFromAsset(List<CriteriaEntry> criteriaEntries, CriterionAsset[] criteriaAssets, ContextManager contextManager,
+            ParsedRulebankInfo info) {
         for (CriterionAsset criterionAsset : criteriaAssets) {
             CriterionType type = criterionAsset.getType();
             CriterionValue value = criterionAsset.getValue();
@@ -219,8 +244,21 @@ public final class RuleDatabaseFactory {
                 return Result.error("Criterion type " + type + " cannot be inverted");
             }
 
+            if (type == CriterionType.Reference) {
+                if (value.getType() != ValueType.String) {
+                    return Result.error("Reference criterion value must always be a string");
+                }
+                String namedRuleId = value.getStringValue();
+                Rule namedRule = info.namedRules().get(namedRuleId);
+                if (namedRule == null) {
+                    return Result.error("Unknown named rule " + namedRuleId);
+                }
+                criteriaEntries.addAll(namedRule.criteria());
+                continue;
+            }
+
             Result result;
-            switch (criterionAsset.getType()) {
+            switch (type) {
                 case Equals -> result = parseEqualsCriterion(criterionRef, value, valueType, invert, contextManager);
                 case Exists -> result = parseExistsCriterion(criterionRef, invert);
                 case Pass -> result = parsePassCriterion(criterionRef, value);

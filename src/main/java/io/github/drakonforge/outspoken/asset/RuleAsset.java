@@ -24,8 +24,8 @@ public class RuleAsset {
                     (rule, criteria) -> rule.response = criteria, RuleAsset::getResponse)
             .documentation("TODO - Responses")
             .add()
-            .append(new KeyedCodec<>("Priority", Codec.INTEGER),
-                    (rule, priority) -> rule.priority = priority, RuleAsset::getPriority)
+            .append(new KeyedCodec<>("ModifyPriority", Codec.INTEGER),
+                    (rule, priority) -> rule.priorityModifier = priority, RuleAsset::getPriorityModifier)
             .documentation("TODO - Priority")
             .add()
             .documentation("TODO - Rule")
@@ -37,7 +37,7 @@ public class RuleAsset {
     private CriterionAsset[] criteria;
     @Nullable
     private ResponseAsset response;
-    private int priority = 0;
+    private int priorityModifier = 0;
 
     protected RuleAsset() {}
 
@@ -54,7 +54,7 @@ public class RuleAsset {
         return response;
     }
 
-    public int getPriority() {
-        return priority;
+    public int getPriorityModifier() {
+        return priorityModifier;
     }
 }

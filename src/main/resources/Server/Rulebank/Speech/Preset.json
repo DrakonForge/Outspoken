@@ -1,0 +1,46 @@
+{
+  "Categories": {
+    "Presets": [
+      {
+        "Id": "Idle",
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": false
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          }
+        ]
+      },
+      {
+        "Id": "InCombat",
+        "Criteria": [
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "Boolean",
+              "Boolean": true
+            },
+            "Table": "Speaker",
+            "Key": "InCombat"
+          },
+          {
+            "Type": "Equals",
+            "Value": {
+              "Type": "StringArray",
+              "StringArray": [
+                "Attack",
+                "Combat"
+              ]
+            },
+            "Table": "Speaker",
+            "Key": "State"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -3,7 +3,7 @@
   "Categories": {
     "Ambient": [
       {
-        "Priority": 100,
+        "ModifyPriority": 99,
         "Criteria": [
           {
             "Type": "Pass",

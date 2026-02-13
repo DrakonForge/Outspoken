@@ -1,17 +1,15 @@
 {
+  "Parent": "Preset",
   "Categories": {
     "Ambient": [
       {
-        "Priority": 1,
         "Criteria": [
           {
-            "Type": "Equals",
+            "Type": "Reference",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": false
-            },
-            "Table": "Speaker",
-            "Key": "InCombat"
+              "Type": "String",
+              "String": "Idle"
+            }
           }
         ],
         "Response": {
@@ -23,16 +21,13 @@
         }
       },
       {
-        "Priority": 3,
         "Criteria": [
           {
-            "Type": "Equals",
+            "Type": "Reference",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": true
-            },
-            "Table": "Speaker",
-            "Key": "InCombat"
+              "Type": "String",
+              "String": "InCombat"
+            }
           },
           {
             "Type": "Range",
@@ -62,16 +57,13 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
-            "Type": "Equals",
+            "Type": "Reference",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": false
-            },
-            "Table": "Speaker",
-            "Key": "InCombat"
+              "Type": "String",
+              "String": "Idle"
+            }
           },
           {
             "Type": "Range",
@@ -95,16 +87,13 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
-            "Type": "Equals",
+            "Type": "Reference",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": false
-            },
-            "Table": "Speaker",
-            "Key": "InCombat"
+              "Type": "String",
+              "String": "Idle"
+            }
           },
           {
             "Type": "Equals",
@@ -125,16 +114,13 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
-            "Type": "Equals",
+            "Type": "Reference",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": false
-            },
-            "Table": "Speaker",
-            "Key": "InCombat"
+              "Type": "String",
+              "String": "Idle"
+            }
           },
           {
             "Type": "Includes",
@@ -154,16 +140,13 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
-            "Type": "Equals",
+            "Type": "Reference",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": false
-            },
-            "Table": "Speaker",
-            "Key": "InCombat"
+              "Type": "String",
+              "String": "Idle"
+            }
           },
           {
             "Type": "Includes",
@@ -183,16 +166,13 @@
         }
       },
       {
-        "Priority": 3,
         "Criteria": [
           {
-            "Type": "Equals",
+            "Type": "Reference",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": false
-            },
-            "Table": "Speaker",
-            "Key": "InCombat"
+              "Type": "String",
+              "String": "Idle"
+            }
           },
           {
             "Type": "Equals",
@@ -219,16 +199,13 @@
         }
       },
       {
-        "Priority": 3,
         "Criteria": [
           {
-            "Type": "Equals",
+            "Type": "Reference",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": true
-            },
-            "Table": "Speaker",
-            "Key": "InCombat"
+              "Type": "String",
+              "String": "InCombat"
+            }
           },
           {
             "Type": "Range",
@@ -259,16 +236,18 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
-            "Type": "Equals",
+            "Type": "Reference",
             "Value": {
-              "Type": "Boolean",
-              "Boolean": true
-            },
-            "Table": "Speaker",
-            "Key": "InCombat"
+              "Type": "String",
+              "String": "InCombat"
+            }
+          },
+          {
+            "Type": "Exists",
+            "Table": "Listener",
+            "Key": "Name"
           },
           {
             "Type": "Pass",
@@ -286,7 +265,6 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
             "Type": "Range",
@@ -319,7 +297,7 @@
         }
       },
       {
-        "Priority": 11,
+        "ModifyPriority": 10,
         "Criteria": [
           {
             "Type": "Includes",
@@ -343,7 +321,6 @@
     ],
     "Greeting": [
       {
-        "Priority": 1,
         "Criteria": [
           {
             "Type": "Range",
@@ -367,7 +344,6 @@
         }
       },
       {
-        "Priority": 1,
         "Criteria": [
           {
             "Type": "Range",
@@ -392,7 +368,6 @@
         }
       },
       {
-        "Priority": 1,
         "Criteria": [
           {
             "Type": "Range",
@@ -417,7 +392,6 @@
         }
       },
       {
-        "Priority": 0,
         "Response": {
           "Type": "PlainText",
           "Entries": [
@@ -429,13 +403,12 @@
     ],
     "StateChange": [
       {
-        "Priority": 1,
         "Criteria": [
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Attack."
+              "String": "Attack"
             },
             "Table": "Event",
             "Key": "State"
@@ -450,22 +423,21 @@
         }
       },
       {
-        "Priority": 3,
         "Criteria": [
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Idle."
+              "String": "Idle"
             },
             "Table": "Event",
             "Key": "PrevState"
           },
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Attack."
+              "String": "Attack"
             },
             "Table": "Event",
             "Key": "State"
@@ -474,7 +446,7 @@
             "Type": "Pass",
             "Value": {
               "Type": "Float",
-              "Float": 0.2
+              "Float": 0.25
             }
           }
         ],
@@ -486,22 +458,21 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Attack."
+              "String": "Attack"
             },
             "Table": "Event",
             "Key": "PrevState"
           },
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Idle."
+              "String": "Idle"
             },
             "Table": "Event",
             "Key": "State"
@@ -515,22 +486,21 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Attack."
+              "String": "Attack"
             },
             "Table": "Event",
             "Key": "PrevState"
           },
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Search."
+              "String": "Search"
             },
             "Table": "Event",
             "Key": "State"
@@ -545,22 +515,21 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Idle."
+              "String": "Idle"
             },
             "Table": "Event",
             "Key": "PrevState"
           },
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Alerted."
+              "String": "Alerted"
             },
             "Table": "Event",
             "Key": "State"
@@ -575,22 +544,21 @@
         }
       },
       {
-        "Priority": 2,
         "Criteria": [
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Alerted."
+              "String": "Alerted"
             },
             "Table": "Event",
             "Key": "PrevState"
           },
           {
-            "Type": "Includes",
+            "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Idle."
+              "String": "Idle"
             },
             "Table": "Event",
             "Key": "State"
@@ -607,7 +575,6 @@
     ],
     "DamageTaken": [
       {
-        "Priority": 2,
         "Criteria": [
           {
             "Type": "Range",
@@ -638,7 +605,6 @@
         }
       },
       {
-        "Priority": 1,
         "Criteria": [
           {
             "Type": "Range",
@@ -662,7 +628,6 @@
         }
       },
       {
-        "Priority": 1,
         "Criteria": [
           {
             "Type": "Range",
@@ -685,7 +650,7 @@
         }
       },
       {
-        "Priority": 11,
+        "ModifyPriority": 10,
         "Criteria": [
           {
             "Type": "Includes",
@@ -707,7 +672,6 @@
         }
       },
       {
-        "Priority": 0,
         "Response": {
           "Type": "PlainText",
           "Entries": [
