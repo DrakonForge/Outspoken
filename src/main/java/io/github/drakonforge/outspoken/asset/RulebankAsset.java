@@ -15,19 +15,27 @@ import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.codec.validation.ValidatorCache;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
-public class RulebankAsset implements JsonAssetWithMap<String, DefaultAssetMap<String, RulebankAsset>> {
+public class RulebankAsset implements
+        JsonAssetWithMap<String, DefaultAssetMap<String, RulebankAsset>> {
+
     private static final AssetBuilderCodec.Builder<String, RulebankAsset> CODEC_BUILDER = AssetBuilderCodec.builder(
                     RulebankAsset.class, RulebankAsset::new, Codec.STRING, (asset, id) -> asset.id = id,
-                    RulebankAsset::getId, (asset, data) -> asset.extraData = data,
-                    asset -> asset.extraData)
+                    RulebankAsset::getId, (asset, data) -> asset.extraData = data, asset -> asset.extraData)
             .append(new KeyedCodec<>("Categories",
-                            new MapCodec<>(new ArrayCodec<>(RuleAsset.CODEC, RuleAsset[]::new), HashMap::new, true), true),
-                    (asset, value) -> asset.categoryMap = value,
+                            new MapCodec<>(new ArrayCodec<>(RuleAsset.CODEC, RuleAsset[]::new),
+                                    HashMap::new, true), true), (asset, value) -> asset.categoryMap = value,
                     RulebankAsset::getCategoryMap)
-            .documentation("Each category defines a distinct set of rules and responses for a particular event. For example: Greeting, DamageTaken, DamageDealt")
+            .documentation(
+                    "Each category defines a distinct set of rules and responses for a particular event. For example: Greeting, DamageTaken, DamageDealt")
             .add()
-            .documentation("A rulebank containing categories of context-based rules. This can be used as a speechbank for NPCs, where each NPC may have at most 1 rulebank governing their dialogue barks.");
+            .append(new KeyedCodec<>("Parent", Codec.STRING),
+                    (asset, parent) -> asset.parent = parent, asset -> asset.parent)
+            .documentation("Optional. The parent rulebank which this rulebank inherits from.")
+            .add()
+            .documentation(
+                    "A rulebank containing categories of context-based rules. This can be used as a speechbank for NPCs, where each NPC may have at most 1 rulebank governing their dialogue barks.");
     public static final AssetCodec<String, RulebankAsset> CODEC = CODEC_BUILDER.build();
     private static AssetStore<String, RulebankAsset, DefaultAssetMap<String, RulebankAsset>> ASSET_STORE;
     public static final ValidatorCache<String> VALIDATOR_CACHE = new ValidatorCache<>(
@@ -47,11 +55,18 @@ public class RulebankAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
 
     protected String id;
     protected AssetExtraInfo.Data extraData;
-    private Map<String, RuleAsset[]> categoryMap;
+    protected Map<String, RuleAsset[]> categoryMap;
+    @Nullable
+    protected String parent;
 
     @Override
     public String getId() {
         return id;
+    }
+
+    @Nullable
+    public String getParent() {
+        return parent;
     }
 
     public Map<String, RuleAsset[]> getCategoryMap() {

@@ -23,12 +23,16 @@ import io.github.drakonforge.outspoken.database.rulebank.RuleDatabase;
 import io.github.drakonforge.outspoken.database.rulebank.RuleTable;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 public final class RuleDatabaseFactory {
@@ -90,19 +94,46 @@ public final class RuleDatabaseFactory {
     public static RuleDatabase createFromAssetMap(Map<String, RulebankAsset> assetMap, ContextManager contextManager) {
         LOGGER.atInfo().log("Found " + assetMap.size() + " rulebank assets");
         RuleDatabase database = new RuleDatabase(contextManager);
+        Queue<RulebankAsset> toParse = new ArrayDeque<>(assetMap.values());
         List<String> failedRulebanks = new ArrayList<>();
-        for (Entry<String, RulebankAsset> entry : assetMap.entrySet()) {
-            RulebankAsset asset = entry.getValue();;
+        Set<String> parsedGroups = new HashSet<>();
+        int checkAfter = toParse.size();
+        boolean anyChanged = false;
+        while (!toParse.isEmpty()) {
+            RulebankAsset asset = toParse.poll();
             String id = asset.getId();
-            LOGGER.atFine().log("Processing rulebank " + id);
-            // TODO: Check dependencies
-            Result result = processRulebank(id, asset, database);
-            if (result.failed()) {
-                failedRulebanks.add(result.message());
+            String parentId = asset.getParent();
+            if (parentId != null && !parsedGroups.contains(parentId)) {
+                toParse.add(asset);
+                continue;
+            } else {
+                LOGGER.atFine().log("Processing rulebank " + id);
+                Result result = processRulebank(id, asset, database);
+                if (result.failed()) {
+                    failedRulebanks.add(result.message());
+                } else {
+                    parsedGroups.add(id);
+                    anyChanged = true;
+                }
+            }
+
+            // After going through the entire queue once, check if any groups were successfully loaded
+            // If not, then all that's left are missing/circular dependencies.
+            if (--checkAfter == 0) {
+                if (!anyChanged) {
+                    // Gather list of all failed groups
+                    failedRulebanks.add("Failed to parse " + id + ": Unknown parent (is it missing or circular reference?)");
+                    while (!toParse.isEmpty()) {
+                        failedRulebanks.add("Failed to parse " + toParse.poll().getId() + ": Unknown parent (is it missing or circular reference?)");
+                    }
+                }
+                checkAfter = toParse.size();
+                anyChanged = false;
             }
         }
+
         if (!failedRulebanks.isEmpty()) {
-            LOGGER.atSevere().log("Some rulebanks failed to parse: " + String.join(", ", failedRulebanks));
+            LOGGER.atSevere().log("Some rulebanks failed to parse:\n" + String.join("\n", failedRulebanks));
         }
         return database;
     }
@@ -110,20 +141,33 @@ public final class RuleDatabaseFactory {
     private static Result processRulebank(String id, RulebankAsset asset, RuleDatabase database) {
         Map<String, RuleAsset[]> categoryMap = asset.getCategoryMap();
         int numCategoryErrors = 0;
+        String parent = asset.getParent();
+
         for (Entry<String, RuleAsset[]> category : categoryMap.entrySet()) {
             List<Rule> rules = new ArrayList<>();
-            LOGGER.atInfo().log("Found id " + id + ", category " + category.getKey());
+            String categoryName = category.getKey();
+            LOGGER.atInfo().log("Found id " + id + ", category " + categoryName);
             for (RuleAsset ruleAsset : category.getValue()) {
                 Result result = collectRuleFromAsset(rules, ruleAsset, database.getContextManager());
                 if (result.failed()) {
                     numCategoryErrors += 1;
-                    LOGGER.atSevere().log("Failed to parse rule in " + id + "." + category.getKey() + " at index " + rules.size() + ": " + result.message());
+                    LOGGER.atSevere().log("Failed to parse rule in " + id + "." + categoryName + " at index " + rules.size() + ": " + result.message());
+                }
+            }
+            // Due to this logic, only categories which are defined (even empty ones) will be inherited
+            // This is intentional, define empty categories if you just want to inherit the parent's rules.
+            if (parent != null) {
+                RuleTable parentTable = database.getRuleTable(parent, categoryName);
+                if (parentTable != null) {
+                    LOGGER.atInfo().log("Applying parent rules for " + parent + ", category " + categoryName);
+                    parentTable.copyAllRules(rules);
                 }
             }
             sortRules(rules);
             RuleTable ruleTable = new RuleTable(rules);
             database.addRuleTable(id, category.getKey(), ruleTable);
         }
+
         if (numCategoryErrors > 0) {
             return Result.error(id + " (" + numCategoryErrors + ")");
         }

@@ -44,4 +44,8 @@ public class RuleTable {
         Response randomMatchingResponse = matchingResponses.get(MathUtil.floor(Math.random() * matchingResponses.size()));
         return new BestMatch(RulebankQueryResult.QueryReturnCode.SUCCESS, randomMatchingResponse);
     }
+
+    public void copyAllRules(List<Rule> rules) {
+        rules.addAll(this.rules);
+    }
 }

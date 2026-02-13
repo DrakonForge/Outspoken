@@ -165,7 +165,7 @@ public class OutspokenPlugin extends JavaPlugin {
     private void registerDefaultSpeechGroups() {
         Map<String, String> speechGroupMap = new HashMap<>();
         // Kweebecs
-        registerSpeechGroup(speechGroupMap, "Generic", new String[] {
+        registerSpeechGroup(speechGroupMap, "Kweebec_Generic", new String[] {
                 "Kweebec_Elder",
                 "Kweebec_Merchant",
                 "Kweebec_Razorleaf",

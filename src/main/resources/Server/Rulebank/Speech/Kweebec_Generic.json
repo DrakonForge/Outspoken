@@ -1,0 +1,28 @@
+{
+  "Parent": "Generic",
+  "Categories": {
+    "Ambient": [
+      {
+        "Priority": 100,
+        "Criteria": [
+          {
+            "Type": "Pass",
+            "Value": {
+              "Type": "Float",
+              "Float": 0.5
+            }
+          }
+        ],
+        "Response": {
+          "Type": "PlainText",
+          "Entries": [
+            "I'm a Kweebec!"
+          ]
+        }
+      }
+    ],
+    "StateChange": [],
+    "Greeting": [],
+    "DamageTaken": []
+  }
+}

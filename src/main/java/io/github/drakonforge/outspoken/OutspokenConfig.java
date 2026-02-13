@@ -50,7 +50,7 @@ public class OutspokenConfig {
     private static Object2FloatMap<String> createDefaultSpeechEventFrequencyMap() {
         Object2FloatMap<String> eventFrequencyMap = new Object2FloatOpenHashMap<>();
         eventFrequencyMap.put(SpeechEvents.AMBIENT_IDLE_MODIFIER, 0.05f);
-        eventFrequencyMap.put(SpeechEvents.AMBIENT, 0.05f);
+        eventFrequencyMap.put(SpeechEvents.AMBIENT, 0.075f);
         eventFrequencyMap.put(SpeechEvents.GREETING, 0.25f);
         eventFrequencyMap.put(SpeechEvents.STATE_CHANGE, 1.0f);
         eventFrequencyMap.put(SpeechEvents.DAMAGE_TAKEN, 0.2f);

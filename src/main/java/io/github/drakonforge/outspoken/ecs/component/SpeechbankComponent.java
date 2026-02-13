@@ -15,9 +15,7 @@ public class SpeechbankComponent implements Component<EntityStore> {
                     SpeechbankComponent.class, SpeechbankComponent::new)
             .append(new KeyedCodec<>("Group", Codec.STRING, true),
                     (data, value) -> data.groupName = value, SpeechbankComponent::getGroupName)
-            .documentation("TODO")
             .add()
-            .documentation("TODO")
             .build();
 
     public static ComponentType<EntityStore, SpeechbankComponent> getComponentType() {
