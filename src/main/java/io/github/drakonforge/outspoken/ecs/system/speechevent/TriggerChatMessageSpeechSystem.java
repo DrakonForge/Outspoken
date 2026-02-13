@@ -32,7 +32,7 @@ public class TriggerChatMessageSpeechSystem extends SpeechEventSystem {
             return;
         }
 
-        OutspokenConfig config = OutspokenPlugin.getInstance().getConfig().get();
+        OutspokenConfig config = OutspokenConfig.get();
         World world = store.getExternalData().getWorld();
         Message speechLine = result.text();
         Message speakerName = result.displayName();
@@ -56,7 +56,7 @@ public class TriggerChatMessageSpeechSystem extends SpeechEventSystem {
     @NullableDecl
     @Override
     public SystemGroup<EntityStore> getGroup() {
-        return OutspokenPlugin.getInstance().getInspectSpeechEventGroup();
+        return OutspokenPlugin.get().getInspectSpeechEventGroup();
     }
 
     @NullableDecl

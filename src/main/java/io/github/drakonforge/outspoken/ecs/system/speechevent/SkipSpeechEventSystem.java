@@ -6,6 +6,7 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.SystemGroup;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.outspoken.OutspokenConfig;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
@@ -21,7 +22,7 @@ public class SkipSpeechEventSystem extends SpeechEventSystem {
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
             @NonNullDecl SpeechEvent speechEvent) {
         String category = speechEvent.getQuery().getCategory();
-        if (OutspokenPlugin.getInstance().getConfig().get().shouldSkipEvent(category)) {
+        if (OutspokenConfig.get().shouldSkipEvent(category)) {
             speechEvent.setCancelled(true);
         }
     }
@@ -35,6 +36,6 @@ public class SkipSpeechEventSystem extends SpeechEventSystem {
     @NullableDecl
     @Override
     public SystemGroup<EntityStore> getGroup() {
-        return OutspokenPlugin.getInstance().getInitSpeechEventGroup();
+        return OutspokenPlugin.get().getInitSpeechEventGroup();
     }
 }

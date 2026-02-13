@@ -9,7 +9,6 @@ import com.hypixel.hytale.component.dependency.Order;
 import com.hypixel.hytale.component.dependency.SystemGroupDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.math.util.MathUtil;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -77,7 +76,7 @@ public class GatherBasicSpeechContextSystem extends SpeechEventSystem {
     @NonNullDecl
     @Override
     public Set<Dependency<EntityStore>> getDependencies() {
-        return Set.of(new SystemGroupDependency<>(Order.AFTER, OutspokenPlugin.getInstance().getInitSpeechEventGroup()), new SystemGroupDependency<>(Order.BEFORE, OutspokenPlugin.getInstance().getGatherSpeechEventGroup()), new SystemGroupDependency<>(Order.BEFORE, OutspokenPlugin.getInstance().getInspectSpeechEventGroup()));
+        return Set.of(new SystemGroupDependency<>(Order.AFTER, OutspokenPlugin.get().getInitSpeechEventGroup()), new SystemGroupDependency<>(Order.BEFORE, OutspokenPlugin.get().getGatherSpeechEventGroup()), new SystemGroupDependency<>(Order.BEFORE, OutspokenPlugin.get().getInspectSpeechEventGroup()));
     }
 
     @NullableDecl

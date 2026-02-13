@@ -15,6 +15,10 @@ import javax.annotation.Nullable;
 
 public class OutspokenConfig {
 
+    public static OutspokenConfig get() {
+        return OutspokenPlugin.get().getConfig().get();
+    }
+
     public static final BuilderCodec<OutspokenConfig> CODEC = BuilderCodec.builder(
                     OutspokenConfig.class, OutspokenConfig::new)
             .append(new KeyedCodec<>("ContextThrottleCooldown", Codec.FLOAT),
@@ -44,6 +48,10 @@ public class OutspokenConfig {
             .append(new KeyedCodec<>("DefaultCharactersPerSecond", Codec.FLOAT),
                     (config, value) -> config.defaultCharactersPerSecond = value,
                     OutspokenConfig::getDefaultCharactersPerSecond)
+            .add()
+            .append(new KeyedCodec<>("RegisterDefaultSpeechGroups", Codec.BOOLEAN),
+                    (config, value) -> config.registerDefaultSpeechGroups = value,
+                    OutspokenConfig::shouldRegisterDefaultSpeechGroups)
             .add()
             .build();
 
@@ -75,6 +83,7 @@ public class OutspokenConfig {
     private ChatMessageMode chatMessageMode = ChatMessageMode.Local;
     private SpeechBubbleMode speechBubbleMode = SpeechBubbleMode.Always;
     private float defaultCharactersPerSecond = 50.0f;
+    private boolean registerDefaultSpeechGroups = true;
 
     public OutspokenConfig() {}
 
@@ -125,5 +134,9 @@ public class OutspokenConfig {
 
     public float getContextThrottleCooldown() {
         return contextThrottleCooldown;
+    }
+
+    public boolean shouldRegisterDefaultSpeechGroups() {
+        return registerDefaultSpeechGroups;
     }
 }

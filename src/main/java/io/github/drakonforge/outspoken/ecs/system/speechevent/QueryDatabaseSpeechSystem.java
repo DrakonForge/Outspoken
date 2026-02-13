@@ -25,7 +25,6 @@ import io.github.drakonforge.outspoken.database.response.Response;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.BestMatch;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQueryResult.QueryReturnCode;
 import io.github.drakonforge.outspoken.speech.SpeechResult;
-import io.github.drakonforge.outspoken.util.ContextTables;
 import io.github.drakonforge.outspoken.util.SpeechHelpers;
 import java.util.Set;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -88,10 +87,10 @@ public class QueryDatabaseSpeechSystem extends SpeechEventSystem {
     @Override
     public Set<Dependency<EntityStore>> getDependencies() {
         return Set.of(new SystemGroupDependency<>(Order.AFTER,
-                OutspokenPlugin.getInstance().getInitSpeechEventGroup()), new SystemGroupDependency<>(Order.AFTER,
-                        OutspokenPlugin.getInstance().getGatherSpeechEventGroup()),
+                OutspokenPlugin.get().getInitSpeechEventGroup()), new SystemGroupDependency<>(Order.AFTER,
+                        OutspokenPlugin.get().getGatherSpeechEventGroup()),
                 new SystemGroupDependency<>(Order.BEFORE,
-                        OutspokenPlugin.getInstance().getInspectSpeechEventGroup()));
+                        OutspokenPlugin.get().getInspectSpeechEventGroup()));
     }
 
     @NullableDecl

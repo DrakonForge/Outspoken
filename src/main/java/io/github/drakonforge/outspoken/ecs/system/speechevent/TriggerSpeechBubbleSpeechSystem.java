@@ -32,7 +32,7 @@ public class TriggerSpeechBubbleSpeechSystem extends SpeechEventSystem {
             return;
         }
 
-        OutspokenConfig config = OutspokenPlugin.getInstance().getConfig().get();
+        OutspokenConfig config = OutspokenConfig.get();
         if (config.getSpeechBubbleMode() == SpeechBubbleMode.Never) {
             return;
         }
@@ -50,7 +50,7 @@ public class TriggerSpeechBubbleSpeechSystem extends SpeechEventSystem {
     @NullableDecl
     @Override
     public SystemGroup<EntityStore> getGroup() {
-        return OutspokenPlugin.getInstance().getInspectSpeechEventGroup();
+        return OutspokenPlugin.get().getInspectSpeechEventGroup();
     }
 
     @NullableDecl

@@ -58,7 +58,7 @@ public class OutspokenPlugin extends JavaPlugin {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private static OutspokenPlugin instance;
 
-    public static OutspokenPlugin getInstance() {
+    public static OutspokenPlugin get() {
         return instance;
     }
 
@@ -155,7 +155,9 @@ public class OutspokenPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new RemoveSpeechBubbleOnDeath());
         // entityStoreRegistry.registerSystem(new RemoveSpeechBubbleOnUnload());
 
-        registerDefaultSpeechGroups();
+        if (OutspokenConfig.get().shouldRegisterDefaultSpeechGroups()) {
+            registerDefaultSpeechGroups();
+        }
 
         this.getCommandRegistry().registerCommand(new OutspokenCommand());
 

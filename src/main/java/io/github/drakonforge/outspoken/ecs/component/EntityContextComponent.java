@@ -6,6 +6,7 @@ import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenApi;
+import io.github.drakonforge.outspoken.OutspokenConfig;
 import io.github.drakonforge.outspoken.OutspokenPlugin;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.ecs.event.UpdateEntityContextEvent;
@@ -15,7 +16,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class EntityContextComponent implements Component<EntityStore> {
     public static ComponentType<EntityStore, EntityContextComponent> getComponentType() {
-        return OutspokenPlugin.getInstance().getEntityContextComponentType();
+        return OutspokenPlugin.get().getEntityContextComponentType();
     }
 
     private ContextTable contextTable = null;
@@ -48,7 +49,7 @@ public class EntityContextComponent implements Component<EntityStore> {
         if (isInitial || !isUpdateThrottled()) {
             UpdateEntityContextEvent event = new UpdateEntityContextEvent(contextTable, entityStore.getExternalData().getWorld(), isInitial);
             entityStore.invoke(entityRef, event);
-            contextUpdateCooldown = OutspokenPlugin.getInstance().getConfig().get().getContextThrottleCooldown();
+            contextUpdateCooldown = OutspokenConfig.get().getContextThrottleCooldown();
         }
         return contextTable;
     }

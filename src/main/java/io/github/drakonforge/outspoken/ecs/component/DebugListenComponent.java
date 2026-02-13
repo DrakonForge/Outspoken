@@ -16,7 +16,7 @@ public class DebugListenComponent implements Component<EntityStore> {
             DebugListenComponent::getDistance).add().append(new KeyedCodec<>("Limit", Codec.INTEGER, true), (data, value) -> data.limit = value, data -> data.limit).add().build();
 
     public static ComponentType<EntityStore, DebugListenComponent> getComponentType() {
-        return OutspokenPlugin.getInstance().getDebugListenComponentType();
+        return OutspokenPlugin.get().getDebugListenComponentType();
     }
 
     private float distance;

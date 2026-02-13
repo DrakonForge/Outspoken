@@ -8,8 +8,7 @@ import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.HolderSystem;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
-import io.github.drakonforge.outspoken.OutspokenPlugin;
-import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
+import io.github.drakonforge.outspoken.OutspokenConfig;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -25,7 +24,7 @@ public class InitDefaultNpcSpeechbankSystem extends HolderSystem<EntityStore> {
         assert npcComponent != null;
 
         String id = npcComponent.getNPCTypeId();
-        String speechbankGroup = OutspokenPlugin.getInstance().getConfig().get().getSpeechGroupFor(id);
+        String speechbankGroup = OutspokenConfig.get().getSpeechGroupFor(id);
         if (speechbankGroup != null) {
             holder.addComponent(SpeechbankComponent.getComponentType(), new SpeechbankComponent(speechbankGroup));
         }

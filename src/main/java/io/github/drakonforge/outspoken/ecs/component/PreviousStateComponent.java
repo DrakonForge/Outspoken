@@ -9,7 +9,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class PreviousStateComponent implements Component<EntityStore> {
     public static ComponentType<EntityStore, PreviousStateComponent> getComponentType() {
-        return OutspokenPlugin.getInstance().getPreviousStateComponentType();
+        return OutspokenPlugin.get().getPreviousStateComponentType();
     }
 
     @Nullable

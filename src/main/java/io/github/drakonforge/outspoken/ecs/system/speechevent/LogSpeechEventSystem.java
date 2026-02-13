@@ -35,7 +35,7 @@ public class LogSpeechEventSystem extends SpeechEventSystem {
     @NullableDecl
     @Override
     public SystemGroup<EntityStore> getGroup() {
-        return OutspokenPlugin.getInstance().getInspectSpeechEventGroup();
+        return OutspokenPlugin.get().getInspectSpeechEventGroup();
     }
 
     @NullableDecl

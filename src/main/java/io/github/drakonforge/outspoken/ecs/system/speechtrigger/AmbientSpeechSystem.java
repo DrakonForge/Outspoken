@@ -11,7 +11,7 @@ import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.outspoken.OutspokenApi;
-import io.github.drakonforge.outspoken.OutspokenPlugin;
+import io.github.drakonforge.outspoken.OutspokenConfig;
 import io.github.drakonforge.outspoken.ecs.component.SpeechbankComponent;
 import io.github.drakonforge.outspoken.util.NpcHelpers;
 import io.github.drakonforge.outspoken.util.SpeechEvents;
@@ -34,7 +34,7 @@ public class AmbientSpeechSystem extends DelayedEntitySystem<EntityStore> {
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
         // If not actively in combat, updates happen much more slowly
         boolean inCombat = NpcHelpers.isInCombat(damageDataComponent, world);
-        if (inCombat || OutspokenPlugin.getInstance().getConfig().get().shouldSkipEvent(SpeechEvents.AMBIENT_IDLE_MODIFIER)) {
+        if (inCombat || OutspokenConfig.get().shouldSkipEvent(SpeechEvents.AMBIENT_IDLE_MODIFIER)) {
             Ref<EntityStore> listenerRef = null;
             if (inCombat) {
                 listenerRef = NpcHelpers.getLockedTarget(ref, store);

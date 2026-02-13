@@ -19,7 +19,7 @@ public class SpeechbankComponent implements Component<EntityStore> {
             .build();
 
     public static ComponentType<EntityStore, SpeechbankComponent> getComponentType() {
-        return OutspokenPlugin.getInstance().getSpeechbankComponentType();
+        return OutspokenPlugin.get().getSpeechbankComponentType();
     }
 
     private String groupName;

@@ -16,7 +16,7 @@ import com.hypixel.hytale.server.core.modules.entity.component.TransformComponen
 import com.hypixel.hytale.server.core.modules.entity.tracker.NetworkId;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.outspoken.OutspokenPlugin;
+import io.github.drakonforge.outspoken.OutspokenConfig;
 import io.github.drakonforge.outspoken.database.context.ContextTable;
 import io.github.drakonforge.outspoken.database.rulebank.RulebankQuery;
 import io.github.drakonforge.outspoken.ecs.component.SpeechBubbleComponent;
@@ -39,7 +39,7 @@ public final class SpeechHelpers {
 
     public static float getTimeToSpeakLine(Message text) {
         String textStr = text.getAnsiMessage();
-        float defaultCharactersPerSecond = OutspokenPlugin.getInstance().getConfig().get().getDefaultCharactersPerSecond();
+        float defaultCharactersPerSecond = OutspokenConfig.get().getDefaultCharactersPerSecond();
         if (defaultCharactersPerSecond == 0) {
             LOGGER.atWarning().log("Default characters per second should not be 0");
             return 1.0f;

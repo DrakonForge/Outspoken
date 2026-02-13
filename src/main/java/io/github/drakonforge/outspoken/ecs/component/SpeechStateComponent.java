@@ -11,7 +11,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class SpeechStateComponent implements Component<EntityStore> {
 
     public static ComponentType<EntityStore, SpeechStateComponent> getComponentType() {
-        return OutspokenPlugin.getInstance().getSpeechStateComponentType();
+        return OutspokenPlugin.get().getSpeechStateComponentType();
     }
 
     private float speechCooldown = 0.0f;

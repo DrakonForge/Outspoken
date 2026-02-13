@@ -34,7 +34,7 @@ public final class OutspokenApi {
     public static void triggerSpeechEvent(@Nonnull Store<EntityStore> store,
             @Nonnull String category, @Nonnull Ref<EntityStore> originRef, @Nullable Ref<EntityStore> listenerRef,
             @Nullable Consumer<RulebankQuery> modifyQuery) {
-        if (OutspokenPlugin.getInstance().getConfig().get().shouldSkipEvent(category)) {
+        if (OutspokenConfig.get().shouldSkipEvent(category)) {
             return;
         }
         SpeechbankComponent speechbank = store.getComponent(originRef,

@@ -10,7 +10,6 @@ import io.github.drakonforge.outspoken.OutspokenPlugin;
 import io.github.drakonforge.outspoken.ecs.component.EntityContextComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechStateComponent;
 import io.github.drakonforge.outspoken.ecs.event.SpeechEvent;
-import io.github.drakonforge.outspoken.util.SpeechEvents;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -38,6 +37,6 @@ public class SkipSpeechEventIfBusySystem extends SpeechEventSystem {
     @NullableDecl
     @Override
     public SystemGroup<EntityStore> getGroup() {
-        return OutspokenPlugin.getInstance().getInitSpeechEventGroup();
+        return OutspokenPlugin.get().getInitSpeechEventGroup();
     }
 }

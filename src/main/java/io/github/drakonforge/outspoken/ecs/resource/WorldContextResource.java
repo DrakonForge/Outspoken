@@ -15,7 +15,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class WorldContextResource implements Resource<EntityStore> {
 
     public static ResourceType<EntityStore, WorldContextResource> getResourceType() {
-        return OutspokenPlugin.getInstance().getWorldContextResourceType();
+        return OutspokenPlugin.get().getWorldContextResourceType();
     }
 
     @Nullable
