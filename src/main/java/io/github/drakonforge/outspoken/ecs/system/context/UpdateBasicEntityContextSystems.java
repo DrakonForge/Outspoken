@@ -231,8 +231,9 @@ public final class UpdateBasicEntityContextSystems {
 
             context.set("Type", npcEntityComponent.getNPCTypeId());
 
-            Inventory inventory = npcEntityComponent.getInventory();
-            addInventoryContext(context, inventory);
+            // TODO: Restore
+            // Inventory inventory = npcEntityComponent.getInventory();
+            // addInventoryContext(context, inventory);
 
             Role role = npcEntityComponent.getRole();
             if (role != null) {
@@ -292,8 +293,9 @@ public final class UpdateBasicEntityContextSystems {
             }
 
             // TODO: Make this a helper and also add it in NPC entity
-            Inventory inventory = player.getInventory();
-            addInventoryContext(context, inventory);
+            // TODO: Restore
+            // Inventory inventory = player.getInventory();
+            // addInventoryContext(context, inventory);
         }
 
         @NullableDecl
@@ -303,20 +305,21 @@ public final class UpdateBasicEntityContextSystems {
         }
     }
 
-    private static void addInventoryContext(ContextTable context, Inventory inventory) {
-        ItemStack mainhandStack = inventory.getActiveHotbarItem();
-        ItemStack offhandStack = inventory.getUtilityItem();
-        if (mainhandStack != null) {
-            context.set("Mainhand", mainhandStack.getItemId());
-        } else {
-            context.remove("Mainhand");
-        }
-        if (offhandStack != null) {
-            context.set("Offhand", offhandStack.getItemId());
-        } else {
-            context.remove("Offhand");
-        }
-    }
+    // TODO: Restore
+    // private static void addInventoryContext(ContextTable context, Inventory inventory) {
+    //     ItemStack mainhandStack = inventory.getActiveHotbarItem();
+    //     ItemStack offhandStack = inventory.getUtilityItem();
+    //     if (mainhandStack != null) {
+    //         context.set("Mainhand", mainhandStack.getItemId());
+    //     } else {
+    //         context.remove("Mainhand");
+    //     }
+    //     if (offhandStack != null) {
+    //         context.set("Offhand", offhandStack.getItemId());
+    //     } else {
+    //         context.remove("Offhand");
+    //     }
+    // }
 
 
 }
