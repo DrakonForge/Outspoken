@@ -8,7 +8,7 @@
             "Type": "Reference",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             }
           }
         ],
@@ -26,17 +26,15 @@
             "Type": "Reference",
             "Value": {
               "Type": "String",
-              "String": "InCombat"
+              "Value": "InCombat"
             }
           },
           {
             "Type": "Range",
             "Value": {
               "Type": "Range",
-              "Range": {
-                "Max": 0.2,
-                "MaxExclusive": true
-              }
+              "Max": 0.2,
+              "MaxExclusive": true
             },
             "Table": "Speaker",
             "Key": "HealthPercentage"
@@ -45,7 +43,7 @@
             "Type": "Pass",
             "Value": {
               "Type": "Float",
-              "Float": 0.5
+              "Value": 0.5
             }
           }
         ],
@@ -62,18 +60,16 @@
             "Type": "Reference",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             }
           },
           {
             "Type": "Range",
             "Value": {
               "Type": "Range",
-              "Range": {
-                "Min": 6,
-                "Max": 18,
-                "MaxExclusive": true
-              }
+              "Min": 6,
+              "Max": 18,
+              "MaxExclusive": true
             },
             "Table": "World",
             "Key": "Hour"
@@ -92,14 +88,14 @@
             "Type": "Reference",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             }
           },
           {
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Axe"
+              "Value": "Axe"
             },
             "Table": "Listener",
             "Key": "Mainhand"
@@ -119,14 +115,14 @@
             "Type": "Reference",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             }
           },
           {
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Skeleton"
+              "Value": "Skeleton"
             },
             "Table": "Speaker",
             "Key": "NearbyMobs"
@@ -145,14 +141,14 @@
             "Type": "Reference",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             }
           },
           {
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Skeleton"
+              "Value": "Skeleton"
             },
             "Table": "Speaker",
             "Key": "NearbyMobs"
@@ -171,14 +167,14 @@
             "Type": "Reference",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             }
           },
           {
             "Type": "Equals",
             "Value": {
               "Type": "Boolean",
-              "Boolean": false
+              "Value": false
             },
             "Table": "Speaker",
             "Key": "Idle"
@@ -187,7 +183,7 @@
             "Type": "Pass",
             "Value": {
               "Type": "Float",
-              "Float": 0.75
+              "Value": 0.75
             }
           }
         ],
@@ -204,7 +200,7 @@
             "Type": "Reference",
             "Value": {
               "Type": "String",
-              "String": "InCombat"
+              "Value": "InCombat"
             }
           },
           {
@@ -222,7 +218,7 @@
             "Type": "Pass",
             "Value": {
               "Type": "Float",
-              "Float": 0.3
+              "Value": 0.3
             }
           }
         ],
@@ -241,7 +237,7 @@
             "Type": "Reference",
             "Value": {
               "Type": "String",
-              "String": "InCombat"
+              "Value": "InCombat"
             }
           },
           {
@@ -253,7 +249,7 @@
             "Type": "Pass",
             "Value": {
               "Type": "Float",
-              "Float": 0.3
+              "Value": 0.3
             }
           }
         ],
@@ -270,11 +266,9 @@
             "Type": "Range",
             "Value": {
               "Type": "Range",
-              "Range": {
-                "Min": 12,
-                "Max": 19,
-                "MaxExclusive": true
-              }
+              "Min": 12,
+              "Max": 19,
+              "MaxExclusive": true
             },
             "Table": "World",
             "Key": "Hour"
@@ -283,7 +277,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "Boolean",
-              "Boolean": true
+              "Value": true
             },
             "Table": "Listener",
             "Key": "Sleeping"
@@ -303,7 +297,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Burn"
+              "Value": "Burn"
             },
             "Table": "Speaker",
             "Key": "ActiveEffects"
@@ -326,11 +320,9 @@
             "Type": "Range",
             "Value": {
               "Type": "Range",
-              "Range": {
-                "Min": 4,
-                "Max": 12,
-                "MaxExclusive": true
-              }
+              "Min": 4,
+              "Max": 12,
+              "MaxExclusive": true
             },
             "Table": "World",
             "Key": "Hour"
@@ -349,11 +341,9 @@
             "Type": "Range",
             "Value": {
               "Type": "Range",
-              "Range": {
-                "Min": 12,
-                "Max": 19,
-                "MaxExclusive": true
-              }
+              "Min": 12,
+              "Max": 19,
+              "MaxExclusive": true
             },
             "Table": "World",
             "Key": "Hour"
@@ -373,11 +363,9 @@
             "Type": "Range",
             "Value": {
               "Type": "Range",
-              "Range": {
-                "Min": 19,
-                "Max": 21,
-                "MaxExclusive": true
-              }
+              "Min": 19,
+              "Max": 21,
+              "MaxExclusive": true
             },
             "Table": "World",
             "Key": "Hour"
@@ -408,7 +396,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Attack"
+              "Value": "Attack"
             },
             "Table": "Event",
             "Key": "State"
@@ -428,7 +416,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             },
             "Table": "Event",
             "Key": "PrevState"
@@ -437,7 +425,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Attack"
+              "Value": "Attack"
             },
             "Table": "Event",
             "Key": "State"
@@ -446,7 +434,7 @@
             "Type": "Pass",
             "Value": {
               "Type": "Float",
-              "Float": 0.25
+              "Value": 0.25
             }
           }
         ],
@@ -463,7 +451,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Attack"
+              "Value": "Attack"
             },
             "Table": "Event",
             "Key": "PrevState"
@@ -472,7 +460,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             },
             "Table": "Event",
             "Key": "State"
@@ -491,7 +479,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Attack"
+              "Value": "Attack"
             },
             "Table": "Event",
             "Key": "PrevState"
@@ -500,7 +488,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Search"
+              "Value": "Search"
             },
             "Table": "Event",
             "Key": "State"
@@ -520,7 +508,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             },
             "Table": "Event",
             "Key": "PrevState"
@@ -529,7 +517,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Alerted"
+              "Value": "Alerted"
             },
             "Table": "Event",
             "Key": "State"
@@ -549,7 +537,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Alerted"
+              "Value": "Alerted"
             },
             "Table": "Event",
             "Key": "PrevState"
@@ -558,7 +546,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "String",
-              "String": "Idle"
+              "Value": "Idle"
             },
             "Table": "Event",
             "Key": "State"
@@ -580,11 +568,9 @@
             "Type": "Range",
             "Value": {
               "Type": "Range",
-              "Range": {
-                "Min": 4,
-                "Max": 12,
-                "MaxExclusive": true
-              }
+              "Min": 4,
+              "Max": 12,
+              "MaxExclusive": true
             },
             "Table": "World",
             "Key": "Hour"
@@ -593,7 +579,7 @@
             "Type": "Pass",
             "Value": {
               "Type": "Float",
-              "Float": 0.5
+              "Value": 0.5
             }
           }
         ],
@@ -610,10 +596,8 @@
             "Type": "Range",
             "Value": {
               "Type": "Range",
-              "Range": {
-                "Min": 0.8,
-                "MinExclusive": true
-              }
+              "Min": 0.8,
+              "MinExclusive": true
             },
             "Table": "Speaker",
             "Key": "HealthPercentage"
@@ -633,9 +617,7 @@
             "Type": "Range",
             "Value": {
               "Type": "Range",
-              "Range": {
-                "Max": 0.5
-              }
+              "Max": 0.5
             },
             "Table": "Speaker",
             "Key": "HealthPercentage"
@@ -656,7 +638,7 @@
             "Type": "Includes",
             "Value": {
               "Type": "String",
-              "String": "Burn"
+              "Value": "Burn"
             },
             "Table": "Speaker",
             "Key": "ActiveEffects"

@@ -21,12 +21,12 @@ public final class OutspokenApi {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
-    private static RuleDatabase database;
+    private static final RuleDatabase database = new RuleDatabase();
 
     public static void createDatabase() {
         Map<String, RulebankAsset> assetMap = RulebankAsset.getAssetMap().getAssetMap();
         ContextManager contextManager = new ContextManager();
-        database = RuleDatabaseFactory.createFromAssetMap(assetMap, contextManager);
+        RuleDatabaseFactory.initializeFromAssetMap(database, assetMap, contextManager);
     }
 
     // This library doesn't only work on speech, but we provide some methods to support it

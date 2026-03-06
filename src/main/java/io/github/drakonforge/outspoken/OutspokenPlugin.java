@@ -14,6 +14,14 @@ import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.Config;
 import io.github.drakonforge.outspoken.asset.RulebankAsset;
+import io.github.drakonforge.outspoken.asset.criterionvalue.BooleanValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.CompareValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.CriterionValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.FloatValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.IntArrayValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.RangeValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.StringArrayValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.StringValue;
 import io.github.drakonforge.outspoken.command.OutspokenCommand;
 import io.github.drakonforge.outspoken.ecs.component.DebugListenComponent;
 import io.github.drakonforge.outspoken.ecs.component.SpeechBubbleComponent;
@@ -160,6 +168,14 @@ public class OutspokenPlugin extends JavaPlugin {
         }
 
         this.getCommandRegistry().registerCommand(new OutspokenCommand());
+
+        CriterionValue.CODEC.register("Boolean", BooleanValue.class, BooleanValue.CODEC);
+        CriterionValue.CODEC.register("Compare", CompareValue.class, CompareValue.CODEC);
+        CriterionValue.CODEC.register("Float", FloatValue.class, FloatValue.CODEC);
+        CriterionValue.CODEC.register("IntArray", IntArrayValue.class, IntArrayValue.CODEC);
+        CriterionValue.CODEC.register("Range", RangeValue.class, RangeValue.CODEC);
+        CriterionValue.CODEC.register("StringArray", StringArrayValue.class, StringArrayValue.CODEC);
+        CriterionValue.CODEC.register("String", StringValue.class, StringValue.CODEC);
 
         config.save();
     }

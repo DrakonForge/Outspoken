@@ -11,11 +11,12 @@ import javax.annotation.Nullable;
 public class RuleDatabase {
     private record GroupCategory(String group, String category) {}
 
-    private final ContextManager contextManager;
+    private final ContextManager contextManager = new ContextManager();
     private final Map<GroupCategory, RuleTable> groupCategoryToTable = new HashMap<>();
 
-    public RuleDatabase(ContextManager contextManager) {
-        this.contextManager = contextManager;
+    public void reset() {
+        contextManager.clear();
+        groupCategoryToTable.clear();
     }
 
     public RulebankQueryResult.BestMatch queryBestMatch(RulebankQuery query) {
@@ -28,7 +29,7 @@ public class RuleDatabase {
 
     @Nullable
     public RuleTable getRuleTable(String group, String category) {
-        GroupCategory key = new GroupCategory(group, category);
+        RuleDatabase.GroupCategory key = new GroupCategory(group, category);
         return groupCategoryToTable.get(key);
     }
 

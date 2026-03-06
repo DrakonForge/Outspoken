@@ -8,7 +8,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "Boolean",
-              "Boolean": false
+              "Value": false
             },
             "Table": "Speaker",
             "Key": "InCombat"
@@ -22,7 +22,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "Boolean",
-              "Boolean": true
+              "Value": true
             },
             "Table": "Speaker",
             "Key": "InCombat"
@@ -31,7 +31,7 @@
             "Type": "Equals",
             "Value": {
               "Type": "StringArray",
-              "StringArray": [
+              "Value": [
                 "Attack",
                 "Combat"
               ]

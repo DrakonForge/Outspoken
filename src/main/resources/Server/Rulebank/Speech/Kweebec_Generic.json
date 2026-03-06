@@ -9,7 +9,7 @@
             "Type": "Pass",
             "Value": {
               "Type": "Float",
-              "Float": 0.5
+              "Value": 0.5
             }
           }
         ],

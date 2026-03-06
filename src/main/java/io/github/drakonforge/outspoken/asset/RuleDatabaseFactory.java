@@ -2,10 +2,15 @@ package io.github.drakonforge.outspoken.asset;
 
 import com.hypixel.hytale.logger.HytaleLogger;
 import io.github.drakonforge.outspoken.asset.CriterionAsset.CriterionType;
-import io.github.drakonforge.outspoken.asset.CriterionValue.CompareValue;
-import io.github.drakonforge.outspoken.asset.CriterionValue.CompareValue.Operation;
-import io.github.drakonforge.outspoken.asset.CriterionValue.Range;
-import io.github.drakonforge.outspoken.asset.CriterionValue.ValueType;
+import io.github.drakonforge.outspoken.asset.criterionvalue.BooleanValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.CriterionValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.CompareValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.CompareValue.Operation;
+import io.github.drakonforge.outspoken.asset.criterionvalue.FloatValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.IntArrayValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.RangeValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.StringArrayValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.StringValue;
 import io.github.drakonforge.outspoken.database.context.ContextManager;
 import io.github.drakonforge.outspoken.database.criterion.Criterion;
 import io.github.drakonforge.outspoken.database.criterion.CriterionAlternate;
@@ -90,9 +95,9 @@ public final class RuleDatabaseFactory {
         }
     }
 
-    public static RuleDatabase createFromAssetMap(Map<String, RulebankAsset> assetMap, ContextManager contextManager) {
+    public static void initializeFromAssetMap(RuleDatabase database, Map<String, RulebankAsset> assetMap, ContextManager contextManager) {
         LOGGER.atInfo().log("Found " + assetMap.size() + " rulebank assets");
-        RuleDatabase database = new RuleDatabase(contextManager);
+        database.reset();
         Queue<RulebankAsset> toParse = new ArrayDeque<>(assetMap.values());
         List<String> failedRulebanks = new ArrayList<>();
         Map<String, ParsedRulebankInfo> parsedRulebanks = new HashMap<>();
@@ -104,7 +109,6 @@ public final class RuleDatabaseFactory {
             String parentId = asset.getParent();
             if (parentId != null && !parsedRulebanks.containsKey(parentId)) {
                 toParse.add(asset);
-                continue;
             } else {
                 LOGGER.atFine().log("Processing rulebank " + id);
                 Result result = processRulebank(id, asset, database, parsedRulebanks);
@@ -133,7 +137,6 @@ public final class RuleDatabaseFactory {
         if (!failedRulebanks.isEmpty()) {
             LOGGER.atSevere().log("Some rulebanks failed to parse:\n" + String.join("\n", failedRulebanks));
         }
-        return database;
     }
 
     public record ParsedRulebankInfo(Map<String, Rule> namedRules) {
@@ -232,12 +235,11 @@ public final class RuleDatabaseFactory {
         for (CriterionAsset criterionAsset : criteriaAssets) {
             CriterionType type = criterionAsset.getType();
             CriterionValue value = criterionAsset.getValue();
-            ValueType valueType = value.getType();
             boolean invert = criterionAsset.shouldInvert();
             Ref<Criterion> criterionRef = new Ref<>();
 
-            if(!type.isValidType(value.getType())) {
-                return Result.error("Invalid value type: " + valueType + " is not a valid type for " + type);
+            if(!type.isValidType(value.getClass())) {
+                return Result.error("Invalid value type: " + value.getClass().getName() + " is not a valid type for " + type);
             }
 
             if (invert && !type.canInvert()) {
@@ -245,10 +247,10 @@ public final class RuleDatabaseFactory {
             }
 
             if (type == CriterionType.Reference) {
-                if (value.getType() != ValueType.String) {
+                if (!(value instanceof StringValue stringValue)) {
                     return Result.error("Reference criterion value must always be a string");
                 }
-                String namedRuleId = value.getStringValue();
+                String namedRuleId = stringValue.getValue();
                 Rule namedRule = info.namedRules().get(namedRuleId);
                 if (namedRule == null) {
                     return Result.error("Unknown named rule " + namedRuleId);
@@ -259,15 +261,15 @@ public final class RuleDatabaseFactory {
 
             Result result;
             switch (type) {
-                case Equals -> result = parseEqualsCriterion(criterionRef, value, valueType, invert, contextManager);
+                case Equals -> result = parseEqualsCriterion(criterionRef, value, invert, contextManager);
                 case Exists -> result = parseExistsCriterion(criterionRef, invert);
                 case Pass -> result = parsePassCriterion(criterionRef, value);
                 case Compare ->
-                        result = parseCompareCriterion(criterionRef, value.getCompareValue(), invert);
+                        result = parseCompareCriterion(criterionRef, value, invert);
                 case Range ->
-                        result = parseRangeCriterion(criterionRef, value.getRangeValue(), invert);
+                        result = parseRangeCriterion(criterionRef, value, invert);
                 case Includes ->
-                    result = parseIncludesCriterion(criterionRef, value, valueType, invert, contextManager);
+                    result = parseIncludesCriterion(criterionRef, value, invert, contextManager);
                 default -> {
                     return Result.error("Unknown criterion type: " + criterionAsset.getType());
                 }
@@ -286,37 +288,38 @@ public final class RuleDatabaseFactory {
         return Result.SUCCESS;
     }
 
-    private static Result parseEqualsCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert, ContextManager contextManager) {
-        if (valueType == ValueType.Float) {
-            float floatValue = value.getFloatValue();
+    private static Result parseEqualsCriterion(Ref<Criterion> criterionRef, CriterionValue value,
+            boolean invert, ContextManager contextManager) {
+        if (value instanceof FloatValue typedValue) {
+            float floatValue = typedValue.getValue();
             criterionRef.set(new CriterionStatic(floatValue - EPSILON, floatValue + EPSILON, invert));
             return Result.SUCCESS;
         }
-        if (valueType == ValueType.String) {
-            String stringValue = value.getStringValue();
+        if (value instanceof StringValue typedValue) {
+            String stringValue = typedValue.getValue();
             int symbol = contextManager.getStringTable().cache(stringValue);
             criterionRef.set(new CriterionStatic(symbol - EPSILON, symbol + EPSILON, invert));
             return Result.SUCCESS;
         }
-        if (valueType == ValueType.IntArray) {
+        if (value instanceof IntArrayValue typedValue) {
             IntSet options = new IntArraySet();
-            for (int item : value.getIntArrayValue()) {
+            for (int item : typedValue.getValue()) {
                 options.add(item);
             }
             criterionRef.set(new CriterionAlternate(options, invert));
             return Result.SUCCESS;
         }
-        if (valueType == ValueType.StringArray) {
+        if (value instanceof StringArrayValue typedValue) {
             IntSet options = new IntArraySet();
-            for (String item : value.getStringArrayValue()) {
+            for (String item : typedValue.getValue()) {
                 int symbol = contextManager.getStringTable().cache(item);
                 options.add(symbol);
             }
             criterionRef.set(new CriterionAlternate(options, invert));
             return Result.SUCCESS;
         }
-        if (valueType == ValueType.Boolean) {
-            if (value.getBooleanValue()) {
+        if (value instanceof BooleanValue typedValue) {
+            if (typedValue.getValue()) {
                 criterionRef.set(CriterionStatic.IS_TRUE);
             } else {
                 criterionRef.set(CriterionStatic.IS_FALSE);
@@ -332,15 +335,21 @@ public final class RuleDatabaseFactory {
     }
 
     private static Result parsePassCriterion(Ref<Criterion> criterionRef, CriterionValue value) {
-        float floatValue = value.getFloatValue();
+        if (!(value instanceof FloatValue typedValue)) {
+            return Result.error("Invalid type");
+        }
+        float floatValue = typedValue.getValue();
         if (floatValue < 0 || floatValue > 1) {
             return Result.error("Pass criterion chance must be between 0 and 1");
         }
-        criterionRef.set(new CriterionPass(value.getFloatValue()));
+        criterionRef.set(new CriterionPass(floatValue));
         return Result.SUCCESS;
     }
 
-    private static Result parseCompareCriterion(Ref<Criterion> criterionRef, CompareValue compareValue, boolean invert) {
+    private static Result parseCompareCriterion(Ref<Criterion> criterionRef, CriterionValue value, boolean invert) {
+        if (!(value instanceof CompareValue compareValue)) {
+            return Result.error("Invalid type");
+        }
         Operation operation = compareValue.getOperation();
         switch (operation) {
             case Equals -> criterionRef.set(new CriterionCompare(-EPSILON, EPSILON, compareValue.getTableName(), compareValue.getKey(), invert));
@@ -360,9 +369,9 @@ public final class RuleDatabaseFactory {
     }
 
 
-    private static Result parseRangeCriterion(Ref<Criterion> criterionRef, Range rangeValue, boolean invert) {
-        if (rangeValue == null) {
-            return Result.error("Range value is null");
+    private static Result parseRangeCriterion(Ref<Criterion> criterionRef, CriterionValue value, boolean invert) {
+        if (!(value instanceof RangeValue rangeValue)) {
+            return Result.error("Invalid type");
         }
 
         float min = rangeValue.getMin();
@@ -378,14 +387,15 @@ public final class RuleDatabaseFactory {
         return Result.SUCCESS;
     }
 
-    private static Result parseIncludesCriterion(Ref<Criterion> criterionRef, CriterionValue value, ValueType valueType, boolean invert, ContextManager contextManager) {
-        if (valueType == ValueType.Float) {
-            float floatValue = value.getFloatValue();
+    private static Result parseIncludesCriterion(Ref<Criterion> criterionRef, CriterionValue value,
+            boolean invert, ContextManager contextManager) {
+        if (value instanceof FloatValue typedValue) {
+            float floatValue = typedValue.getValue();
             criterionRef.set(new CriterionIncludes((int) floatValue, invert));
             return Result.SUCCESS;
         }
-        if (valueType == ValueType.String) {
-            String stringValue = value.getStringValue();
+        if (value instanceof StringValue typedValue) {
+            String stringValue = typedValue.getValue();
             int symbol = contextManager.getStringTable().cache(stringValue);
             criterionRef.set(new CriterionIncludes(symbol, invert));
             return Result.SUCCESS;

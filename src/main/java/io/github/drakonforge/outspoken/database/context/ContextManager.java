@@ -13,4 +13,8 @@ public class ContextManager {
         // TODO: Consider object pooling
         return new ContextTable(this);
     }
+
+    public void clear() {
+        stringTable.clear();
+    }
 }

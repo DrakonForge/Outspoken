@@ -4,29 +4,37 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
-import io.github.drakonforge.outspoken.asset.CriterionValue.ValueType;
+import io.github.drakonforge.outspoken.asset.criterionvalue.BooleanValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.CompareValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.CriterionValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.FloatValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.IntArrayValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.NullValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.RangeValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.StringArrayValue;
+import io.github.drakonforge.outspoken.asset.criterionvalue.StringValue;
 import java.util.Set;
 import javax.annotation.Nonnull;
 
 public class CriterionAsset {
     public enum CriterionType {
-        Equals(Set.of(ValueType.Float, ValueType.String, ValueType.IntArray, ValueType.StringArray, ValueType.Boolean), true),
-        Exists(Set.of(ValueType.None), true),
-        Pass(Set.of(ValueType.Float), false),
-        Compare(Set.of(ValueType.Compare), true),
-        Range(Set.of(ValueType.Range, ValueType.Float), true),
-        Includes(Set.of(ValueType.String, ValueType.Float), true),
-        Reference(Set.of(ValueType.String), false);
+        Equals(Set.of(FloatValue.class, StringValue.class, IntArrayValue.class, StringArrayValue.class, BooleanValue.class), true),
+        Exists(Set.of(NullValue.class), true),
+        Pass(Set.of(FloatValue.class), false),
+        Compare(Set.of(CompareValue.class), true),
+        Range(Set.of(RangeValue.class, FloatValue.class), true),
+        Includes(Set.of(StringValue.class, FloatValue.class), true),
+        Reference(Set.of(StringValue.class), false);
 
-        private final Set<ValueType> validValueTypes;
+        private final Set<Class<? extends CriterionValue>> validValueTypes;
         private final boolean invertible;
 
-        CriterionType(Set<ValueType> validValueTypes, boolean invertible) {
+        CriterionType(Set<Class<? extends CriterionValue>> validValueTypes, boolean invertible) {
             this.validValueTypes = validValueTypes;
             this.invertible = invertible;
         }
 
-        public boolean isValidType(ValueType valueType) {
+        public boolean isValidType(Class<? extends CriterionValue> valueType) {
             return validValueTypes.contains(valueType);
         }
 
@@ -53,7 +61,7 @@ public class CriterionAsset {
     private String tableName;
     private String key;
     @Nonnull
-    private CriterionValue value = CriterionValue.NONE;
+    private CriterionValue value = NullValue.INSTANCE;
 
     @Nonnull
     public CriterionType getType() {
